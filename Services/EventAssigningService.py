@@ -17,7 +17,7 @@ class EventAssigningService:
         self._minimum_event_similarity_threshold = 0.7
         
     def assign_posts_to_events(self, post: Post):
-        
+        topic_instance = self.db.get_topic_by_name(post.topic.name)
         events_to_match = self.db.get_events_by_topic_from_last_24_hours(post.topic.name)
         post_embedding = self.semantic_similarity_service.embed(post.content)
         
@@ -40,6 +40,7 @@ class EventAssigningService:
         
         print(f"Event '{new_event.name}' created for post '{post.link}'")
         db.add_event(new_event)
+        topic_instance.events.append(new_event)
             
         
         
