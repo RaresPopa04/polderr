@@ -10,6 +10,7 @@
   },
   "HomePage": {
         "dashboardTitle": "Hoofddashboard",
+        "dashboardSubtitle": "Monitor en analyseer gemeenschapsdiscussies over alle onderwerpen",
         "searchPlaceholder": "Zoek evenementen, onderwerpen of discussies...",
         "trending": "Trending",
         "trashTopic": "Afvalbeheer",

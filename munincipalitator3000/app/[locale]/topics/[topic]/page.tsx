@@ -249,43 +249,40 @@ export default function TopicPage() {
                                     </CardContent>
                                 </Card>
                             ) : (
-                                <div className="space-y-3">
+                                <div className="space-y-6">
                                     {topicData.events.map((event) => (
-                                        <Card key={event.id} className="transition-shadow hover:shadow-md">
-                                            <CardHeader className="pb-3">
-                                                <div className="flex items-start justify-between gap-4">
-                                                    <div className="flex-1 space-y-1">
-                                                        <CardTitle className="text-base">{event.name}</CardTitle>
-                                                        <CardDescription className="text-sm">{event.small_summary}</CardDescription>
+                                        <Link key={event.id} href={`/events/${event.id}`}>
+                                            <Card className="cursor-pointer transition-all hover:shadow-lg hover:border-zinc-400 dark:hover:border-zinc-600">
+                                                <CardHeader className="pb-3">
+                                                    <div className="flex items-start justify-between gap-4">
+                                                        <div className="flex-1 space-y-1">
+                                                            <CardTitle className="text-base">{event.name}</CardTitle>
+                                                            <CardDescription className="text-sm">{event.small_summary}</CardDescription>
+                                                        </div>
                                                     </div>
-                                                    <Link href={`/events/${event.id}`}>
-                                                        <Button size="sm">
-                                                            {t('viewDetails')}
-                                                        </Button>
-                                                    </Link>
-                                                </div>
-                                            </CardHeader>
-                                            <CardContent className="pt-0">
-                                                <div className="flex items-center gap-4 text-xs text-zinc-600 dark:text-zinc-400">
-                                                    <div className="flex items-center gap-1">
-                                                        <Calendar className="h-3 w-3" />
-                                                        <span>{event.date}</span>
+                                                </CardHeader>
+                                                <CardContent className="pt-0">
+                                                    <div className="flex items-center gap-4 text-xs text-zinc-600 dark:text-zinc-400">
+                                                        <div className="flex items-center gap-1">
+                                                            <Calendar className="h-3 w-3" />
+                                                            <span>{event.date}</span>
+                                                        </div>
+                                                        <div className="flex items-center gap-1">
+                                                            <MessageCircle className="h-3 w-3" />
+                                                            <span>{event.totalPosts}</span>
+                                                        </div>
+                                                        <div className="flex items-center gap-1">
+                                                            <TrendingUp className="h-3 w-3" />
+                                                            <span>{event.totalEngagement}</span>
+                                                        </div>
+                                                        <div className={`ml-auto flex items-center gap-1 font-medium ${event.trend === 'up' ? 'text-green-600 dark:text-green-400' : 'text-zinc-600 dark:text-zinc-400'}`}>
+                                                            <TrendingUp className={`h-3 w-3 ${event.trend === 'up' ? '' : 'opacity-50'}`} />
+                                                            <span>{event.trend === 'up' ? t('rising') : t('stable')}</span>
+                                                        </div>
                                                     </div>
-                                                    <div className="flex items-center gap-1">
-                                                        <MessageCircle className="h-3 w-3" />
-                                                        <span>{event.totalPosts}</span>
-                                                    </div>
-                                                    <div className="flex items-center gap-1">
-                                                        <TrendingUp className="h-3 w-3" />
-                                                        <span>{event.totalEngagement}</span>
-                                                    </div>
-                                                    <div className={`ml-auto flex items-center gap-1 font-medium ${event.trend === 'up' ? 'text-green-600 dark:text-green-400' : 'text-zinc-600 dark:text-zinc-400'}`}>
-                                                        <TrendingUp className={`h-3 w-3 ${event.trend === 'up' ? '' : 'opacity-50'}`} />
-                                                        <span>{event.trend === 'up' ? t('rising') : t('stable')}</span>
-                                                    </div>
-                                                </div>
-                                            </CardContent>
-                                        </Card>
+                                                </CardContent>
+                                            </Card>
+                                        </Link>
                                     ))}
                                 </div>
                             )}
