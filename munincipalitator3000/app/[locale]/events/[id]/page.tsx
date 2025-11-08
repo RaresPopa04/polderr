@@ -1,6 +1,7 @@
 'use client';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { ExternalLink, TrendingUp, Calendar, MessageCircle } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useParams } from 'next/navigation';
@@ -124,6 +125,58 @@ export default function EventPage() {
             </Card>
           )}
         </div>
+
+        {/* Engagement Timeline Chart */}
+        {eventData.engagementData && eventData.engagementData.length > 0 && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-2xl">Engagement Over Time</CardTitle>
+              <CardDescription>
+                Historical engagement with predicted future trends
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="h-96">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={eventData.engagementData}>
+                    <CartesianGrid strokeDasharray="3 3" className="stroke-zinc-200 dark:stroke-zinc-800" />
+                    <XAxis
+                      dataKey="date"
+                      className="text-xs text-zinc-600 dark:text-zinc-400"
+                      tickFormatter={(value) => new Date(value).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                    />
+                    <YAxis className="text-xs text-zinc-600 dark:text-zinc-400" />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                        border: '1px solid #e4e4e7',
+                        borderRadius: '8px'
+                      }}
+                    />
+                    <Legend />
+                    <Line
+                      type="monotone"
+                      dataKey="engagement"
+                      stroke="#3b82f6"
+                      strokeWidth={3}
+                      name="Actual Engagement"
+                      dot={{ fill: '#3b82f6', r: 4 }}
+                    />
+                    <Line
+                      type="monotone"
+                      dataKey="predicted"
+                      stroke="#f59e0b"
+                      strokeWidth={2}
+                      strokeDasharray="5 5"
+                      name="Predicted Engagement"
+                      dot={{ fill: '#f59e0b', r: 3 }}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Description */}
         {eventData.big_summary && (
