@@ -1,18 +1,21 @@
+
 import json
-from dataclasses import dataclass
-from enum import Enum
+from dataclasses import dataclass, field
+from typing import List, Dict
 
 @dataclass
 class AzerionPromptTemplate:
-    model = "mistral-large-2407-v1:0"
-    messages = []
-    temperature = 0.01
-    max_tokens = 4096
-    top_p = 0.001
-    stream = False
+    prompt: str = ""
+    model: str = "mistral-large-2407-v1:0"
+    messages: List[Dict[str, str]] = field(default_factory=list)
+    temperature: float = 0.01
+    max_tokens: int = 4096
+    top_p: float = 0.001
+    stream: bool = False
 
-    def __init__(self, prompt:str = ""):
-        self.messages = [{"role": "user", "content": prompt}]
+    def __init__(self, prompt):
+        self.prompt = prompt
+        self.messages = [{"role": "user", "content": self.prompt}]
 
     def to_json(self):
         return json.dumps({
