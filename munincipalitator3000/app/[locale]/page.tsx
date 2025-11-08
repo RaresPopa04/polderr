@@ -5,95 +5,70 @@ import { Input } from "@/components/ui/input";
 import { Link } from '@/i18n/routing';
 import { useTranslations } from 'next-intl';
 import { Search } from "lucide-react";
+import { useEffect, useState } from 'react';
+import { topicsApi } from '@/lib/api';
 
 export default function Home() {
   const t = useTranslations('HomePage');
+  const [trendingTopics, setTrendingTopics] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // Mock data for trending topics with events (with time-series data)
-  const trendingTopics = [
-    {
-      id: 'trash',
-      name: t('trashTopic'),
-      icon: '🗑️',
-      events: [
-        {
-          id: 1,
-          name: t('trashEvent1'),
-          engagement: 892,
-          color: '#f59e0b', // Amber
-          dataPoints: [400, 450, 500, 550, 600, 700, 750, 800, 850, 892]
-        },
-        {
-          id: 2,
-          name: t('trashEvent2Short'),
-          engagement: 1245,
-          color: '#8b5cf6', // Purple
-          dataPoints: [500, 600, 700, 800, 900, 950, 1000, 1100, 1200, 1245]
-        },
-        {
-          id: 3,
-          name: t('trashEvent3Short'),
-          engagement: 456,
-          color: '#ec4899', // Pink
-          dataPoints: [200, 250, 280, 300, 320, 350, 380, 400, 430, 456]
-        },
-      ],
-      actionables: {
-        misinformation: 3,
-        questions: 7
+  useEffect(() => {
+    async function loadDashboard() {
+      try {
+        const data = await topicsApi.listTopics();
+        setTrendingTopics(data.topics);
+        setLoading(false);
+      } catch (err) {
+        console.error('Failed to load dashboard:', err);
+        setError('Failed to load dashboard data');
+        setLoading(false);
       }
-    },
-    {
-      id: 'traffic',
-      name: t('trafficTopic'),
-      icon: '🚗',
-      events: [
-        {
-          id: 1,
-          name: t('trafficEvent1'),
-          engagement: 591,
-          color: '#3b82f6', // Blue
-          dataPoints: [300, 350, 380, 420, 450, 480, 510, 540, 570, 591]
-        },
-        {
-          id: 2,
-          name: t('trafficEvent2Short'),
-          engagement: 423,
-          color: '#f59e0b', // Amber
-          dataPoints: [150, 200, 250, 280, 310, 340, 370, 390, 410, 423]
-        },
-      ],
-      actionables: {
-        misinformation: 1,
-        questions: 5
-      }
-    },
-    {
-      id: 'health',
-      name: t('healthTopic'),
-      icon: '🏥',
-      events: [
-        {
-          id: 1,
-          name: t('healthEvent1'),
-          engagement: 678,
-          color: '#10b981', // Green
-          dataPoints: [300, 350, 400, 450, 500, 550, 600, 630, 660, 678]
-        },
-        {
-          id: 2,
-          name: t('healthEvent2Short'),
-          engagement: 934,
-          color: '#06b6d4', // Cyan
-          dataPoints: [400, 500, 600, 650, 700, 750, 800, 850, 900, 934]
-        },
-      ],
-      actionables: {
-        misinformation: 2,
-        questions: 4
-      }
-    },
-  ];
+    }
+
+    loadDashboard();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-zinc-50 to-zinc-100 dark:from-zinc-950 dark:to-zinc-900">
+        <div className="text-center">
+          <div className="h-32 w-32 mx-auto animate-spin rounded-full border-b-2 border-zinc-900 dark:border-zinc-50"></div>
+          <p className="mt-4 text-lg text-zinc-600 dark:text-zinc-400">Loading dashboard...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-zinc-50 to-zinc-100 dark:from-zinc-950 dark:to-zinc-900">
+        <div className="text-center">
+          <p className="text-red-600 dark:text-red-400 text-xl mb-4">⚠️ {error}</p>
+          <p className="text-zinc-600 dark:text-zinc-400">
+            Make sure the backend is running at{' '}
+            <code className="bg-zinc-200 dark:bg-zinc-800 px-2 py-1 rounded">
+              http://localhost:8000
+            </code>
+          </p>
+          <p className="mt-2 text-sm text-zinc-500 dark:text-zinc-500">
+            Run: <code className="bg-zinc-200 dark:bg-zinc-800 px-2 py-1 rounded">python -m api.main</code>
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (trendingTopics.length === 0) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-zinc-50 to-zinc-100 dark:from-zinc-950 dark:to-zinc-900">
+        <div className="text-center">
+          <p className="text-zinc-600 dark:text-zinc-400 text-xl">No topics available</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-zinc-50 to-zinc-100 dark:from-zinc-950 dark:to-zinc-900">
@@ -120,9 +95,9 @@ export default function Home() {
         {/* Main Content Area */}
         <div className="space-y-10">
           {/* Topic Sections */}
-          {trendingTopics.map((topic) => {
+          {trendingTopics.map((topic: any) => {
             // Find max value across all data points for scaling
-            const allDataPoints = topic.events.flatMap(e => e.dataPoints);
+            const allDataPoints = topic.events.flatMap((e: any) => e.data_points || e.dataPoints);
             const maxValue = Math.max(...allDataPoints);
             const minValue = Math.min(...allDataPoints);
             const range = maxValue - minValue;
@@ -145,7 +120,7 @@ export default function Home() {
                     <div className="grid grid-cols-[350px_1fr_180px] gap-8">
                       {/* Left: Legend */}
                       <div className="space-y-4">
-                        {topic.events.map((event) => (
+                        {topic.events.map((event: any) => (
                           <div key={event.id} className="flex items-center gap-4 rounded-lg bg-zinc-50 p-3 dark:bg-zinc-900">
                             <div
                               className="h-4 w-4 shrink-0 rounded-full shadow-sm"
@@ -175,13 +150,14 @@ export default function Home() {
                           <rect width="800" height="240" fill={`url(#grid-${topic.id})`} />
 
                           {/* Lines for each event */}
-                          {topic.events.map((event, eventIndex) => {
+                          {topic.events.map((event: any, eventIndex: number) => {
                             const padding = 20;
                             const graphWidth = 800 - (padding * 2);
                             const graphHeight = 240 - (padding * 2);
 
-                            const points = event.dataPoints.map((value, index) => {
-                              const x = padding + (index / (event.dataPoints.length - 1)) * graphWidth;
+                            const dataPoints = event.data_points || event.dataPoints;
+                            const points = dataPoints.map((value: number, index: number) => {
+                              const x = padding + (index / (dataPoints.length - 1)) * graphWidth;
                               const normalizedValue = (value - minValue) / range;
                               const y = padding + graphHeight - (normalizedValue * graphHeight);
                               return `${x},${y}`;
@@ -211,8 +187,8 @@ export default function Home() {
                                 />
 
                                 {/* Data points */}
-                                {event.dataPoints.map((value, index) => {
-                                  const x = padding + (index / (event.dataPoints.length - 1)) * graphWidth;
+                                {dataPoints.map((value: number, index: number) => {
+                                  const x = padding + (index / (dataPoints.length - 1)) * graphWidth;
                                   const normalizedValue = (value - minValue) / range;
                                   const y = padding + graphHeight - (normalizedValue * graphHeight);
                                   return (
