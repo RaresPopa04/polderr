@@ -37,10 +37,7 @@ class Event:
         llm_client = LlmClient()
         self.name = self.extract_name_from_posts(llm_client)
         
-        print(f"Event name: {self.name}")
         (self.small_summary, self.big_summary) = self.generate_summaries(llm_client)
-        print(f"Event small summary: {self.small_summary}")
-        print(f"Event big summary: {self.big_summary}")
         self.similar_events = self.find_similar_events(llm_client, other_events)
         self.keywords = self.extract_keywords(llm_client)
         self.date = self.find_most_recent_post_date()
