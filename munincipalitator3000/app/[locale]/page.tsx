@@ -30,95 +30,6 @@ export default function Home() {
     loadDashboard();
   }, []);
 
-  // Fallback mock data for development
-  const mockTopics = [
-    {
-      id: 'trash',
-      name: t('trashTopic'),
-      icon: '🗑️',
-      events: [
-        {
-          id: 1,
-          name: t('trashEvent1'),
-          engagement: 892,
-          color: '#f59e0b', // Amber
-          dataPoints: [400, 450, 500, 550, 600, 700, 750, 800, 850, 892]
-        },
-        {
-          id: 2,
-          name: t('trashEvent2Short'),
-          engagement: 1245,
-          color: '#8b5cf6', // Purple
-          dataPoints: [500, 600, 700, 800, 900, 950, 1000, 1100, 1200, 1245]
-        },
-        {
-          id: 3,
-          name: t('trashEvent3Short'),
-          engagement: 456,
-          color: '#ec4899', // Pink
-          dataPoints: [200, 250, 280, 300, 320, 350, 380, 400, 430, 456]
-        },
-      ],
-      actionables: {
-        misinformation: 3,
-        questions: 7
-      }
-    },
-    {
-      id: 'traffic',
-      name: t('trafficTopic'),
-      icon: '🚗',
-      events: [
-        {
-          id: 1,
-          name: t('trafficEvent1'),
-          engagement: 591,
-          color: '#3b82f6', // Blue
-          dataPoints: [300, 350, 380, 420, 450, 480, 510, 540, 570, 591]
-        },
-        {
-          id: 2,
-          name: t('trafficEvent2Short'),
-          engagement: 423,
-          color: '#f59e0b', // Amber
-          dataPoints: [150, 200, 250, 280, 310, 340, 370, 390, 410, 423]
-        },
-      ],
-      actionables: {
-        misinformation: 1,
-        questions: 5
-      }
-    },
-    {
-      id: 'health',
-      name: t('healthTopic'),
-      icon: '🏥',
-      events: [
-        {
-          id: 1,
-          name: t('healthEvent1'),
-          engagement: 678,
-          color: '#10b981', // Green
-          dataPoints: [300, 350, 400, 450, 500, 550, 600, 630, 660, 678]
-        },
-        {
-          id: 2,
-          name: t('healthEvent2Short'),
-          engagement: 934,
-          color: '#06b6d4', // Cyan
-          dataPoints: [400, 500, 600, 650, 700, 750, 800, 850, 900, 934]
-        },
-      ],
-      actionables: {
-        misinformation: 2,
-        questions: 4
-      }
-    },
-  ];
-
-  // Use API data if available, otherwise fallback to mock data
-  const displayTopics = trendingTopics.length > 0 ? trendingTopics : mockTopics;
-
   if (loading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-zinc-50 to-zinc-100 dark:from-zinc-950 dark:to-zinc-900">
@@ -134,8 +45,26 @@ export default function Home() {
     return (
       <div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-zinc-50 to-zinc-100 dark:from-zinc-950 dark:to-zinc-900">
         <div className="text-center">
-          <p className="text-red-600 dark:text-red-400">⚠️ {error}</p>
-          <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">Using fallback mock data</p>
+          <p className="text-red-600 dark:text-red-400 text-xl mb-4">⚠️ {error}</p>
+          <p className="text-zinc-600 dark:text-zinc-400">
+            Make sure the backend is running at{' '}
+            <code className="bg-zinc-200 dark:bg-zinc-800 px-2 py-1 rounded">
+              http://localhost:8000
+            </code>
+          </p>
+          <p className="mt-2 text-sm text-zinc-500 dark:text-zinc-500">
+            Run: <code className="bg-zinc-200 dark:bg-zinc-800 px-2 py-1 rounded">python -m api.main</code>
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (trendingTopics.length === 0) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-zinc-50 to-zinc-100 dark:from-zinc-950 dark:to-zinc-900">
+        <div className="text-center">
+          <p className="text-zinc-600 dark:text-zinc-400 text-xl">No topics available</p>
         </div>
       </div>
     );
@@ -166,7 +95,7 @@ export default function Home() {
         {/* Main Content Area */}
         <div className="space-y-10">
           {/* Topic Sections */}
-          {displayTopics.map((topic: any) => {
+          {trendingTopics.map((topic: any) => {
             // Find max value across all data points for scaling
             const allDataPoints = topic.events.flatMap((e: any) => e.data_points || e.dataPoints);
             const maxValue = Math.max(...allDataPoints);

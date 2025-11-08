@@ -1,332 +1,159 @@
 'use client';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Link } from '@/i18n/routing';
-import { TrendingUp, Calendar, MessageCircle, Hash, Clock } from "lucide-react";
+import { TrendingUp, Calendar, MessageCircle } from "lucide-react";
 import { useTranslations } from 'next-intl';
 import { useParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { topicsApi } from '@/lib/api';
 
 export default function TopicPage() {
     const params = useParams();
-    const topic = params.topic as string;
+    const topicId = params.topic as string;
     const t = useTranslations('TopicsPage');
+    const [topicData, setTopicData] = useState<any>(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
-    // Mock data - this would come from your API/backend
-    const getTopicData = (topicSlug: string) => {
-        const topicConfigs: Record<string, {
-            title: string;
-            description: string;
-            color: string;
-            events: Array<{
-                id: number;
-                name: string;
-                small_summary: string;
-                date: string;
-                totalPosts: number;
-                totalEngagement: number;
-                trend: string;
-            }>;
-        }> = {
-            trash: {
-                title: t('trashTitle'),
-                description: t('trashDescription'),
-                color: 'text-amber-600 dark:text-amber-400',
-                events: [
-                    {
-                        id: 1,
-                        name: t('trashEvent1Name'),
-                        small_summary: t('trashEvent1Summary'),
-                        date: "2025-11-08",
-                        totalPosts: 15,
-                        totalEngagement: 892,
-                        trend: "up"
-                    },
-                    {
-                        id: 2,
-                        name: t('trashEvent2Name'),
-                        small_summary: t('trashEvent2Summary'),
-                        date: "2025-11-05",
-                        totalPosts: 23,
-                        totalEngagement: 1245,
-                        trend: "up"
-                    },
-                    {
-                        id: 3,
-                        name: t('trashEvent3Name'),
-                        small_summary: t('trashEvent3Summary'),
-                        date: "2025-11-02",
-                        totalPosts: 8,
-                        totalEngagement: 456,
-                        trend: "stable"
-                    },
-                ]
-            },
-            health: {
-                title: t('healthTitle'),
-                description: t('healthDescription'),
-                color: 'text-green-600 dark:text-green-400',
-                events: [
-                    {
-                        id: 4,
-                        name: t('healthEvent1Name'),
-                        small_summary: t('healthEvent1Summary'),
-                        date: "2025-11-07",
-                        totalPosts: 12,
-                        totalEngagement: 678,
-                        trend: "up"
-                    },
-                    {
-                        id: 5,
-                        name: t('healthEvent2Name'),
-                        small_summary: t('healthEvent2Summary'),
-                        date: "2025-11-04",
-                        totalPosts: 18,
-                        totalEngagement: 934,
-                        trend: "stable"
-                    },
-                ]
-            },
-            traffic: {
-                title: t('trafficTitle'),
-                description: t('trafficDescription'),
-                color: 'text-blue-600 dark:text-blue-400',
-                events: [
-                    {
-                        id: 6,
-                        name: t('trafficEvent1Name'),
-                        small_summary: t('trafficEvent1Summary'),
-                        date: "2025-11-08",
-                        totalPosts: 10,
-                        totalEngagement: 591,
-                        trend: "up"
-                    },
-                    {
-                        id: 7,
-                        name: t('trafficEvent2Name'),
-                        small_summary: t('trafficEvent2Summary'),
-                        date: "2025-11-06",
-                        totalPosts: 8,
-                        totalEngagement: 423,
-                        trend: "stable"
-                    },
-                ]
+    useEffect(() => {
+        async function loadTopic() {
+            try {
+                const data = await topicsApi.getTopic(topicId);
+                setTopicData(data);
+                setLoading(false);
+            } catch (err) {
+                console.error('Failed to load topic:', err);
+                setError('Failed to load topic data');
+                setLoading(false);
             }
-        };
+        }
+        loadTopic();
+    }, [topicId]);
 
-        return topicConfigs[topicSlug] || {
-            title: t('unknownTitle'),
-            description: t('unknownDescription'),
-            color: 'text-zinc-600 dark:text-zinc-400',
-            events: []
-        };
-    };
+    if (loading) {
+        return (
+            <div className="flex min-h-screen items-center justify-center bg-zinc-50 dark:bg-zinc-950">
+                <div className="text-center">
+                    <div className="h-32 w-32 mx-auto animate-spin rounded-full border-b-2 border-zinc-900 dark:border-zinc-50"></div>
+                    <p className="mt-4 text-lg text-zinc-600 dark:text-zinc-400">Loading topic...</p>
+                </div>
+            </div>
+        );
+    }
 
-    const topicData = getTopicData(topic);
-
-    // Mock sentiment data for the timeline
-    const sentimentData = [
-        { date: '2025-11-02', sentiment: 0.3 },
-        { date: '2025-11-03', sentiment: 0.5 },
-        { date: '2025-11-04', sentiment: 0.4 },
-        { date: '2025-11-05', sentiment: 0.7 },
-        { date: '2025-11-06', sentiment: 0.6 },
-        { date: '2025-11-07', sentiment: 0.65 },
-        { date: '2025-11-08', sentiment: 0.8 },
-    ];
-
-    // Mock forum posts
-    const forumPosts = [
-        { id: 1, author: "Jan_Rijswijk", content: "When will the missed collections be addressed?", time: "2h ago", replies: 5 },
-        { id: 2, author: "Maria_NL", content: "We need better recycling options in our area.", time: "5h ago", replies: 12 },
-        { id: 3, author: "Piet_V", content: "Great initiative with the new bins!", time: "1d ago", replies: 3 },
-    ];
+    if (error || !topicData) {
+        return (
+            <div className="flex min-h-screen items-center justify-center bg-zinc-50 dark:bg-zinc-950">
+                <div className="text-center">
+                    <p className="text-red-600 dark:text-red-400 text-xl mb-4">⚠️ {error || 'Topic not found'}</p>
+                    <p className="text-zinc-600 dark:text-zinc-400">
+                        Make sure the backend is running at{' '}
+                        <code className="bg-zinc-200 dark:bg-zinc-800 px-2 py-1 rounded">
+                            http://localhost:8000
+                        </code>
+                    </p>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950">
-            <div className="mx-auto max-w-[1800px] p-6">
+            <div className="mx-auto max-w-7xl p-6">
                 {/* Header */}
-                <div className="mb-6 space-y-2">
-                    <div className="flex items-center gap-3">
-                        <Hash className={`h-8 w-8 ${topicData.color}`} />
-                        <h1 className="text-4xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
-                            {topicData.title}
-                        </h1>
-                    </div>
-                    <p className="text-lg text-zinc-600 dark:text-zinc-400">
-                        {topicData.description}
-                    </p>
-                </div>
-
-                {/* Two Column Layout */}
-                <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_400px]">
-                    {/* Left Column - Timeline and Events */}
-                    <div className="space-y-6">
-                        {/* Sentiment Timeline Chart */}
-                        <Card>
-                            <CardHeader>
-                                <div className="flex items-center justify-between">
-                                    <div>
-                                        <CardTitle className="text-lg">{t('sentimentTimeline')}</CardTitle>
-                                        <CardDescription>{t('sentimentDescription')}</CardDescription>
-                                    </div>
-                                    <div className="text-sm text-zinc-600 dark:text-zinc-400">
-                                        S
-                                    </div>
-                                </div>
-                            </CardHeader>
-                            <CardContent>
-                                <div className="relative h-48 w-full">
-                                    {/* Simple SVG chart */}
-                                    <svg className="h-full w-full" viewBox="0 0 700 200" preserveAspectRatio="none">
-                                        {/* Grid lines */}
-                                        <line x1="0" y1="50" x2="700" y2="50" stroke="currentColor" strokeWidth="0.5" className="text-zinc-200 dark:text-zinc-800" />
-                                        <line x1="0" y1="100" x2="700" y2="100" stroke="currentColor" strokeWidth="0.5" className="text-zinc-200 dark:text-zinc-800" />
-                                        <line x1="0" y1="150" x2="700" y2="150" stroke="currentColor" strokeWidth="0.5" className="text-zinc-200 dark:text-zinc-800" />
-
-                                        {/* Line path */}
-                                        <polyline
-                                            points={sentimentData.map((d, i) => `${(i / (sentimentData.length - 1)) * 700},${200 - d.sentiment * 200}`).join(' ')}
-                                            fill="none"
-                                            stroke="currentColor"
-                                            strokeWidth="3"
-                                            className={topicData.color}
-                                        />
-
-                                        {/* Data points */}
-                                        {sentimentData.map((d, i) => (
-                                            <circle
-                                                key={i}
-                                                cx={(i / (sentimentData.length - 1)) * 700}
-                                                cy={200 - d.sentiment * 200}
-                                                r="5"
-                                                fill="currentColor"
-                                                className={topicData.color}
-                                            />
-                                        ))}
-                                    </svg>
-                                </div>
-                            </CardContent>
-                        </Card>
-
-                        {/* Event Queue Timeline */}
-                        <Card>
-                            <CardHeader>
-                                <div className="flex items-center gap-2">
-                                    <Clock className="h-5 w-5 text-zinc-600 dark:text-zinc-400" />
-                                    <CardTitle className="text-lg">{t('eventQueueTime')}</CardTitle>
-                                </div>
-                            </CardHeader>
-                            <CardContent>
-                                <div className="space-y-2">
-                                    {topicData.events.map((event, index) => (
-                                        <div key={event.id} className="flex items-center gap-4">
-                                            <div className="flex-1">
-                                                <div className="flex items-center gap-2">
-                                                    <div className={`h-2 w-2 rounded-full ${event.trend === 'up' ? 'bg-green-500' : 'bg-zinc-400'}`} />
-                                                    <span className="text-sm font-medium text-zinc-900 dark:text-zinc-50">
-                                                        {event.name}
-                                                    </span>
-                                                </div>
-                                            </div>
-                                            <span className="text-xs text-zinc-500 dark:text-zinc-500">{event.date}</span>
-                                        </div>
-                                    ))}
-                                </div>
-                            </CardContent>
-                        </Card>
-
-                        {/* Events List */}
-                        <div className="space-y-4">
-                            <h2 className="text-xl font-bold text-zinc-900 dark:text-zinc-50">
-                                {t('eventsInTopic')}
-                            </h2>
-
-                            {topicData.events.length === 0 ? (
-                                <Card>
-                                    <CardContent className="py-10 text-center text-zinc-600 dark:text-zinc-400">
-                                        {t('noEvents')}
-                                    </CardContent>
-                                </Card>
-                            ) : (
-                                <div className="space-y-6">
-                                    {topicData.events.map((event) => (
-                                        <Link key={event.id} href={`/events/${event.id}`}>
-                                            <Card className="cursor-pointer transition-all hover:shadow-lg hover:border-zinc-400 dark:hover:border-zinc-600">
-                                                <CardHeader className="pb-3">
-                                                    <div className="flex items-start justify-between gap-4">
-                                                        <div className="flex-1 space-y-1">
-                                                            <CardTitle className="text-base">{event.name}</CardTitle>
-                                                            <CardDescription className="text-sm">{event.small_summary}</CardDescription>
-                                                        </div>
-                                                    </div>
-                                                </CardHeader>
-                                                <CardContent className="pt-0">
-                                                    <div className="flex items-center gap-4 text-xs text-zinc-600 dark:text-zinc-400">
-                                                        <div className="flex items-center gap-1">
-                                                            <Calendar className="h-3 w-3" />
-                                                            <span>{event.date}</span>
-                                                        </div>
-                                                        <div className="flex items-center gap-1">
-                                                            <MessageCircle className="h-3 w-3" />
-                                                            <span>{event.totalPosts}</span>
-                                                        </div>
-                                                        <div className="flex items-center gap-1">
-                                                            <TrendingUp className="h-3 w-3" />
-                                                            <span>{event.totalEngagement}</span>
-                                                        </div>
-                                                        <div className={`ml-auto flex items-center gap-1 font-medium ${event.trend === 'up' ? 'text-green-600 dark:text-green-400' : 'text-zinc-600 dark:text-zinc-400'}`}>
-                                                            <TrendingUp className={`h-3 w-3 ${event.trend === 'up' ? '' : 'opacity-50'}`} />
-                                                            <span>{event.trend === 'up' ? t('rising') : t('stable')}</span>
-                                                        </div>
-                                                    </div>
-                                                </CardContent>
-                                            </Card>
-                                        </Link>
-                                    ))}
-                                </div>
-                            )}
+                <div className="mb-8 space-y-4">
+                    <div className="flex items-center gap-4">
+                        <span className="text-6xl">{topicData.icon}</span>
+                        <div>
+                            <h1 className="text-5xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
+                                {topicData.name}
+                            </h1>
+                            <p className="mt-2 text-lg text-zinc-600 dark:text-zinc-400">
+                                {topicData.events?.length || 0} active events
+                            </p>
                         </div>
                     </div>
 
-                    {/* Right Column - Forum */}
-                    <div className="space-y-6">
-                        <Card className="sticky top-6">
-                            <CardHeader>
-                                <CardTitle className="text-lg">{t('forumDiscussions')}</CardTitle>
-                                <CardDescription>{t('forumDescription')}</CardDescription>
-                            </CardHeader>
-                            <CardContent>
-                                <div className="space-y-4">
-                                    {forumPosts.map((post) => (
-                                        <div key={post.id} className="space-y-2 border-b border-zinc-200 pb-4 last:border-0 dark:border-zinc-800">
-                                            <div className="flex items-start justify-between gap-2">
-                                                <div className="font-medium text-sm text-zinc-900 dark:text-zinc-50">
-                                                    {post.author}
-                                                </div>
-                                                <div className="text-xs text-zinc-500 dark:text-zinc-500">
-                                                    {post.time}
+                    {/* Actionables Summary */}
+                    <div className="flex gap-6">
+                        <div className="rounded-lg bg-red-50 px-6 py-4 dark:bg-red-950/20">
+                            <div className="text-3xl font-bold text-red-600 dark:text-red-400">
+                                {topicData.actionables?.misinformation || 0}
+                            </div>
+                            <div className="text-sm font-medium text-red-700 dark:text-red-300">
+                                Misinformation
+                            </div>
+                        </div>
+                        <div className="rounded-lg bg-blue-50 px-6 py-4 dark:bg-blue-950/20">
+                            <div className="text-3xl font-bold text-blue-600 dark:text-blue-400">
+                                {topicData.actionables?.questions || 0}
+                            </div>
+                            <div className="text-sm font-medium text-blue-700 dark:text-blue-300">
+                                Questions
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Events List */}
+                <div className="space-y-6">
+                    <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">Events</h2>
+
+                    {topicData.events && topicData.events.length > 0 ? (
+                        <div className="space-y-6">
+                            {topicData.events.map((event: any) => (
+                                <Link key={event.id} href={`/events/${event.id}`}>
+                                    <Card className="cursor-pointer transition-all hover:shadow-lg hover:border-zinc-400 dark:hover:border-zinc-600">
+                                        <CardHeader>
+                                            <div className="flex items-start justify-between">
+                                                <div className="flex-1">
+                                                    <div className="flex items-center gap-3 mb-2">
+                                                        <div
+                                                            className="h-4 w-4 rounded-full"
+                                                            style={{ backgroundColor: event.color }}
+                                                        />
+                                                        <CardTitle className="text-2xl">{event.name}</CardTitle>
+                                                    </div>
+                                                    <CardDescription className="text-base">
+                                                        {event.small_summary || 'No description available'}
+                                                    </CardDescription>
                                                 </div>
                                             </div>
-                                            <p className="text-sm text-zinc-600 dark:text-zinc-400">
-                                                {post.content}
-                                            </p>
-                                            <div className="flex items-center gap-2 text-xs text-zinc-500 dark:text-zinc-500">
-                                                <MessageCircle className="h-3 w-3" />
-                                                <span>{post.replies} {t('replies')}</span>
+                                        </CardHeader>
+                                        <CardContent>
+                                            <div className="flex items-center gap-6 text-sm text-zinc-600 dark:text-zinc-400">
+                                                <div className="flex items-center gap-2">
+                                                    <TrendingUp className="h-4 w-4" />
+                                                    <span className="font-semibold">{event.engagement?.toLocaleString() || 0} engagement</span>
+                                                </div>
+                                                {event.totalPosts !== undefined && (
+                                                    <div className="flex items-center gap-2">
+                                                        <MessageCircle className="h-4 w-4" />
+                                                        <span>{event.totalPosts} posts</span>
+                                                    </div>
+                                                )}
+                                                {event.date && (
+                                                    <div className="flex items-center gap-2">
+                                                        <Calendar className="h-4 w-4" />
+                                                        <span>{new Date(event.date).toLocaleDateString()}</span>
+                                                    </div>
+                                                )}
                                             </div>
-                                        </div>
-                                    ))}
-                                </div>
-                                <Button className="mt-4 w-full" variant="outline">
-                                    {t('viewAllDiscussions')}
-                                </Button>
+                                        </CardContent>
+                                    </Card>
+                                </Link>
+                            ))}
+                        </div>
+                    ) : (
+                        <Card>
+                            <CardContent className="py-12 text-center">
+                                <p className="text-zinc-600 dark:text-zinc-400">No events found for this topic</p>
                             </CardContent>
                         </Card>
-                    </div>
+                    )}
                 </div>
             </div>
         </div>
     );
 }
-
