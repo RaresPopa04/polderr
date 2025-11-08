@@ -1,3 +1,32 @@
+import textwrap
+
+event_name_prompt = textwrap.dedent(
+    """
+    Generate a maximum of 10 words name for an event considering these 
+    news articles / conversations about it. Return only this name.
+    {event_posts}
+    """)
+
+event_keywords_prompt = textwrap.dedent(
+    """
+    Generate a set of 15 keywords for an event considering these 
+    news articles / conversations about it. Return only these keywords separated by commas.
+    {event_posts}
+    """)
+
+event_small_summary_prompt = textwrap.dedent(
+    """
+    Generate a small summary of approximatively 50 words for an event considering these 
+    news articles / conversations about it. Return only the summary.
+    {event_posts}
+    """)
+
+event_big_summary_prompt = textwrap.dedent(
+    """
+    Generate a small summary of approximatively 50 words for an event considering these 
+    news articles / conversations about it. Return only the summary.
+    {event_posts}
+    """)
 import json
 from textwrap import dedent
 
