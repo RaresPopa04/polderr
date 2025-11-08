@@ -57,7 +57,7 @@ csv_file = "rijswijk_feed_news.csv"
 if os.path.exists(csv_file):
         process_csv_data(csv_file)
         show_database_stats()
-        print(SentimentAnalysisService(LlmClient()).analyze_sentiment("Traffic"))
+        print(SentimentAnalysisService(LlmClient()).analyze_sentiment("Education"))
 else:
     print(f"\nNote: CSV file '{csv_file}' not found in current directory.")
 
