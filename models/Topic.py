@@ -5,11 +5,6 @@ from models.Event import Event
 
 @dataclass
 class Topic:
-    def __init__(self,
-                 topic_id: int,
-                 name,
-                 events: List[Event]
-                 ):
-        self.topic_id = topic_id
-        self.name = name
-        self.events = events
+    topic_id: int
+    name: str
+    events: List[Event]
