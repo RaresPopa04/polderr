@@ -63,7 +63,6 @@ event1 = Event(first_post)
 event2 = Event(second_post)
 event3 = Event(third_post)
 
-print(posts)
 
 
 

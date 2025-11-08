@@ -15,3 +15,7 @@ python -m api.main
 cd munincipalitator3000
 npm run dev
 ```
+
+
+a new post comes -> a topic is assigned -> see if there are recents events in this topic and
+try to assigning similar ones, if no similar ones than create a new one 
