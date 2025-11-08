@@ -1,4 +1,8 @@
 {
+  "Navbar": {
+    "home": "Home",
+    "events": "Events"
+  },
   "HomePage": {
     "title": "Munincipalitator3000",
     "subtitle": "Rijswijk Municipality - Online Monitoring Platform",

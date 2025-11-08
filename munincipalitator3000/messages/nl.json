@@ -1,5 +1,9 @@
 {
-    "HomePage": {
+  "Navbar": {
+    "home": "Home",
+    "events": "Evenementen"
+  },
+  "HomePage": {
         "title": "Munincipalitator3000",
         "subtitle": "Gemeente Rijswijk - Online Monitoringsplatform",
         "viewEventsButton": "Bekijk Evenementen Dashboard",

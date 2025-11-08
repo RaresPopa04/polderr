@@ -4,7 +4,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Link } from '@/i18n/routing';
 import { useTranslations } from 'next-intl';
-import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 
 export default function Home() {
   const t = useTranslations('HomePage');
@@ -12,9 +11,6 @@ export default function Home() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-zinc-50 p-8 dark:bg-zinc-950">
       <div className="w-full max-w-4xl space-y-8">
-        <div className="flex justify-end">
-          <LanguageSwitcher />
-        </div>
         <div className="text-center">
           <h1 className="text-4xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
             {t('title')}

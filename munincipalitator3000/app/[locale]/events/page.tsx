@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Link } from '@/i18n/routing';
 import { TrendingUp, Calendar, MessageCircle } from "lucide-react";
 import { useTranslations } from 'next-intl';
-import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 
 export default function EventsPage() {
     const t = useTranslations('EventsPage');
@@ -44,9 +43,6 @@ export default function EventsPage() {
     return (
         <div className="min-h-screen bg-zinc-50 p-6 dark:bg-zinc-950">
             <div className="mx-auto max-w-7xl space-y-6">
-                <div className="flex justify-end">
-                    <LanguageSwitcher />
-                </div>
                 {/* Header */}
                 <div className="space-y-2">
                     <h1 className="text-4xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
