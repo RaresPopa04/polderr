@@ -1,5 +1,33 @@
 import textwrap
 
+get_raport_for_event_prompt = textwrap.dedent(
+    """
+    Generate a raport for an event considering these 
+    news articles / conversations about it. Return only the raport.
+    {event_posts}
+    """)
+
+get_raport_for_topic_prompt = textwrap.dedent(
+    """
+    Generate a raport for a topic considering these 
+    news articles / conversations about it. Return only the raport.
+    {topic_posts}
+    """)
+
+get_raport_for_last_week_prompt = textwrap.dedent(
+    """
+    Generate a raport for the last week considering these 
+    news articles / conversations about it. Return only the raport.
+    {last_week_posts}
+    """)
+
+get_raport_for_last_month_prompt = textwrap.dedent(
+    """
+    Generate a raport for the last month considering these 
+    news articles / conversations about it. Return only the raport.
+    {last_month_posts}
+    """)
+
 event_name_prompt = textwrap.dedent(
     """
     Generate a maximum of 10 words name for an event considering these 

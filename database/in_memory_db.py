@@ -1,5 +1,7 @@
 from typing import List, Optional
 
+from llm import AzerionPromptTemplate, LlmClient
+from llm.PromptTemplates.Prompts import get_raport_for_event_prompt, get_raport_for_last_month_prompt, get_raport_for_last_week_prompt, get_raport_for_topic_prompt
 from models.Event import Event
 from models.Post import Post
 
@@ -128,6 +130,27 @@ class InMemoryDB:
             "latest_post_date": max([p.date for p in posts]) if posts else None
         }
 
+    def get_raport_for_event(self, event_id: int) -> Optional[str]:
+        event = self.get_event_by_id(event_id)
+        if not event:
+            return None
+        llm_client = LlmClient()
+        return llm_client.generate_response(AzerionPromptTemplate(prompt=get_raport_for_event_prompt.format(event_posts=event.posts)))
+
+    def get_raport_for_topic(self, topic_id: int) -> Optional[str]:
+        topic = self.get_topic_by_id(topic_id)
+        if not topic:
+            return None
+        llm_client = LlmClient()
+        return llm_client.generate_response(AzerionPromptTemplate(prompt=get_raport_for_topic_prompt.format(topic_posts=topic.posts)))
+
+    def get_raport_for_last_week(self, ) -> Optional[str]:
+        llm_client = LlmClient()
+        return llm_client.generate_response(AzerionPromptTemplate(prompt=get_raport_for_last_week_prompt.format(last_week_posts=self.posts)))
+
+    def get_raport_for_last_month(self, ) -> Optional[str]:
+        llm_client = LlmClient()
+        return llm_client.generate_response(AzerionPromptTemplate(prompt=get_raport_for_last_month_prompt.format(last_month_posts=self.posts)))
 
 # Singleton instance
 db = InMemoryDB()
