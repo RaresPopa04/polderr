@@ -2,6 +2,7 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from typing import List, Optional
 
+from llm.AzerionPromptTemplate import AzerionPromptTemplate
 from llm.LlmClient import LlmClient
 from llm.PromptTemplates.Prompts import event_name_prompt, event_keywords_prompt, event_big_summary_prompt, \
     event_small_summary_prompt
@@ -47,7 +48,7 @@ class Event:
 
         name_find_prompt = event_name_prompt.format(event_posts=total_context)
 
-        name = llm_client.generate_response(name_find_prompt)
+        name = llm_client.generate_response(AzerionPromptTemplate(prompt=name_find_prompt))
 
         return name
 
@@ -58,7 +59,7 @@ class Event:
 
         keywords_find_prompt = event_keywords_prompt.format(event_posts=total_context)
 
-        keywords = llm_client.generate_response(keywords_find_prompt)
+        keywords = llm_client.generate_response(AzerionPromptTemplate(prompt=keywords_find_prompt))
 
         kw_list = keywords.split(',')
 
@@ -81,7 +82,9 @@ class Event:
 
         small_summary_find_prompt = event_small_summary_prompt.format(event_posts=total_context)
 
-        small_summary = llm_client.generate_response(small_summary_find_prompt)
+
+
+        small_summary = llm_client.generate_response(AzerionPromptTemplate(prompt=small_summary_find_prompt))
 
         return small_summary
 
@@ -92,7 +95,7 @@ class Event:
 
         big_summary_find_prompt = event_big_summary_prompt.format(event_posts=total_context)
 
-        big_summary = llm_client.generate_response(big_summary_find_prompt)
+        big_summary = llm_client.generate_response(AzerionPromptTemplate(prompt=big_summary_find_prompt))
 
         return big_summary
 
