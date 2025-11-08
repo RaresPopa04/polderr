@@ -20,6 +20,10 @@ class Post:
     topic: Optional[str] = field(default=None)
     
     def __init__(self, link: str, content: str, date: datetime, source: str):
+        from llm.find_topic_for_post import find_topic_for_post
+        from database import db
+        topics = db.get_all_topics()
+        
         self.link = link
         self.content = content
         self.date = date
@@ -29,6 +33,7 @@ class Post:
         self.satisfaction_rating = self.get_sentiment_score(content, llm_client)
         self.engagement_rating = []
         self.actionables = []
+        self.topic = find_topic_for_post(self, topics)
 
     
     def get_sentiment_score(self, content: str, llm_client: LlmClient) -> int:

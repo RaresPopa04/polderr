@@ -6,7 +6,8 @@
 
 from typing import List
 from llm.SemanticSimilarityService import cosine_similarity, embed_text_to_embedding
-from models import Post, Topic
+from models.Post import Post
+from models.Topic import Topic
 
 
 def find_topic_for_post(post: Post, topics: List[Topic]) -> Topic:
