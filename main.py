@@ -45,16 +45,12 @@ def process_csv_data(csv_file: str):
         print(f"Event: {event.name}")
         print(f"Event small summary: {event.small_summary}")
         print(f"Event big summary: {event.big_summary}")
-        print(f"Event keywords: {event.keywords}")
-        print(f"Event similar events: {event.similar_events}")
-        print(f"Event posts: {event.posts}")
+        print(f"Event keywords: {[kw.keyword for kw in event.keywords] if event.keywords else []}")
+        print(f"Event similar events: {[e.name for e in event.similar_events] if event.similar_events else []}")
+        print(f"Event posts: {[p.link for p in event.posts] if event.posts else []}")
         print("-" * 70)
-    print("-" * 70)
     print(f"\n✓ Successfully processed posts!")
         
-
-
-
 csv_file = "rijswijk_feed_news.csv"
 if os.path.exists(csv_file):
         process_csv_data(csv_file)
