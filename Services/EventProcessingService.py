@@ -24,7 +24,7 @@ class EventProcessingService:
             reader = csv.reader(file)
             next(reader)
 
-            needed_posts = 10
+            needed_posts = 3
 
             for row in reader:
                 if len(row) < 3:

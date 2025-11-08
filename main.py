@@ -40,6 +40,15 @@ def process_csv_data(csv_file: str):
     service = EventProcessingService(llm_client)
     
     service.process_csv_events_to_posts(csv_file)
+    
+    for event in db.get_all_events():
+        print(f"Event: {event.name}")
+        print(f"Event small summary: {event.small_summary}")
+        print(f"Event big summary: {event.big_summary}")
+        print(f"Event keywords: {event.keywords}")
+        print(f"Event similar events: {event.similar_events}")
+        print(f"Event posts: {event.posts}")
+        print("-" * 70)
     print("-" * 70)
     print(f"\n✓ Successfully processed posts!")
         
@@ -53,15 +62,6 @@ if os.path.exists(csv_file):
 else:
     print(f"\nNote: CSV file '{csv_file}' not found in current directory.")
 
-posts = db.get_all_posts()
-
-print("\n" + "=" * 70)
-first_post = posts[0:3]
-second_post = posts[3:6]
-third_post = posts[6:9]
-event1 = Event(first_post)
-event2 = Event(second_post)
-event3 = Event(third_post)
 
 
 

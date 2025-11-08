@@ -24,13 +24,23 @@ class Event:
     _minimum_words_in_common = 2
 
     event_id: Optional[int] = field(default=None)
+    name: Optional[str] = field(default=None)
+    small_summary: Optional[str] = field(default=None)
+    big_summary: Optional[str] = field(default=None)
+    posts: Optional[List[Post]] = field(default=None)
+    similar_events: Optional[List['Event']] = field(default=None)
+    keywords: Optional[List[Keyword]] = field(default=None)
 
     def __init__(self,posts: List[Post] = None, other_events: List['Event'] = []):
         self.posts = posts
 
         llm_client = LlmClient()
         self.name = self.extract_name_from_posts(llm_client)
+        
+        print(f"Event name: {self.name}")
         (self.small_summary, self.big_summary) = self.generate_summaries(llm_client)
+        print(f"Event small summary: {self.small_summary}")
+        print(f"Event big summary: {self.big_summary}")
         self.similar_events = self.find_similar_events(llm_client, other_events)
         self.keywords = self.extract_keywords(llm_client)
         self.date = self.find_most_recent_post_date()
@@ -58,6 +68,9 @@ class Event:
         return max(post.date for post in self.posts)
 
     def extract_name_from_posts(self, llm_client) -> str:
+        if not self.posts:
+            return "Unnamed Event"
+        
         total_context = ''
         for post in self.posts:
             total_context += post.content + ' '
@@ -69,6 +82,9 @@ class Event:
         return name
 
     def extract_keywords(self, llm_client: LlmClient) -> List[Keyword]:
+        if not self.posts:
+            return []
+        
         total_context = ''
         for post in self.posts:
             total_context += post.content + ' '
@@ -92,6 +108,9 @@ class Event:
         return self.generate_small_summary(llm_client), self.generate_large_summary(llm_client)
 
     def generate_small_summary(self, llm_client: LlmClient):
+        if not self.posts:
+            return "No summary available"
+        
         total_context = ''
         for post in self.posts:
             total_context += post.content + ' '
@@ -105,6 +124,9 @@ class Event:
         return small_summary
 
     def generate_large_summary(self, llm_client: LlmClient):
+        if not self.posts:
+            return "No summary available"
+        
         total_context = ''
         for post in self.posts:
             total_context += post.content + ' '
@@ -127,6 +149,10 @@ class Event:
     def events_are_similar(self, other_event: 'Event', llm_client: LlmClient) -> float:
         if self.event_id and other_event.event_id == self.event_id:
             return False # don't add the same event in event_similarity !!
+
+        # Safety checks
+        if not self.keywords or not other_event.keywords:
+            return False
 
         # how many keywords do they have in common ?
         # one keyword is in common if it has cosine similarity > _min_event_treshold

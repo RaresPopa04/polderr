@@ -3,7 +3,7 @@ from typing import List, Optional
 from models.Event import Event
 from models.Post import Post
 from datetime import datetime, timedelta
-
+from models.Topic import Topic
 
 class InMemoryDB:
     """In-memory database using lists for posts and events"""
@@ -11,7 +11,28 @@ class InMemoryDB:
     def __init__(self):
         self.posts: List[Post] = []
         self.events: List[Event] = []
+        self.topics: List[Topic] = []
+        
+        self.topics = [
+            Topic(topic_id=1, name="Traffic", events=[]), 
+            Topic(topic_id=2, name="Environment", events=[]),
+            Topic(topic_id=3, name="Crime", events=[]),
+            Topic(topic_id=4, name="Health", events=[]),
+            Topic(topic_id=5, name="Education", events=[]),
+            Topic(topic_id=6, name="Transportation", events=[]),
+            Topic(topic_id=7, name="Economy", events=[]),
+            Topic(topic_id=8, name="Culture", events=[]),
+            Topic(topic_id=9, name="Politics", events=[]),
+            Topic(topic_id=10, name="Other", events=[]),
+        ]
+        
+        
+    
 
+    def get_all_topics(self) -> List[Topic]:
+        """Get all topics"""
+        return self.topics
+    
     # Event CRUD operations
     def get_all_events(self) -> List[Event]:
         """Get all events"""
