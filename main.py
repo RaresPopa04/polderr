@@ -59,7 +59,6 @@ print("\n" + "=" * 70)
 print(len(posts))
 event = Event(posts)
 
-print(posts)
 
 
 

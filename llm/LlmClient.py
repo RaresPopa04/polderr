@@ -34,7 +34,6 @@ class LlmClient:
                     # Handle chat completions response
                     elif 'choices' in response_data and len(response_data['choices']) > 0:
                         message = response_data['choices'][0].get('message', {})
-                        print(message.get('content'))
                         return message.get('content', 'No content found')
 
                     else:
