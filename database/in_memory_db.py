@@ -35,6 +35,13 @@ class InMemoryDB:
         """Get all topics"""
         return self.topics
     
+    def get_all_events_by_topic(self, topic: str) -> List[Event]:
+        """Get all events for a specific topic"""
+        for topic in self.topics:
+            if topic.name == topic:
+                return topic.events
+        return None
+    
     # Event CRUD operations
     def get_all_events(self) -> List[Event]:
         """Get all events"""
@@ -158,6 +165,12 @@ class InMemoryDB:
             return None
         llm_client = LlmClient()
         return llm_client.generate_response(AzerionPromptTemplate(prompt=get_raport_for_event_prompt.format(event_posts=event.posts)))
+
+    def get_topic_by_name(self, topic_name: str) -> Optional[Topic]:
+        for topic in self.topics:
+            if topic.name == topic_name:
+                return topic
+        return None
 
     def get_raport_for_topic(self, topic_id: int) -> Optional[str]:
         topic = self.get_topic_by_id(topic_id)
