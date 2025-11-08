@@ -20,26 +20,28 @@ from models.Post import Post
 # keywords: List[Keyword] = None,
 @dataclass
 class Event:
+    _minimum_event_similarity_threshold = 0.7
+    _minimum_words_in_common = 2
 
     event_id: Optional[int] = field(default=None)
 
-    def __init__(self,posts: List[Post] = None):
+    def __init__(self,posts: List[Post] = None, other_events: List['Event'] = []):
         self.posts = posts
 
         llm_client = LlmClient()
         self.name = self.extract_name_from_posts(llm_client)
         (self.small_summary, self.big_summary) = self.generate_summaries(llm_client)
-        self.similar_events = self.find_similar_events(llm_client)
+        self.similar_events = self.find_similar_events(llm_client, other_events)
         self.keywords = self.extract_keywords(llm_client)
 
     # add the post to posts and regenerate everything
-    def add_post(self, post: Post):
+    def add_post(self, post: Post, other_events: List['Event'] = []):
         llm_client = LlmClient()
         self.posts += [post]
 
         self.keywords = self.extract_keywords(llm_client)
         (self.small_summary, self.big_summary) = self.generate_summaries(llm_client)
-        self.similar_events = self.find_similar_events()
+        self.similar_events = self.find_similar_events(llm_client, other_events)
 
     def extract_name_from_posts(self, llm_client) -> str:
         total_context = ''
@@ -99,8 +101,30 @@ class Event:
 
         return big_summary
 
-    def find_similar_events(self, llm_client: LlmClient):
-        return []
+    def find_similar_events(self, llm_client: LlmClient, other_events: List['Event'] = []):
+        for event in other_events:
+            if self.events_are_similar(event, llm_client):
+                self.similar_events.append(event)
+
+    # we chose similar keywords in the end
+    def events_are_similar(self, other_event: 'Event', llm_client: LlmClient) -> float:
+        if self.event_id and other_event.event_id == self.event_id:
+            return False # don't add the same event in event_similarity !!
+
+        # how many keywords do they have in common ?
+        # one keyword is in common if it has cosine similarity > _min_event_treshold
+
+        semantic_similarity_service = SemanticSimilarityService(llm_client)
+
+        kws_in_common = 0
+
+        for kw1 in self.keywords:
+            for kw2 in other_event.keywords:
+                cosine_similarity = semantic_similarity_service.cosine_similarity(kw1.emb, kw2.emb)
+                if cosine_similarity > self._minimum_event_similarity_threshold:
+                    kws_in_common += 1
+
+        return kws_in_common >= self._minimum_words_in_common
 
 
 
