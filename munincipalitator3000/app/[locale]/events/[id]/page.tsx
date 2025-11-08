@@ -16,6 +16,26 @@ export default function EventPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const formatPercent = (value: number) => `${(value * 100).toFixed(1)}%`;
+  const renderReturnDot = (color: string) => (props: any) => {
+    const { cx, cy, payload } = props;
+    if (payload?.prediction) {
+      return (
+        <rect
+          x={cx - 5}
+          y={cy - 5}
+          width={10}
+          height={10}
+          fill="white"
+          stroke={color}
+          strokeWidth={2}
+          transform={`rotate(45 ${cx} ${cy})`}
+        />
+      );
+    }
+    return <circle cx={cx} cy={cy} r={4} fill={color} />;
+  };
+
   useEffect(() => {
     async function loadEvent() {
       try {
@@ -127,49 +147,67 @@ export default function EventPage() {
         </div>
 
         {/* Engagement Timeline Chart */}
-        {eventData.engagementData && eventData.engagementData.length > 0 && (
+        {eventData.engagementTimeline && eventData.engagementTimeline.length > 0 && (
           <Card>
             <CardHeader>
-              <CardTitle className="text-2xl">Engagement Over Time</CardTitle>
+              <CardTitle className="text-2xl">Engagement Timeline</CardTitle>
               <CardDescription>
-                Historical engagement with predicted future trends
+                Log returns (approximate % change) for likes, comments, and combined engagement.
+                {eventData.engagementTimeline.some((point: any) => point.prediction) && (
+                  <span className="ml-1 text-amber-600 font-semibold">
+                    Last marker is a prediction via exponential smoothing.
+                  </span>
+                )}
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="h-96">
                 <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={eventData.engagementData}>
+                  <LineChart data={eventData.engagementTimeline}>
                     <CartesianGrid strokeDasharray="3 3" className="stroke-zinc-200 dark:stroke-zinc-800" />
                     <XAxis
-                      dataKey="date"
+                      dataKey="timestamp"
                       className="text-xs text-zinc-600 dark:text-zinc-400"
-                      tickFormatter={(value) => new Date(value).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                      tickFormatter={(value) => new Date(value).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
                     />
-                    <YAxis className="text-xs text-zinc-600 dark:text-zinc-400" />
+                    <YAxis
+                      className="text-xs text-zinc-600 dark:text-zinc-400"
+                      tickFormatter={(value) => formatPercent(value)}
+                    />
                     <Tooltip
                       contentStyle={{
                         backgroundColor: 'rgba(255, 255, 255, 0.95)',
                         border: '1px solid #e4e4e7',
                         borderRadius: '8px'
                       }}
+                      labelFormatter={(value) => new Date(value).toLocaleString()}
+                      formatter={(value: number, name: string) => [formatPercent(value ?? 0), name]}
                     />
                     <Legend />
                     <Line
                       type="monotone"
-                      dataKey="engagement"
-                      stroke="#3b82f6"
+                      dataKey="likeReturn"
+                      stroke="#f97316"
                       strokeWidth={3}
-                      name="Actual Engagement"
-                      dot={{ fill: '#3b82f6', r: 4 }}
+                      name="Likes return"
+                      dot={renderReturnDot('#f97316')}
                     />
                     <Line
                       type="monotone"
-                      dataKey="predicted"
-                      stroke="#f59e0b"
+                      dataKey="commentReturn"
+                      stroke="#22c55e"
+                      strokeWidth={3}
+                      name="Comments return"
+                      dot={renderReturnDot('#22c55e')}
+                    />
+                    <Line
+                      type="monotone"
+                      dataKey="engagementReturn"
+                      stroke="#2563eb"
                       strokeWidth={2}
-                      strokeDasharray="5 5"
-                      name="Predicted Engagement"
-                      dot={{ fill: '#f59e0b', r: 3 }}
+                      strokeDasharray="5 3"
+                      name="Engagement return"
+                      dot={renderReturnDot('#2563eb')}
                     />
                   </LineChart>
                 </ResponsiveContainer>

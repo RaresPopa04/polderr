@@ -2,7 +2,8 @@
 Events API endpoints
 """
 from fastapi import APIRouter, HTTPException
-from api.mock_data import get_event_by_id, TOPICS_DATA
+from api.csv_events import get_csv_events, get_csv_event_by_id
+from api.mock_data import get_event_by_id as get_mock_event_by_id, TOPICS_DATA
 
 router = APIRouter()
 
@@ -12,6 +13,10 @@ async def list_events():
     """
     Get list of all events across all topics
     """
+    csv_events = get_csv_events()
+    if csv_events:
+        return {"events": csv_events}
+
     events = []
     for topic in TOPICS_DATA:
         for event in topic["events"]:
@@ -20,7 +25,7 @@ async def list_events():
                 "topic_id": topic["id"],
                 "topic_name": topic["name"]
             })
-    
+
     return {"events": events}
 
 
@@ -29,11 +34,20 @@ async def get_event(event_id: int):
     """
     Get a specific event by ID
     """
-    event = get_event_by_id(event_id)
-    
-    if not event:
+    event = get_csv_event_by_id(event_id)
+    if event:
+        event["topic"] = {
+            "id": event.get("topic_id"),
+            "name": event.get("topic_name"),
+            "icon": event.get("topic_icon", "🗂️")
+        }
+        return event
+
+    mock_event = get_mock_event_by_id(event_id)
+
+    if not mock_event:
         raise HTTPException(status_code=404, detail="Event not found")
-    
+
     # Find the topic this event belongs to
     topic_info = None
     for topic in TOPICS_DATA:
@@ -45,9 +59,10 @@ async def get_event(event_id: int):
                     "icon": topic["icon"]
                 }
                 break
-    
+        if topic_info:
+            break
+
     return {
-        **event,
+        **mock_event,
         "topic": topic_info
     }
-
