@@ -14,14 +14,14 @@ class LlmClient:
             'Content-Type': 'application/json',
             'Authorization': f'Bearer {self.api_key}'
         }
-
+        
         try:
             response = requests.post(
                 self.address + endpoint,
                 headers=headers,
                 data=prompt.to_json() if hasattr(prompt, 'to_json') else json.dumps(prompt)
             )
-
+            
             if response.status_code == 200:
                 try:
                     response_data = response.json()
@@ -34,6 +34,7 @@ class LlmClient:
                     # Handle chat completions response
                     elif 'choices' in response_data and len(response_data['choices']) > 0:
                         message = response_data['choices'][0].get('message', {})
+                        print(message.get('content'))
                         return message.get('content', 'No content found')
 
                     else:
