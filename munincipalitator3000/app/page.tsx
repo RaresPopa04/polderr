@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import Link from "next/link";
 
 export default function Home() {
   return (
@@ -12,8 +13,15 @@ export default function Home() {
             Munincipalitator3000
           </h1>
           <p className="mt-2 text-lg text-zinc-600 dark:text-zinc-400">
-            Your municipal data platform
+            Rijswijk Gemeente - Online Monitoring Platform
           </p>
+          <div className="mt-4">
+            <Link href="/events">
+              <Button size="lg">
+                View Events Dashboard
+              </Button>
+            </Link>
+          </div>
         </div>
 
         <div className="grid gap-6 md:grid-cols-2">
