@@ -25,12 +25,18 @@
     "viewTopic": "View Topic",
     "timeline": "Timeline",
     "trashEvent1": "Missed trash collection complaints",
+    "trashEvent2Short": "Recycling program expansion",
+    "trashEvent3Short": "Illegal dumping reports",
     "trafficEvent1": "City center traffic safety concerns",
+    "trafficEvent2Short": "Parking issues",
     "healthEvent1": "Mental health services discussion",
+    "healthEvent2Short": "Sports facility proposals",
     "2hoursAgo": "2 hours ago",
     "event1": "Missed Trash Collection",
     "event2": "Traffic Safety Discussion",
-    "event3": "Recycling Program Update"
+    "event3": "Recycling Program Update",
+    "misinformation": "Misinformation",
+    "questions": "Questions"
   },
   "EventsPage": {
     "title": "Events Overview",

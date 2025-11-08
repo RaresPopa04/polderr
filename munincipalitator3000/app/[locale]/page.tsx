@@ -1,51 +1,98 @@
 'use client';
 
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Link } from '@/i18n/routing';
 import { useTranslations } from 'next-intl';
-import { Search, Flame, TrendingUp, Clock, MessageCircle, Calendar } from "lucide-react";
+import { Search } from "lucide-react";
 
 export default function Home() {
   const t = useTranslations('HomePage');
 
-  // Mock data for trending topics
+  // Mock data for trending topics with events (with time-series data)
   const trendingTopics = [
     { 
       id: 'trash', 
       name: t('trashTopic'), 
       icon: '🗑️',
-      engagement: '+20',
-      events: 3,
-      color: 'text-amber-600 dark:text-amber-400',
-      bgColor: 'bg-amber-50 dark:bg-amber-950/20'
+      events: [
+        { 
+          id: 1, 
+          name: t('trashEvent1'), 
+          engagement: 892, 
+          color: '#f59e0b',
+          dataPoints: [400, 450, 500, 550, 600, 700, 750, 800, 850, 892]
+        },
+        { 
+          id: 2, 
+          name: t('trashEvent2Short'), 
+          engagement: 1245, 
+          color: '#d97706',
+          dataPoints: [500, 600, 700, 800, 900, 950, 1000, 1100, 1200, 1245]
+        },
+        { 
+          id: 3, 
+          name: t('trashEvent3Short'), 
+          engagement: 456, 
+          color: '#b45309',
+          dataPoints: [200, 250, 280, 300, 320, 350, 380, 400, 430, 456]
+        },
+      ],
+      actionables: {
+        misinformation: 3,
+        questions: 7
+      }
     },
     { 
       id: 'traffic', 
       name: t('trafficTopic'), 
       icon: '🚗',
-      engagement: '+15',
-      events: 2,
-      color: 'text-blue-600 dark:text-blue-400',
-      bgColor: 'bg-blue-50 dark:bg-blue-950/20'
+      events: [
+        { 
+          id: 1, 
+          name: t('trafficEvent1'), 
+          engagement: 591, 
+          color: '#3b82f6',
+          dataPoints: [300, 350, 380, 420, 450, 480, 510, 540, 570, 591]
+        },
+        { 
+          id: 2, 
+          name: t('trafficEvent2Short'), 
+          engagement: 423, 
+          color: '#1d4ed8',
+          dataPoints: [150, 200, 250, 280, 310, 340, 370, 390, 410, 423]
+        },
+      ],
+      actionables: {
+        misinformation: 1,
+        questions: 5
+      }
     },
     { 
       id: 'health', 
       name: t('healthTopic'), 
       icon: '🏥',
-      engagement: '+8',
-      events: 2,
-      color: 'text-green-600 dark:text-green-400',
-      bgColor: 'bg-green-50 dark:bg-green-950/20'
+      events: [
+        { 
+          id: 1, 
+          name: t('healthEvent1'), 
+          engagement: 678, 
+          color: '#10b981',
+          dataPoints: [300, 350, 400, 450, 500, 550, 600, 630, 660, 678]
+        },
+        { 
+          id: 2, 
+          name: t('healthEvent2Short'), 
+          engagement: 934, 
+          color: '#059669',
+          dataPoints: [400, 500, 600, 650, 700, 750, 800, 850, 900, 934]
+        },
+      ],
+      actionables: {
+        misinformation: 2,
+        questions: 4
+      }
     },
-  ];
-
-  // Mock recent events for timeline
-  const recentEvents = [
-    { id: 1, title: t('event1'), time: '2h ago', topic: 'trash' },
-    { id: 2, title: t('event2'), time: '5h ago', topic: 'traffic' },
-    { id: 3, title: t('event3'), time: '1d ago', topic: 'trash' },
   ];
 
   return (
@@ -67,161 +114,127 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Main Layout: Fire Sidebar + Content + Timeline */}
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-[200px_1fr_200px]">
-          {/* Left Sidebar - FIRE (Trending) */}
-          <div className="space-y-4">
-            <Card>
-              <CardHeader className="pb-3">
-                <div className="flex items-center gap-2">
-                  <Flame className="h-5 w-5 text-orange-500" />
-                  <CardTitle className="text-lg">{t('trending')}</CardTitle>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2">
-                  {trendingTopics.map((topic) => (
-                    <Link key={topic.id} href={`/topics/${topic.id}`}>
-                      <div className={`cursor-pointer rounded-lg p-3 transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-900 ${topic.bgColor}`}>
-                        <div className="flex items-center gap-2">
-                          <span className="text-2xl">{topic.icon}</span>
-                          <div className="flex-1 min-w-0">
-                            <div className="text-sm font-medium text-zinc-900 dark:text-zinc-50 truncate">
-                              {topic.name}
+        {/* Main Content Area */}
+        <div className="space-y-12">
+            {/* Topic Sections */}
+            {trendingTopics.map((topic) => {
+              // Find max value across all data points for scaling
+              const allDataPoints = topic.events.flatMap(e => e.dataPoints);
+              const maxValue = Math.max(...allDataPoints);
+              const minValue = Math.min(...allDataPoints);
+              const range = maxValue - minValue;
+              
+              return (
+                <Link key={topic.id} href={`/topics/${topic.id}`}>
+                  <Card className="cursor-pointer border-2 transition-all hover:border-zinc-400 hover:shadow-xl dark:hover:border-zinc-600">
+                    <CardHeader className="pb-6">
+                      <div className="flex items-center gap-4">
+                        <span className="text-4xl">{topic.icon}</span>
+                        <div>
+                          <CardTitle className="text-2xl">{topic.name}</CardTitle>
+                          <CardDescription className="text-base">
+                            {topic.events.length} {t('activeEventsInTopic')}
+                          </CardDescription>
+                        </div>
+                      </div>
+                    </CardHeader>
+                    <CardContent className="pt-0">
+                      <div className="grid grid-cols-[350px_1fr_180px] gap-8">
+                        {/* Left: Legend */}
+                        <div className="space-y-4">
+                          {topic.events.map((event) => (
+                            <div key={event.id} className="flex items-center gap-4 rounded-lg bg-zinc-50 p-3 dark:bg-zinc-900">
+                              <div 
+                                className="h-4 w-4 shrink-0 rounded-full shadow-sm" 
+                                style={{ backgroundColor: event.color }}
+                              />
+                              <div className="flex-1 min-w-0">
+                                <div className="text-base font-medium text-zinc-900 dark:text-zinc-50 truncate">
+                                  {event.name}
+                                </div>
+                              </div>
+                              <div className="text-base font-bold text-zinc-900 dark:text-zinc-50">
+                                {event.engagement.toLocaleString()}
+                              </div>
                             </div>
-                            <div className={`text-xs font-semibold ${topic.color}`}>
-                              {topic.engagement}
+                          ))}
+                        </div>
+                        
+                        {/* Center: Line Graph */}
+                        <div className="h-40 rounded-lg bg-zinc-50 p-6 dark:bg-zinc-900">
+                          <svg className="h-full w-full" viewBox="0 0 700 200" preserveAspectRatio="none">
+                            {/* Grid lines */}
+                            <line x1="0" y1="50" x2="700" y2="50" stroke="currentColor" strokeWidth="0.5" className="text-zinc-300 dark:text-zinc-700" />
+                            <line x1="0" y1="100" x2="700" y2="100" stroke="currentColor" strokeWidth="0.5" className="text-zinc-300 dark:text-zinc-700" />
+                            <line x1="0" y1="150" x2="700" y2="150" stroke="currentColor" strokeWidth="0.5" className="text-zinc-300 dark:text-zinc-700" />
+                            
+                            {/* Lines for each event */}
+                            {topic.events.map((event) => {
+                              const points = event.dataPoints.map((value, index) => {
+                                const x = (index / (event.dataPoints.length - 1)) * 700;
+                                const y = 200 - ((value - minValue) / range) * 180 - 10;
+                                return `${x},${y}`;
+                              }).join(' ');
+                              
+                              return (
+                                <g key={event.id}>
+                                  {/* Line */}
+                                  <polyline
+                                    points={points}
+                                    fill="none"
+                                    stroke={event.color}
+                                    strokeWidth="3"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                  />
+                                  
+                                  {/* Data points */}
+                                  {event.dataPoints.map((value, index) => {
+                                    const x = (index / (event.dataPoints.length - 1)) * 700;
+                                    const y = 200 - ((value - minValue) / range) * 180 - 10;
+                                    return (
+                                      <circle
+                                        key={index}
+                                        cx={x}
+                                        cy={y}
+                                        r="4"
+                                        fill={event.color}
+                                        stroke="white"
+                                        strokeWidth="2"
+                                      />
+                                    );
+                                  })}
+                                </g>
+                              );
+                            })}
+                          </svg>
+                        </div>
+                        
+                        {/* Right: Actionables */}
+                        <div className="flex flex-col justify-center space-y-6">
+                          <div className="rounded-lg bg-red-50 p-4 text-center dark:bg-red-950/20">
+                            <div className="text-4xl font-bold text-red-600 dark:text-red-400">
+                              {topic.actionables.misinformation}
+                            </div>
+                            <div className="text-sm font-medium text-red-700 dark:text-red-300 mt-2">
+                              {t('misinformation')}
+                            </div>
+                          </div>
+                          <div className="rounded-lg bg-blue-50 p-4 text-center dark:bg-blue-950/20">
+                            <div className="text-4xl font-bold text-blue-600 dark:text-blue-400">
+                              {topic.actionables.questions}
+                            </div>
+                            <div className="text-sm font-medium text-blue-700 dark:text-blue-300 mt-2">
+                              {t('questions')}
                             </div>
                           </div>
                         </div>
                       </div>
-                    </Link>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Main Content Area */}
-          <div className="space-y-6">
-            {/* Engagement Stats */}
-            <div className="grid gap-4 md:grid-cols-3">
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">{t('totalEngagement')}</CardTitle>
-                  <TrendingUp className="h-4 w-4 text-zinc-600 dark:text-zinc-400" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold text-green-600 dark:text-green-400">+20</div>
-                  <p className="text-xs text-zinc-600 dark:text-zinc-400">
-                    {t('last24Hours')}
-                  </p>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">{t('activeEvents')}</CardTitle>
-                  <Calendar className="h-4 w-4 text-zinc-600 dark:text-zinc-400" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">3</div>
-                  <p className="text-xs text-zinc-600 dark:text-zinc-400">
-                    {t('currentlyTracking')}
-                  </p>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">{t('newEvents')}</CardTitle>
-                  <Clock className="h-4 w-4 text-zinc-600 dark:text-zinc-400" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">6</div>
-                  <p className="text-xs text-zinc-600 dark:text-zinc-400">
-                    {t('thisWeek')}
-                  </p>
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* Topic Sections */}
-            {trendingTopics.map((topic) => (
-              <Card key={topic.id}>
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <span className="text-3xl">{topic.icon}</span>
-                      <div>
-                        <CardTitle className="text-xl">{topic.name}</CardTitle>
-                        <CardDescription>
-                          {topic.events} {t('activeEventsInTopic')}
-                        </CardDescription>
-                      </div>
-                    </div>
-                    <Link href={`/topics/${topic.id}`}>
-                      <Button>
-                        {t('viewTopic')}
-                      </Button>
-                    </Link>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
-                    {/* Mock events for this topic */}
-                    <div className="flex items-center justify-between rounded-lg border border-zinc-200 p-3 dark:border-zinc-800">
-                      <div className="flex-1">
-                        <div className="text-sm font-medium text-zinc-900 dark:text-zinc-50">
-                          {topic.id === 'trash' ? t('trashEvent1') : 
-                           topic.id === 'traffic' ? t('trafficEvent1') : 
-                           t('healthEvent1')}
-                        </div>
-                        <div className="text-xs text-zinc-600 dark:text-zinc-400">
-                          {t('2hoursAgo')}
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-3 text-xs text-zinc-600 dark:text-zinc-400">
-                        <div className="flex items-center gap-1">
-                          <MessageCircle className="h-3 w-3" />
-                          <span>12</span>
-                        </div>
-                        <TrendingUp className="h-4 w-4 text-green-600 dark:text-green-400" />
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-
-          {/* Right Sidebar - Timeline */}
-          <div className="space-y-4">
-            <Card className="sticky top-6">
-              <CardHeader className="pb-3">
-                <CardTitle className="text-lg">{t('timeline')}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {recentEvents.map((event, index) => (
-                    <div key={event.id} className="flex items-start gap-3">
-                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-zinc-200 text-sm font-bold text-zinc-900 dark:bg-zinc-800 dark:text-zinc-50">
-                        {index + 1}
-                      </div>
-                      <div className="flex-1 space-y-1">
-                        <div className="text-sm font-medium text-zinc-900 dark:text-zinc-50">
-                          {event.title}
-                        </div>
-                        <div className="text-xs text-zinc-500 dark:text-zinc-500">
-                          {event.time}
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+                    </CardContent>
+                  </Card>
+                </Link>
+              );
+            })}
         </div>
       </div>
     </div>

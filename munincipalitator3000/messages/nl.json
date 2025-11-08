@@ -25,12 +25,18 @@
         "viewTopic": "Bekijk Onderwerp",
         "timeline": "Tijdlijn",
         "trashEvent1": "Klachten gemiste afvalinzameling",
+        "trashEvent2Short": "Uitbreiding recyclingprogramma",
+        "trashEvent3Short": "Meldingen illegaal dumpen",
         "trafficEvent1": "Zorgen over verkeersveiligheid centrum",
+        "trafficEvent2Short": "Parkeerproblemen",
         "healthEvent1": "Discussie GGZ diensten",
+        "healthEvent2Short": "Voorstellen sportfaciliteiten",
         "2hoursAgo": "2 uur geleden",
         "event1": "Gemiste Afvalinzameling",
         "event2": "Verkeersveiligheid Discussie",
-        "event3": "Update Recyclingprogramma"
+        "event3": "Update Recyclingprogramma",
+        "misinformation": "Desinformatie",
+        "questions": "Vragen"
     },
     "EventsPage": {
         "title": "Evenementen Overzicht",
