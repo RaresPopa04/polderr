@@ -40,6 +40,9 @@ class Event:
         self.keywords = self.extract_keywords(llm_client)
         (self.small_summary, self.big_summary) = self.generate_summaries(llm_client)
         self.similar_events = self.find_similar_events()
+        
+    def get_event_last_time(self):
+        return self.posts[-1].date
 
     def extract_name_from_posts(self, llm_client) -> str:
         total_context = ''

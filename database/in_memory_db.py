@@ -46,6 +46,14 @@ class InMemoryDB:
                 return True
         return False
     
+    def get_events_by_topic_from_last_24_hours(self, topic: str) -> List[Event]:
+        """Get all events for a specific topic from the last 24 hours"""
+        events = []
+        for event in self.events:
+            if event.topic == topic and event.date > datetime.now() - timedelta(hours=24):
+                events.append(event)
+        return events
+    
     # Post CRUD operations
     def get_all_posts(self) -> List[Post]:
         """Get all posts"""
