@@ -5,6 +5,7 @@ from llm.AzerionPromptTemplate import AzerionPromptTemplate
 from models.Actionable import Actionable
 from llm.PromptTemplates.Prompts import build_sentiment_prompt
 from llm.LlmClient import LlmClient
+from llm.find_topic_for_post import find_topic_for_post
 
 
 @dataclass
@@ -29,6 +30,7 @@ class Post:
         self.satisfaction_rating = self.get_sentiment_score(content, llm_client)
         self.engagement_rating = []
         self.actionables = []
+        self.topic = find_topic_for_post(self)
 
     
     def get_sentiment_score(self, content: str, llm_client: LlmClient) -> int:

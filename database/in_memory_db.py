@@ -2,6 +2,7 @@ from typing import List, Optional
 
 from models.Event import Event
 from models.Post import Post
+from datetime import datetime, timedelta
 
 
 class InMemoryDB:
@@ -48,7 +49,7 @@ class InMemoryDB:
         """Get all events for a specific topic from the last 24 hours"""
         events = []
         for event in self.events:
-            if event.topic == topic and event.date > datetime.now() - timedelta(hours=24):
+            if event.get_event_topic() == topic and event.date > datetime.now() - timedelta(hours=24):
                 events.append(event)
         return events
     

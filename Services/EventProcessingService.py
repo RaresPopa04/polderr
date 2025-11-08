@@ -5,10 +5,12 @@ import csv
 from datetime import datetime
 from llm.AzerionPromptTemplate import AzerionPromptTemplate
 from llm.PromptTemplates.Prompts import build_sentiment_prompt
+from Services.EventAssigningService import EventAssigningService
 
 class EventProcessingService:
     def __init__(self, llm_client:LlmClient):
         self.llm_client = llm_client
+        self.event_assigning_service = EventAssigningService(llm_client)
 
     def process_csv_events_to_posts(self, csv_file: str):
         """
@@ -57,6 +59,7 @@ class EventProcessingService:
                         source=source
                     )
                     db.add_post(post)
+                    self.event_assigning_service.assign_posts_to_events(post)
 
                 except Exception as e:
                     print(f"Error processing row: {e}")
