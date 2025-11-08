@@ -101,9 +101,9 @@ export default function TopicPage() {
                     <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">Events</h2>
 
                     {topicData.events && topicData.events.length > 0 ? (
-                        <div className="space-y-6">
+                        <div className="space-y-8">
                             {topicData.events.map((event: any) => (
-                                <Link key={event.id} href={`/events/${event.id}`}>
+                                <Link key={event.id} href={`/events/${event.id}`} className="block">
                                     <Card className="cursor-pointer transition-all hover:shadow-lg hover:border-zinc-400 dark:hover:border-zinc-600">
                                         <CardHeader>
                                             <div className="flex items-start justify-between">
