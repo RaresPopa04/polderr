@@ -3,82 +3,86 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { ExternalLink } from 'lucide-react';
-
-  // Mock data - this would come from your API/backend
-const mockEventData = {
-  id: 1,
-  name: "Rijswijk Traffic Safety Discussion",
-  small_summary: "Public discussion about traffic safety in the city center",
-  big_summary: "A growing discussion on social media about traffic safety in Rijswijk city center. Residents are expressing concerns about the safety of cyclists and pedestrians.",
-  
-  // Engagement data over time (actual + predicted)
-  engagementData: [
-    { date: '2025-11-01', engagement: 45, predicted: null },
-    { date: '2025-11-02', engagement: 62, predicted: null },
-    { date: '2025-11-03', engagement: 78, predicted: null },
-    { date: '2025-11-04', engagement: 95, predicted: null },
-    { date: '2025-11-05', engagement: 123, predicted: null },
-    { date: '2025-11-06', engagement: 145, predicted: null },
-    { date: '2025-11-07', engagement: 167, predicted: null },
-    { date: '2025-11-08', engagement: 189, predicted: null },
-    // Predicted future values
-    { date: '2025-11-09', engagement: null, predicted: 210 },
-    { date: '2025-11-10', engagement: null, predicted: 235 },
-    { date: '2025-11-11', engagement: null, predicted: 258 },
-    { date: '2025-11-12', engagement: null, predicted: 275 },
-    { date: '2025-11-13', engagement: null, predicted: 285 },
-  ],
-  
-  posts: [
-    {
-      id: 1,
-      title: "Dangerous situation at city center intersection",
-      link: "https://facebook.com/rijswijk-nieuws/posts/123456",
-      source: "Facebook - Rijswijk News",
-      date: "2025-11-08",
-      engagement: 89,
-      content: "Almost got hit by a car again at the intersection today..."
-    },
-    {
-      id: 2,
-      title: "Traffic safety must become a priority",
-      link: "https://twitter.com/rijswijk_veilig/status/987654",
-      source: "X (Twitter) - @rijswijk_safe",
-      date: "2025-11-07",
-      engagement: 67,
-      content: "The municipality must take action now..."
-    },
-    {
-      id: 3,
-      title: "Residents group starts petition for safer traffic",
-      link: "https://instagram.com/p/abc123",
-      source: "Instagram - Rijswijk Residents",
-      date: "2025-11-06",
-      engagement: 145,
-      content: "Link to petition in bio! Let's work together..."
-    },
-    {
-      id: 4,
-      title: "Video: Dangerous traffic situations captured",
-      link: "https://youtube.com/watch?v=xyz789",
-      source: "YouTube - Rijswijk Current",
-      date: "2025-11-05",
-      engagement: 234,
-      content: "In this video we show how dangerous the situation..."
-    },
-    {
-      id: 5,
-      title: "Discussion about traffic measures in city council",
-      link: "https://linkedin.com/posts/gemeente-rijswijk_abc123",
-      source: "LinkedIn - Municipality Rijswijk",
-      date: "2025-11-04",
-      engagement: 56,
-      content: "Next week we will discuss the proposals..."
-    },
-  ]
-};
+import { useTranslations } from 'next-intl';
+import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 
 export default function EventPage({ params }: { params: { id: string } }) {
+  const t = useTranslations('EventDetailPage');
+  
+  // Mock data - this would come from your API/backend
+  const mockEventData = {
+    id: 1,
+    name: t('eventName'),
+    small_summary: t('eventSmallSummary'),
+    big_summary: t('eventBigSummary'),
+    
+    // Engagement data over time (actual + predicted)
+    engagementData: [
+      { date: '2025-11-01', engagement: 45, predicted: null },
+      { date: '2025-11-02', engagement: 62, predicted: null },
+      { date: '2025-11-03', engagement: 78, predicted: null },
+      { date: '2025-11-04', engagement: 95, predicted: null },
+      { date: '2025-11-05', engagement: 123, predicted: null },
+      { date: '2025-11-06', engagement: 145, predicted: null },
+      { date: '2025-11-07', engagement: 167, predicted: null },
+      { date: '2025-11-08', engagement: 189, predicted: null },
+      // Predicted future values
+      { date: '2025-11-09', engagement: null, predicted: 210 },
+      { date: '2025-11-10', engagement: null, predicted: 235 },
+      { date: '2025-11-11', engagement: null, predicted: 258 },
+      { date: '2025-11-12', engagement: null, predicted: 275 },
+      { date: '2025-11-13', engagement: null, predicted: 285 },
+    ],
+    
+    posts: [
+      {
+        id: 1,
+        title: t('post1Title'),
+        link: "https://facebook.com/rijswijk-nieuws/posts/123456",
+        source: t('post1Source'),
+        date: "2025-11-08",
+        engagement: 89,
+        content: t('post1Content')
+      },
+      {
+        id: 2,
+        title: t('post2Title'),
+        link: "https://twitter.com/rijswijk_veilig/status/987654",
+        source: t('post2Source'),
+        date: "2025-11-07",
+        engagement: 67,
+        content: t('post2Content')
+      },
+      {
+        id: 3,
+        title: t('post3Title'),
+        link: "https://instagram.com/p/abc123",
+        source: t('post3Source'),
+        date: "2025-11-06",
+        engagement: 145,
+        content: t('post3Content')
+      },
+      {
+        id: 4,
+        title: t('post4Title'),
+        link: "https://youtube.com/watch?v=xyz789",
+        source: t('post4Source'),
+        date: "2025-11-05",
+        engagement: 234,
+        content: t('post4Content')
+      },
+      {
+        id: 5,
+        title: t('post5Title'),
+        link: "https://linkedin.com/posts/gemeente-rijswijk_abc123",
+        source: t('post5Source'),
+        date: "2025-11-04",
+        engagement: 56,
+        content: t('post5Content')
+      },
+    ]
+  };
+  
   // In a real app, you would fetch data based on params.id
   const event = mockEventData;
   
@@ -88,6 +92,9 @@ export default function EventPage({ params }: { params: { id: string } }) {
   return (
     <div className="min-h-screen bg-zinc-50 p-6 dark:bg-zinc-950">
       <div className="mx-auto max-w-7xl space-y-6">
+        <div className="flex justify-end">
+          <LanguageSwitcher />
+        </div>
         {/* Header */}
         <div className="space-y-2">
           <h1 className="text-4xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
@@ -101,9 +108,9 @@ export default function EventPage({ params }: { params: { id: string } }) {
         {/* Engagement Graph */}
         <Card>
           <CardHeader>
-            <CardTitle>Post Engagement Over Time</CardTitle>
+            <CardTitle>{t('engagementTitle')}</CardTitle>
             <CardDescription>
-              Total engagement with prediction (dotted line)
+              {t('engagementDescription')}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -136,7 +143,7 @@ export default function EventPage({ params }: { params: { id: string } }) {
                     dataKey="engagement" 
                     stroke="#3b82f6" 
                     strokeWidth={3}
-                    name="Actual Engagement"
+                    name={t('actualEngagement')}
                     dot={{ r: 4 }}
                     connectNulls={false}
                   />
@@ -146,7 +153,7 @@ export default function EventPage({ params }: { params: { id: string } }) {
                     stroke="#10b981" 
                     strokeWidth={3}
                     strokeDasharray="5 5"
-                    name="Predicted Engagement"
+                    name={t('predictedEngagement')}
                     dot={{ r: 4 }}
                     connectNulls={false}
                   />
@@ -155,15 +162,15 @@ export default function EventPage({ params }: { params: { id: string } }) {
             </div>
             <div className="mt-4 grid grid-cols-3 gap-4 border-t border-zinc-200 pt-4 dark:border-zinc-800">
               <div>
-                <p className="text-sm text-zinc-600 dark:text-zinc-400">Total Posts</p>
+                <p className="text-sm text-zinc-600 dark:text-zinc-400">{t('totalPosts')}</p>
                 <p className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">{event.posts.length}</p>
               </div>
               <div>
-                <p className="text-sm text-zinc-600 dark:text-zinc-400">Total Engagement</p>
+                <p className="text-sm text-zinc-600 dark:text-zinc-400">{t('totalEngagement')}</p>
                 <p className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">{totalEngagement}</p>
               </div>
               <div>
-                <p className="text-sm text-zinc-600 dark:text-zinc-400">Average per Post</p>
+                <p className="text-sm text-zinc-600 dark:text-zinc-400">{t('averagePerPost')}</p>
                 <p className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">
                   {Math.round(totalEngagement / event.posts.length)}
                 </p>
@@ -175,7 +182,7 @@ export default function EventPage({ params }: { params: { id: string } }) {
         {/* Event Summary */}
         <Card>
           <CardHeader>
-            <CardTitle>Summary</CardTitle>
+            <CardTitle>{t('summaryTitle')}</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-zinc-700 dark:text-zinc-300">{event.big_summary}</p>
@@ -185,9 +192,9 @@ export default function EventPage({ params }: { params: { id: string } }) {
         {/* Posts List */}
         <Card>
           <CardHeader>
-            <CardTitle>Related Posts</CardTitle>
+            <CardTitle>{t('relatedPostsTitle')}</CardTitle>
             <CardDescription>
-              All posts linked to this event
+              {t('relatedPostsDescription')}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -209,7 +216,7 @@ export default function EventPage({ params }: { params: { id: string } }) {
                         className="flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
                       >
                         <ExternalLink className="h-4 w-4" />
-                        View
+                        {t('viewLink')}
                       </a>
                     </div>
                     <p className="text-sm text-zinc-600 dark:text-zinc-400">
