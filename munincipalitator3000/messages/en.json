@@ -10,6 +10,7 @@
   },
   "HomePage": {
     "dashboardTitle": "Main Dashboard",
+    "dashboardSubtitle": "Monitor and analyze community discussions across all topics",
     "searchPlaceholder": "Search events, topics, or discussions...",
     "trending": "Trending",
     "trashTopic": "Waste Management",
