@@ -19,6 +19,14 @@ export default function TopicsOverviewPage() {
             eventCount: 3
         },
         {
+            slug: 'traffic',
+            title: t('trafficTitle'),
+            description: t('trafficDescription'),
+            color: 'text-blue-600 dark:text-blue-400',
+            bgColor: 'bg-blue-50 dark:bg-blue-950/20',
+            eventCount: 2
+        },
+        {
             slug: 'health',
             title: t('healthTitle'),
             description: t('healthDescription'),

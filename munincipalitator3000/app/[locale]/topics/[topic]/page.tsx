@@ -86,6 +86,31 @@ export default function TopicPage() {
                         trend: "stable"
                     },
                 ]
+            },
+            traffic: {
+                title: t('trafficTitle'),
+                description: t('trafficDescription'),
+                color: 'text-blue-600 dark:text-blue-400',
+                events: [
+                    {
+                        id: 6,
+                        name: t('trafficEvent1Name'),
+                        small_summary: t('trafficEvent1Summary'),
+                        date: "2025-11-08",
+                        totalPosts: 10,
+                        totalEngagement: 591,
+                        trend: "up"
+                    },
+                    {
+                        id: 7,
+                        name: t('trafficEvent2Name'),
+                        small_summary: t('trafficEvent2Summary'),
+                        date: "2025-11-06",
+                        totalPosts: 8,
+                        totalEngagement: 423,
+                        trend: "stable"
+                    },
+                ]
             }
         };
 
