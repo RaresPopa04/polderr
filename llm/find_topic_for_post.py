@@ -11,6 +11,8 @@ from models import Post, Topic
 
 def find_topic_for_post(post: Post, topics: List[Topic]) -> Topic:
     post_embedding = embed_text_to_embedding(post.content)
+    max_similarity = 0
+    most_similar_topic = None
     for topic in topics:
         topic_embedding = embed_text_to_embedding(topic.name)
         similarity = cosine_similarity(post_embedding, topic_embedding)

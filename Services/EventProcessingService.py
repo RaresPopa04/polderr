@@ -50,24 +50,12 @@ class EventProcessingService:
                     else:
                         source = "Unknown Source"
 
-                    try:
-                        sentiment_score = int(self.llm_client.generate_response(AzerionPromptTemplate(
-                            prompt = build_sentiment_prompt(content)
-                        )))
-                        sentiment_score = max(0, min(100, sentiment_score))
-                    except:
-                        sentiment_score = 50
-
                     post = Post(
                         link=link,
                         content=content,
                         date=post_date,
-                        source=source,
-                        satisfaction_rating=sentiment_score,
-                        engagement_rating=[(post_date, 0)],
-                        actionables=[]
+                        source=source
                     )
-
                     db.add_post(post)
 
                 except Exception as e:

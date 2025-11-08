@@ -45,10 +45,15 @@ class Event:
         (self.small_summary, self.big_summary) = self.generate_summaries(llm_client)
         self.similar_events = self.find_similar_events(llm_client, other_events)
         self.date = self.find_most_recent_post_date()
+        
+    def get_event_topic(self) -> str:
+        if not self.posts:
+            return None
+        return self.posts[0].topic
 
     def find_most_recent_post_date(self) -> datetime:
         if not self.posts:
-            return datetime.now()  # or raise an exception if preferred
+            return datetime.now()
 
         return max(post.date for post in self.posts)
 
