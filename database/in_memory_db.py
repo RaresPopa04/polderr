@@ -1,6 +1,7 @@
 from typing import List, Optional
 
-from llm import AzerionPromptTemplate, LlmClient
+from llm.LlmClient import LlmClient
+from llm.AzerionPromptTemplate import AzerionPromptTemplate
 from llm.PromptTemplates.Prompts import get_raport_for_event_prompt, get_raport_for_last_month_prompt, get_raport_for_last_week_prompt, get_raport_for_topic_prompt
 from models.Event import Event
 from models.Post import Post
@@ -49,7 +50,10 @@ class InMemoryDB:
     
     def add_event(self, event: Event) -> Event:
         self.events.append(event)
+        print("event added: ", event)
         event.event_id = len(self.events)
+        print("event id: ", event.event_id)
+        print("events: ", self.events)
         return event
     
     def update_event(self, event_id: int, updated_event: Event) -> Optional[Event]:

@@ -43,6 +43,9 @@ class Event:
         self.date = self.find_most_recent_post_date()
 
 
+    def __repr__(self):
+        return f"Event(event_id={self.event_id}, name={self.name}, small_summary={self.small_summary}, big_summary={self.big_summary}, posts={self.posts}, similar_events={self.similar_events}, keywords={self.keywords})"
+
 # add the post to posts and regenerate everything
     def add_post(self, post: Post, other_events: List['Event'] = []):
         llm_client = LlmClient()
