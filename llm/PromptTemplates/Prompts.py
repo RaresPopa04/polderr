@@ -1,5 +1,11 @@
 import textwrap
 
+
+find_topic_for_post_prompt = textwrap.dedent(
+    """
+    Chose one of these topics: {topics} for the post: {post_content}. Return only the topic name.
+    """)
+
 get_raport_for_event_prompt = textwrap.dedent(
     """
     Generate a raport for an event considering these 
