@@ -43,21 +43,19 @@ class Event:
 
         self.keywords = self.extract_keywords(llm_client)
         (self.small_summary, self.big_summary) = self.generate_summaries(llm_client)
-<<<<<<< HEAD
-        self.similar_events = self.find_similar_events()
-        
-    def get_event_last_time(self):
-        return self.posts[-1].date
-=======
         self.similar_events = self.find_similar_events(llm_client, other_events)
         self.date = self.find_most_recent_post_date()
+        
+    def get_event_topic(self) -> str:
+        if not self.posts:
+            return None
+        return self.posts[0].topic
 
     def find_most_recent_post_date(self) -> datetime:
         if not self.posts:
-            return datetime.now()  # or raise an exception if preferred
+            return datetime.now()
 
         return max(post.date for post in self.posts)
->>>>>>> main
 
     def extract_name_from_posts(self, llm_client) -> str:
         total_context = ''
