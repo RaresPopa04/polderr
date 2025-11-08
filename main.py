@@ -56,8 +56,12 @@ else:
 posts = db.get_all_posts()
 
 print("\n" + "=" * 70)
-print(len(posts))
-event = Event(posts)
+first_post = posts[0:3]
+second_post = posts[3:6]
+third_post = posts[6:9]
+event1 = Event(first_post)
+event2 = Event(second_post)
+event3 = Event(third_post)
 
 
 
