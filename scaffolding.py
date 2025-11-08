@@ -1,4 +1,3 @@
-from database import db
 from llm.AzerionPromptTemplate import AzerionPromptTemplate
 from llm.LlmClient import LlmClient
 from llm.SemanticSimilarityService import SemanticSimilarityService

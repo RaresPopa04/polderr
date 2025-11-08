@@ -1,0 +1,22 @@
+# Input: a post, a list of topics
+# Output: the topic that the post is most related to
+# 1. Embeds the content of the post. Embeds the name of each topic.
+# 2. Computes the cosine similarity between the embedding of the post and the embeddings of each topic.
+# 3. Returns the topic with the highest cosine similarity.
+
+from typing import List
+from llm.SemanticSimilarityService import cosine_similarity, embed_text_to_embedding
+from models import Post, Topic
+
+
+def find_topic_for_post(post: Post, topics: List[Topic]) -> Topic:
+    post_embedding = embed_text_to_embedding(post.content)
+    for topic in topics:
+        topic_embedding = embed_text_to_embedding(topic.name)
+        similarity = cosine_similarity(post_embedding, topic_embedding)
+        if similarity > max_similarity:
+            max_similarity = similarity
+            most_similar_topic = topic
+    return most_similar_topic
+
+

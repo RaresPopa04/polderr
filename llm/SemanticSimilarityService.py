@@ -23,6 +23,15 @@ class EmbeddingsPromptTemplate:
             "encoding_format": "float"
         })
 
+def embed_text_to_embedding(txt: str) -> List[float]:
+    llm_client = LlmClient()
+    semanticSimilarityService = SemanticSimilarityService(llm_client)
+    return semanticSimilarityService.embed(txt)
+
+def cosine_similarity(embedding1: List[float], embedding2: List[float]) -> float:
+    llm_client = LlmClient()
+    semanticSimilarityService = SemanticSimilarityService(llm_client)
+    return semanticSimilarityService.cosine_similarity(embedding1, embedding2)
 
 class SemanticSimilarityService:
     _embedding_model = "gemini-embedding-001"
