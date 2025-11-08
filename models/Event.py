@@ -33,8 +33,10 @@ class Event:
         (self.small_summary, self.big_summary) = self.generate_summaries(llm_client)
         self.similar_events = self.find_similar_events(llm_client, other_events)
         self.keywords = self.extract_keywords(llm_client)
+        self.date = self.find_most_recent_post_date()
 
-    # add the post to posts and regenerate everything
+
+# add the post to posts and regenerate everything
     def add_post(self, post: Post, other_events: List['Event'] = []):
         llm_client = LlmClient()
         self.posts += [post]
@@ -42,6 +44,13 @@ class Event:
         self.keywords = self.extract_keywords(llm_client)
         (self.small_summary, self.big_summary) = self.generate_summaries(llm_client)
         self.similar_events = self.find_similar_events(llm_client, other_events)
+        self.date = self.find_most_recent_post_date()
+
+    def find_most_recent_post_date(self) -> datetime:
+        if not self.posts:
+            return datetime.now()  # or raise an exception if preferred
+
+        return max(post.date for post in self.posts)
 
     def extract_name_from_posts(self, llm_client) -> str:
         total_context = ''
@@ -102,9 +111,12 @@ class Event:
         return big_summary
 
     def find_similar_events(self, llm_client: LlmClient, other_events: List['Event'] = []):
+        sim_events = []
         for event in other_events:
             if self.events_are_similar(event, llm_client):
-                self.similar_events.append(event)
+                sim_events.append(event)
+
+        return sim_events
 
     # we chose similar keywords in the end
     def events_are_similar(self, other_event: 'Event', llm_client: LlmClient) -> float:
