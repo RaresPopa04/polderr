@@ -27,6 +27,22 @@ event_big_summary_prompt = textwrap.dedent(
     news articles / conversations about it. Return only the summary.
     {event_posts}
     """)
+
+actionable_is_question_prompt = textwrap.dedent(
+    """
+    Generate a yes/no question about whether the given text is a question
+    Return yes or no.
+    {raw_citation}
+    """)
+actionable_proposed_answer_prompt = textwrap.dedent(
+    """
+    Use this official information from the Dutch Municipality to answer the 
+    question or debunk the misinformation:
+    {all_the_belastingdienst_data}
+    Generate an answer to this question or if it is a misinformation, mention this is a 
+    misinformation. Return the answer of the question or the corrected response to the misinformation.
+    {raw_citation}
+    """)
 import json
 from textwrap import dedent
 

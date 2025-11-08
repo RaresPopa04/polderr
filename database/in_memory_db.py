@@ -1,9 +1,7 @@
-from datetime import datetime, timedelta
 from typing import List, Optional
-from models.Post import Post
+
 from models.Event import Event
-from models.Actionable import Actionable
-from models.Keyword import Keyword
+from models.Post import Post
 
 
 class InMemoryDB:
