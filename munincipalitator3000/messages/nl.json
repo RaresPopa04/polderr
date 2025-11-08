@@ -1,7 +1,11 @@
 {
   "Navbar": {
     "home": "Home",
-    "events": "Evenementen"
+    "events": "Evenementen",
+    "topics": "Onderwerpen",
+    "allTopics": "Alle Onderwerpen",
+    "trash": "Afvalbeheer",
+    "health": "Gezondheid & Welzijn"
   },
   "HomePage": {
         "title": "Munincipalitator3000",
@@ -84,5 +88,53 @@
         "post5Title": "Discussie over verkeersmaatregelen in gemeenteraad",
         "post5Content": "Volgende week bespreken we de voorstellen...",
         "post5Source": "LinkedIn - Gemeente Rijswijk"
+    },
+    "TopicsOverviewPage": {
+        "title": "Onderwerpen Overzicht",
+        "subtitle": "Blader door discussies georganiseerd per onderwerp",
+        "trashTitle": "Afvalbeheer",
+        "trashDescription": "Volg discussies over afvalinzameling, recycling en netheid in Rijswijk",
+        "healthTitle": "Gezondheid & Welzijn",
+        "healthDescription": "Volg gezondheidsgerelateerde discussies en initiatieven in Rijswijk",
+        "activeEvents": "actieve evenementen",
+        "viewTopic": "Bekijk Onderwerp"
+    },
+    "TopicsPage": {
+        "totalEvents": "Totaal Evenementen",
+        "inThisTopic": "In dit onderwerp",
+        "totalPosts": "Totaal Berichten",
+        "allPlatforms": "Alle platforms",
+        "totalEngagement": "Totale Betrokkenheid",
+        "totalInteractions": "Totaal interacties",
+        "sentimentTimeline": "Sentiment Tijdlijn",
+        "sentimentDescription": "Volg sentimenttrends in de tijd",
+        "eventQueueTime": "Evenementenrij - Tijd",
+        "eventsInTopic": "Evenementen in dit Onderwerp",
+        "viewDetails": "Bekijk Details",
+        "posts": "berichten",
+        "engagement": "betrokkenheid",
+        "rising": "Stijgend",
+        "stable": "Stabiel",
+        "noEvents": "Geen evenementen gevonden voor dit onderwerp",
+        "unknownTitle": "Onbekend Onderwerp",
+        "unknownDescription": "Dit onderwerp bestaat nog niet",
+        "forumDiscussions": "Forum Discussies",
+        "forumDescription": "Recente gemeenschapsdiscussies",
+        "replies": "reacties",
+        "viewAllDiscussions": "Bekijk Alle Discussies",
+        "trashTitle": "Afvalbeheer",
+        "trashDescription": "Volg discussies over afvalinzameling, recycling en netheid in Rijswijk",
+        "trashEvent1Name": "Klachten over Gemiste Afvalinzameling",
+        "trashEvent1Summary": "Bewoners melden meerdere gemiste vuilnisophaalingen in hun buurten",
+        "trashEvent2Name": "Discussie Uitbreiding Recyclingprogramma",
+        "trashEvent2Summary": "Gemeenschapsfeedback over nieuwe recyclinginitiatieven en plaatsing van containers",
+        "trashEvent3Name": "Illegaal Dumpen in Parkgebieden",
+        "trashEvent3Summary": "Zorgen over afval dat wordt gedumpt in openbare groene ruimtes",
+        "healthTitle": "Gezondheid & Welzijn",
+        "healthDescription": "Volg gezondheidsgerelateerde discussies en initiatieven in Rijswijk",
+        "healthEvent1Name": "Toegankelijkheid GGZ Diensten",
+        "healthEvent1Summary": "Bewoners bespreken wachttijden en toegang tot geestelijke gezondheidszorg",
+        "healthEvent2Name": "Voorstellen Nieuwe Sportfaciliteiten",
+        "healthEvent2Summary": "Gemeenschap input over locaties voor nieuwe recreatieve voorzieningen"
     }
 }

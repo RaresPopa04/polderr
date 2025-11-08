@@ -1,7 +1,11 @@
 {
   "Navbar": {
     "home": "Home",
-    "events": "Events"
+    "events": "Events",
+    "topics": "Topics",
+    "allTopics": "All Topics",
+    "trash": "Waste Management",
+    "health": "Health & Wellbeing"
   },
   "HomePage": {
     "title": "Munincipalitator3000",
@@ -84,5 +88,53 @@
     "post5Title": "Discussion about traffic measures in city council",
     "post5Content": "Next week we will discuss the proposals...",
     "post5Source": "LinkedIn - Municipality Rijswijk"
+  },
+  "TopicsOverviewPage": {
+    "title": "Topics Overview",
+    "subtitle": "Browse discussions organized by topic",
+    "trashTitle": "Waste Management",
+    "trashDescription": "Follow discussions about waste collection, recycling, and cleanliness in Rijswijk",
+    "healthTitle": "Health & Wellbeing",
+    "healthDescription": "Track health-related discussions and initiatives in Rijswijk",
+    "activeEvents": "active events",
+    "viewTopic": "View Topic"
+  },
+  "TopicsPage": {
+    "totalEvents": "Total Events",
+    "inThisTopic": "In this topic",
+    "totalPosts": "Total Posts",
+    "allPlatforms": "All platforms",
+    "totalEngagement": "Total Engagement",
+    "totalInteractions": "Total interactions",
+    "sentimentTimeline": "Sentiment Timeline",
+    "sentimentDescription": "Track sentiment trends over time",
+    "eventQueueTime": "Event Queue - Time",
+    "eventsInTopic": "Events in this Topic",
+    "viewDetails": "View Details",
+    "posts": "posts",
+    "engagement": "engagement",
+    "rising": "Rising",
+    "stable": "Stable",
+    "noEvents": "No events found for this topic",
+    "unknownTitle": "Unknown Topic",
+    "unknownDescription": "This topic does not exist yet",
+    "forumDiscussions": "Forum Discussions",
+    "forumDescription": "Recent community discussions",
+    "replies": "replies",
+    "viewAllDiscussions": "View All Discussions",
+    "trashTitle": "Waste Management",
+    "trashDescription": "Follow discussions about waste collection, recycling, and cleanliness in Rijswijk",
+    "trashEvent1Name": "Complaints about Missed Trash Collection",
+    "trashEvent1Summary": "Residents report multiple missed garbage pickups in their neighborhoods",
+    "trashEvent2Name": "Recycling Program Expansion Discussion",
+    "trashEvent2Summary": "Community feedback on new recycling initiatives and bin placement",
+    "trashEvent3Name": "Illegal Dumping in Park Areas",
+    "trashEvent3Summary": "Concerns about waste being dumped in public green spaces",
+    "healthTitle": "Health & Wellbeing",
+    "healthDescription": "Track health-related discussions and initiatives in Rijswijk",
+    "healthEvent1Name": "Mental Health Services Accessibility",
+    "healthEvent1Summary": "Residents discuss wait times and access to mental health support",
+    "healthEvent2Name": "New Sports Facility Proposals",
+    "healthEvent2Summary": "Community input on locations for new recreational facilities"
   }
 }
