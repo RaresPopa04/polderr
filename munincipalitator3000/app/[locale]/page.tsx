@@ -5,12 +5,33 @@ import { Input } from "@/components/ui/input";
 import { Link } from '@/i18n/routing';
 import { useTranslations } from 'next-intl';
 import { Search } from "lucide-react";
+import { useEffect, useState } from 'react';
+import { topicsApi } from '@/lib/api';
 
 export default function Home() {
   const t = useTranslations('HomePage');
+  const [trendingTopics, setTrendingTopics] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // Mock data for trending topics with events (with time-series data)
-  const trendingTopics = [
+  useEffect(() => {
+    async function loadDashboard() {
+      try {
+        const data = await topicsApi.listTopics();
+        setTrendingTopics(data.topics);
+        setLoading(false);
+      } catch (err) {
+        console.error('Failed to load dashboard:', err);
+        setError('Failed to load dashboard data');
+        setLoading(false);
+      }
+    }
+
+    loadDashboard();
+  }, []);
+
+  // Fallback mock data for development
+  const mockTopics = [
     {
       id: 'trash',
       name: t('trashTopic'),
@@ -95,6 +116,31 @@ export default function Home() {
     },
   ];
 
+  // Use API data if available, otherwise fallback to mock data
+  const displayTopics = trendingTopics.length > 0 ? trendingTopics : mockTopics;
+
+  if (loading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-zinc-50 to-zinc-100 dark:from-zinc-950 dark:to-zinc-900">
+        <div className="text-center">
+          <div className="h-32 w-32 mx-auto animate-spin rounded-full border-b-2 border-zinc-900 dark:border-zinc-50"></div>
+          <p className="mt-4 text-lg text-zinc-600 dark:text-zinc-400">Loading dashboard...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-zinc-50 to-zinc-100 dark:from-zinc-950 dark:to-zinc-900">
+        <div className="text-center">
+          <p className="text-red-600 dark:text-red-400">⚠️ {error}</p>
+          <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">Using fallback mock data</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-zinc-50 to-zinc-100 dark:from-zinc-950 dark:to-zinc-900">
       <div className="mx-auto max-w-[1800px] p-8">
@@ -120,9 +166,9 @@ export default function Home() {
         {/* Main Content Area */}
         <div className="space-y-10">
           {/* Topic Sections */}
-          {trendingTopics.map((topic) => {
+          {displayTopics.map((topic: any) => {
             // Find max value across all data points for scaling
-            const allDataPoints = topic.events.flatMap(e => e.dataPoints);
+            const allDataPoints = topic.events.flatMap((e: any) => e.data_points || e.dataPoints);
             const maxValue = Math.max(...allDataPoints);
             const minValue = Math.min(...allDataPoints);
             const range = maxValue - minValue;
@@ -145,7 +191,7 @@ export default function Home() {
                     <div className="grid grid-cols-[350px_1fr_180px] gap-8">
                       {/* Left: Legend */}
                       <div className="space-y-4">
-                        {topic.events.map((event) => (
+                        {topic.events.map((event: any) => (
                           <div key={event.id} className="flex items-center gap-4 rounded-lg bg-zinc-50 p-3 dark:bg-zinc-900">
                             <div
                               className="h-4 w-4 shrink-0 rounded-full shadow-sm"
@@ -175,13 +221,14 @@ export default function Home() {
                           <rect width="800" height="240" fill={`url(#grid-${topic.id})`} />
 
                           {/* Lines for each event */}
-                          {topic.events.map((event, eventIndex) => {
+                          {topic.events.map((event: any, eventIndex: number) => {
                             const padding = 20;
                             const graphWidth = 800 - (padding * 2);
                             const graphHeight = 240 - (padding * 2);
 
-                            const points = event.dataPoints.map((value, index) => {
-                              const x = padding + (index / (event.dataPoints.length - 1)) * graphWidth;
+                            const dataPoints = event.data_points || event.dataPoints;
+                            const points = dataPoints.map((value: number, index: number) => {
+                              const x = padding + (index / (dataPoints.length - 1)) * graphWidth;
                               const normalizedValue = (value - minValue) / range;
                               const y = padding + graphHeight - (normalizedValue * graphHeight);
                               return `${x},${y}`;
@@ -211,8 +258,8 @@ export default function Home() {
                                 />
 
                                 {/* Data points */}
-                                {event.dataPoints.map((value, index) => {
-                                  const x = padding + (index / (event.dataPoints.length - 1)) * graphWidth;
+                                {dataPoints.map((value: number, index: number) => {
+                                  const x = padding + (index / (dataPoints.length - 1)) * graphWidth;
                                   const normalizedValue = (value - minValue) / range;
                                   const y = padding + graphHeight - (normalizedValue * graphHeight);
                                   return (
