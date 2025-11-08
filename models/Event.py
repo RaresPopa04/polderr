@@ -1,6 +1,6 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime
-from typing import List
+from typing import List, Optional
 
 from llm.LlmClient import LlmClient
 from llm.PromptTemplates.Prompts import event_name_prompt, event_keywords_prompt, event_big_summary_prompt, \
@@ -8,7 +8,6 @@ from llm.PromptTemplates.Prompts import event_name_prompt, event_keywords_prompt
 from llm.SemanticSimilarityService import SemanticSimilarityService
 from models.Keyword import Keyword
 from models.Post import Post
-from database import db
 
 # the date of an event is the date of the latest post (biggest post date)
 # event_id: int,
@@ -20,6 +19,9 @@ from database import db
 # keywords: List[Keyword] = None,
 @dataclass
 class Event:
+
+    event_id: Optional[int] = field(default=None)
+
     def __init__(self,posts: List[Post] = None):
         self.posts = posts
 
