@@ -20,21 +20,21 @@ export default function Home() {
           id: 1, 
           name: t('trashEvent1'), 
           engagement: 892, 
-          color: '#f59e0b',
+          color: '#f59e0b', // Amber
           dataPoints: [400, 450, 500, 550, 600, 700, 750, 800, 850, 892]
         },
         { 
           id: 2, 
           name: t('trashEvent2Short'), 
           engagement: 1245, 
-          color: '#d97706',
+          color: '#8b5cf6', // Purple
           dataPoints: [500, 600, 700, 800, 900, 950, 1000, 1100, 1200, 1245]
         },
         { 
           id: 3, 
           name: t('trashEvent3Short'), 
           engagement: 456, 
-          color: '#b45309',
+          color: '#ec4899', // Pink
           dataPoints: [200, 250, 280, 300, 320, 350, 380, 400, 430, 456]
         },
       ],
@@ -52,14 +52,14 @@ export default function Home() {
           id: 1, 
           name: t('trafficEvent1'), 
           engagement: 591, 
-          color: '#3b82f6',
+          color: '#3b82f6', // Blue
           dataPoints: [300, 350, 380, 420, 450, 480, 510, 540, 570, 591]
         },
         { 
           id: 2, 
           name: t('trafficEvent2Short'), 
           engagement: 423, 
-          color: '#1d4ed8',
+          color: '#f59e0b', // Amber
           dataPoints: [150, 200, 250, 280, 310, 340, 370, 390, 410, 423]
         },
       ],
@@ -77,14 +77,14 @@ export default function Home() {
           id: 1, 
           name: t('healthEvent1'), 
           engagement: 678, 
-          color: '#10b981',
+          color: '#10b981', // Green
           dataPoints: [300, 350, 400, 450, 500, 550, 600, 630, 660, 678]
         },
         { 
           id: 2, 
           name: t('healthEvent2Short'), 
           engagement: 934, 
-          color: '#059669',
+          color: '#06b6d4', // Cyan
           dataPoints: [400, 500, 600, 650, 700, 750, 800, 850, 900, 934]
         },
       ],
@@ -161,24 +161,43 @@ export default function Home() {
                         </div>
                         
                         {/* Center: Line Graph */}
-                        <div className="h-40 rounded-lg bg-zinc-50 p-6 dark:bg-zinc-900">
-                          <svg className="h-full w-full" viewBox="0 0 700 200" preserveAspectRatio="none">
-                            {/* Grid lines */}
-                            <line x1="0" y1="50" x2="700" y2="50" stroke="currentColor" strokeWidth="0.5" className="text-zinc-300 dark:text-zinc-700" />
-                            <line x1="0" y1="100" x2="700" y2="100" stroke="currentColor" strokeWidth="0.5" className="text-zinc-300 dark:text-zinc-700" />
-                            <line x1="0" y1="150" x2="700" y2="150" stroke="currentColor" strokeWidth="0.5" className="text-zinc-300 dark:text-zinc-700" />
+                        <div className="relative h-48 rounded-lg border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-950">
+                          <svg className="h-full w-full" viewBox="0 0 800 240" preserveAspectRatio="xMidYMid meet">
+                            {/* Background grid */}
+                            <defs>
+                              <pattern id={`grid-${topic.id}`} width="80" height="60" patternUnits="userSpaceOnUse">
+                                <path d="M 80 0 L 0 0 0 60" fill="none" stroke="currentColor" strokeWidth="0.5" className="text-zinc-200 dark:text-zinc-800" />
+                              </pattern>
+                            </defs>
+                            <rect width="800" height="240" fill={`url(#grid-${topic.id})`} />
                             
                             {/* Lines for each event */}
-                            {topic.events.map((event) => {
+                            {topic.events.map((event, eventIndex) => {
+                              const padding = 20;
+                              const graphWidth = 800 - (padding * 2);
+                              const graphHeight = 240 - (padding * 2);
+                              
                               const points = event.dataPoints.map((value, index) => {
-                                const x = (index / (event.dataPoints.length - 1)) * 700;
-                                const y = 200 - ((value - minValue) / range) * 180 - 10;
+                                const x = padding + (index / (event.dataPoints.length - 1)) * graphWidth;
+                                const normalizedValue = (value - minValue) / range;
+                                const y = padding + graphHeight - (normalizedValue * graphHeight);
                                 return `${x},${y}`;
                               }).join(' ');
                               
                               return (
                                 <g key={event.id}>
-                                  {/* Line */}
+                                  {/* Shadow/glow effect */}
+                                  <polyline
+                                    points={points}
+                                    fill="none"
+                                    stroke={event.color}
+                                    strokeWidth="6"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    opacity="0.2"
+                                  />
+                                  
+                                  {/* Main line */}
                                   <polyline
                                     points={points}
                                     fill="none"
@@ -190,17 +209,19 @@ export default function Home() {
                                   
                                   {/* Data points */}
                                   {event.dataPoints.map((value, index) => {
-                                    const x = (index / (event.dataPoints.length - 1)) * 700;
-                                    const y = 200 - ((value - minValue) / range) * 180 - 10;
+                                    const x = padding + (index / (event.dataPoints.length - 1)) * graphWidth;
+                                    const normalizedValue = (value - minValue) / range;
+                                    const y = padding + graphHeight - (normalizedValue * graphHeight);
                                     return (
                                       <circle
                                         key={index}
                                         cx={x}
                                         cy={y}
-                                        r="4"
+                                        r="5"
                                         fill={event.color}
                                         stroke="white"
-                                        strokeWidth="2"
+                                        strokeWidth="2.5"
+                                        className="drop-shadow-md"
                                       />
                                     );
                                   })}
