@@ -131,9 +131,9 @@ export default function Home() {
                                 {event.name}
                               </div>
                             </div>
-                            <div className="text-base font-bold text-zinc-900 dark:text-zinc-50">
+                            {/* <div className="text-base font-bold text-zinc-900 dark:text-zinc-50">
                               {event.engagement.toLocaleString()}
-                            </div>
+                            </div> */}
                           </div>
                         ))}
                       </div>

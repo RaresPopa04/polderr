@@ -1,5 +1,5 @@
-from dataclasses import dataclass
-from typing import List
+from dataclasses import dataclass, field
+from typing import List, Optional
 
 from models.Event import Event
 
@@ -7,4 +7,9 @@ from models.Event import Event
 class Topic:
     topic_id: int
     name: str
-    events: List[Event]
+    events: List[Event] = field(default_factory=list)
+    icon: str = "📋" 
+    actionables: dict = field(default_factory=lambda: {
+        "misinformation": 0,
+        "questions": 0
+    })
