@@ -5,14 +5,10 @@ import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from api.routes import topics, events, search
+from api.routes import topics, events, search, posts, forum, auth, reports, database
 from llm.LlmClient import LlmClient
 from Services.EventProcessingService import EventProcessingService
 from database import db
-from llm.LlmClient import LlmClient
-from Services.EventProcessingService import EventProcessingService
-from database import db
-from api.routes import topics, events, search, posts, forum, auth, reports
 
 
 app = FastAPI(
@@ -79,6 +75,7 @@ app.include_router(posts.router, prefix="/api", tags=["posts"])
 app.include_router(forum.router, prefix="/api", tags=["forum"])
 app.include_router(auth.router, prefix="/api/auth", tags=["auth"])
 app.include_router(reports.router, prefix="/api", tags=["reports"])
+app.include_router(database.router, prefix="/api", tags=["database"])
 
 
 @app.get("/")
