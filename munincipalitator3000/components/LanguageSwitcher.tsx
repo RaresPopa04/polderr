@@ -6,21 +6,24 @@ import { Button } from '@/components/ui/button';
 
 export function LanguageSwitcher() {
   const params = useParams();
-  const locale = params.locale as string;
   const router = useRouter();
   const pathname = usePathname();
+
+  const locale = (params.locale as string) || 'en';
+  const isEnglish = locale === 'en';
+  const isDutch = locale === 'nl';
 
   return (
     <div className="flex items-center gap-2">
       <Button
-        variant={locale === 'en' ? 'default' : 'outline'}
+        variant={isEnglish ? 'outline' : 'default'}
         size="sm"
         onClick={() => router.replace(pathname, { locale: 'en' })}
       >
         English
       </Button>
       <Button
-        variant={locale === 'nl' ? 'default' : 'outline'}
+        variant={isDutch ? 'outline' : 'default'}
         size="sm"
         onClick={() => router.replace(pathname, { locale: 'nl' })}
       >

@@ -6,7 +6,8 @@
     "allTopics": "All Topics",
     "trash": "Waste Management",
     "traffic": "Traffic",
-    "health": "Health & Wellbeing"
+    "health": "Health & Wellbeing",
+    "search": "Search"
   },
   "HomePage": {
     "dashboardTitle": "Main Dashboard",
@@ -103,6 +104,23 @@
     "healthDescription": "Track health-related discussions and initiatives in Rijswijk",
     "activeEvents": "active events",
     "viewTopic": "View Topic"
+  },
+  "SearchPage": {
+    "title": "Search Results",
+    "searchingFor": "Searching for",
+    "createdTopic": "Created Topic",
+    "foundEvents": "Found Events",
+    "noResults": "No results found",
+    "noResultsDescription": "Try different keywords or check your spelling",
+    "searching": "Searching...",
+    "searchError": "Search failed. Please try again.",
+    "keywordsMatched": "Keywords Matched",
+    "queryWords": "Query Words",
+    "viewEvent": "View Event",
+    "back": "Back to Dashboard",
+    "enterQuery": "Enter a search query",
+    "enterQueryDescription": "Use the search bar above to find events and topics",
+    "keywords": "keywords"
   },
   "TopicsPage": {
     "totalEvents": "Total Events",

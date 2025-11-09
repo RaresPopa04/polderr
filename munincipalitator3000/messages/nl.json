@@ -1,14 +1,15 @@
 {
-  "Navbar": {
-    "home": "Home",
-    "events": "Evenementen",
-    "topics": "Onderwerpen",
-    "allTopics": "Alle Onderwerpen",
-    "trash": "Afvalbeheer",
-    "traffic": "Verkeer",
-    "health": "Gezondheid & Welzijn"
-  },
-  "HomePage": {
+    "Navbar": {
+        "home": "Home",
+        "events": "Evenementen",
+        "topics": "Onderwerpen",
+        "allTopics": "Alle Onderwerpen",
+        "trash": "Afvalbeheer",
+        "traffic": "Verkeer",
+        "health": "Gezondheid & Welzijn",
+        "search": "Zoeken"
+    },
+    "HomePage": {
         "dashboardTitle": "Hoofddashboard",
         "dashboardSubtitle": "Monitor en analyseer gemeenschapsdiscussies over alle onderwerpen",
         "searchPlaceholder": "Zoek evenementen, onderwerpen of discussies...",
@@ -103,6 +104,23 @@
         "healthDescription": "Volg gezondheidsgerelateerde discussies en initiatieven in Rijswijk",
         "activeEvents": "actieve evenementen",
         "viewTopic": "Bekijk Onderwerp"
+    },
+    "SearchPage": {
+        "title": "Zoekresultaten",
+        "searchingFor": "Zoeken naar",
+        "createdTopic": "Onderwerp Aangemaakt",
+        "foundEvents": "Gevonden Evenementen",
+        "noResults": "Geen resultaten gevonden",
+        "noResultsDescription": "Probeer andere zoekwoorden of controleer de spelling",
+        "searching": "Zoeken...",
+        "searchError": "Zoeken mislukt. Probeer het opnieuw.",
+        "keywordsMatched": "Overeenkomende Trefwoorden",
+        "queryWords": "Zoekopdracht Woorden",
+        "viewEvent": "Bekijk Evenement",
+        "back": "Terug naar Dashboard",
+        "enterQuery": "Voer een zoekopdracht in",
+        "enterQueryDescription": "Gebruik de zoekbalk hierboven om evenementen en onderwerpen te vinden",
+        "keywords": "trefwoorden"
     },
     "TopicsPage": {
         "totalEvents": "Totaal Evenementen",

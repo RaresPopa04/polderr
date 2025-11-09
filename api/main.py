@@ -8,6 +8,7 @@ from api.routes import topics, events
 from llm.LlmClient import LlmClient
 from Services.EventProcessingService import EventProcessingService
 from database import db
+from api.routes import topics, events, search
 
 app = FastAPI(
     title="Polderr API",
@@ -56,6 +57,7 @@ app.add_middleware(
 # Include routers
 app.include_router(topics.router, prefix="/api", tags=["topics"])
 app.include_router(events.router, prefix="/api", tags=["events"])
+app.include_router(search.router, prefix="/api", tags=["search"])
 
 
 @app.get("/")

@@ -2,7 +2,7 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Link } from '@/i18n/routing';
+import { Link, useRouter } from '@/i18n/routing';
 import { useTranslations } from 'next-intl';
 import { Search } from "lucide-react";
 import { useEffect, useState } from 'react';
@@ -10,9 +10,11 @@ import { topicsApi } from '@/lib/api';
 
 export default function Home() {
   const t = useTranslations('HomePage');
+  const router = useRouter();
   const [trendingTopics, setTrendingTopics] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     async function loadDashboard() {
@@ -83,13 +85,23 @@ export default function Home() {
           </div>
 
           {/* Search Bar */}
-          <div className="relative mx-auto max-w-2xl">
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              if (searchQuery.trim()) {
+                router.push(`/search?q=${encodeURIComponent(searchQuery)}`);
+              }
+            }}
+            className="relative mx-auto max-w-2xl"
+          >
             <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-zinc-400" />
             <Input
               placeholder={t('searchPlaceholder')}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
               className="h-14 pl-12 text-base shadow-sm"
             />
-          </div>
+          </form>
         </div>
 
         {/* Main Content Area */}
