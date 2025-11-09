@@ -91,10 +91,7 @@ export default function TrendsPage() {
                                 </defs>
                                 <rect width="2000" height="700" fill="url(#grid)" />
 
-                                {/* Y-axis labels (Engagement) */}
-                                <text x="30" y="30" className="fill-[#4A8EC6] dark:fill-[#7CB8E8] text-sm font-semibold" fontSize="14">
-                                    {t('engagement')}
-                                </text>
+                                {/* Y-axis labels */}
                                 {[0, 25, 50, 75, 100].map((percent) => {
                                     const value = minEngagement + (range * percent / 100);
                                     const y = 650 - (percent * 6);
@@ -111,11 +108,11 @@ export default function TrendsPage() {
                                                 strokeDasharray="5,5"
                                             />
                                             <text
-                                                x="70"
+                                                x="65"
                                                 y={y + 5}
                                                 textAnchor="end"
-                                                className="fill-zinc-600 dark:fill-zinc-400 text-xs"
-                                                fontSize="12"
+                                                className="fill-zinc-600 dark:fill-zinc-400 text-xl"
+                                                fontSize="28"
                                             >
                                                 {Math.round(value)}
                                             </text>
@@ -124,7 +121,7 @@ export default function TrendsPage() {
                                 })}
 
                                 {/* X-axis labels (Time) */}
-                                <text x="1000" y="690" textAnchor="middle" className="fill-[#4A8EC6] dark:fill-[#7CB8E8] text-sm font-semibold" fontSize="14">
+                                <text x="1000" y="695" textAnchor="middle" className="fill-[#4A8EC6] dark:fill-[#7CB8E8] text-xl font-semibold" fontSize="24">
                                     {t('time')}
                                 </text>
                                 {mockData.map((point, index) => {
@@ -133,10 +130,10 @@ export default function TrendsPage() {
                                         <text
                                             key={index}
                                             x={x}
-                                            y="670"
+                                            y="675"
                                             textAnchor="middle"
-                                            className="fill-zinc-600 dark:fill-zinc-400 text-xs"
-                                            fontSize="12"
+                                            className="fill-zinc-600 dark:fill-zinc-400 text-xl"
+                                            fontSize="28"
                                         >
                                             {point.time}
                                         </text>
@@ -146,7 +143,7 @@ export default function TrendsPage() {
                                 {/* Area under the curve */}
                                 <path
                                     d={`
-                    M 80,650
+                    M 0,650
                     L ${graphPoints[0].x},650
                     ${createSmoothPath(graphPoints).replace(/^M [^,]+,[^ ]+/, '')}
                     L ${graphPoints[graphPoints.length - 1].x},650

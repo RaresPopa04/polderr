@@ -234,7 +234,7 @@ export default function Home() {
               </div>
 
               {/* Show Trends Button */}
-              <Link href="/trends">
+              <Link href="/engagementtrends">
                 <Button
                   variant="outline"
                   className="flex items-center gap-2 border-[#6BC04A] text-[#6BC04A] hover:bg-[#6BC04A]/10 dark:border-[#7ACC58] dark:text-[#7ACC58] dark:hover:bg-[#7ACC58]/10"
