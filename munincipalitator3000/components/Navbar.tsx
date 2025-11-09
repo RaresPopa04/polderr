@@ -24,9 +24,9 @@ export function Navbar() {
   };
 
   return (
-    <nav className="sticky top-0 z-50 border-b border-[#4A8EC6]/20 bg-white/80 backdrop-blur-sm dark:border-[#5B9ED3]/30 dark:bg-[#0f1419]/90">
+    <nav className="sticky top-0 z-50 border-b border-zinc-200 dark:border-zinc-800 bg-white/80 backdrop-blur-sm dark:bg-zinc-950/90">
       <div className="mx-auto flex w-full items-center justify-between px-4 py-4">
-        <Link href="/" className="text-3xl font-bold bg-gradient-to-r from-[#4A8EC6] to-[#6BC04A] bg-clip-text text-transparent hover:from-[#5B9ED3] hover:to-[#7ACC58] transition-all tracking-tight ml-4">
+        <Link href="/" className="text-3xl font-bold text-zinc-900 dark:text-zinc-100 hover:text-zinc-700 dark:hover:text-zinc-300 transition-colors tracking-tight ml-4">
           CivicLens
         </Link>
 
@@ -36,7 +36,7 @@ export function Navbar() {
           {isAuthenticated ? (
             <button
               onClick={handleLogout}
-              className="flex items-center gap-2 text-sm font-medium text-zinc-700 hover:text-[#4A8EC6] dark:text-zinc-300 dark:hover:text-[#7CB8E8] transition-colors"
+              className="flex items-center gap-2 text-sm font-medium text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100 transition-colors"
             >
               <LogOut className="h-4 w-4" />
               Logout
@@ -45,14 +45,14 @@ export function Navbar() {
             <>
               <Link
                 href="/auth/login"
-                className="flex items-center gap-2 text-sm font-medium text-zinc-700 hover:text-[#4A8EC6] dark:text-zinc-300 dark:hover:text-[#7CB8E8] transition-colors"
+                className="flex items-center gap-2 text-sm font-medium text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100 transition-colors"
               >
                 <LogIn className="h-4 w-4" />
                 Login
               </Link>
               <Link
                 href="/auth/signup"
-                className="flex items-center gap-2 text-sm font-medium text-[#6BC04A] hover:text-[#4A9B35] dark:text-[#7ACC58] dark:hover:text-[#9DE57A] transition-colors"
+                className="flex items-center gap-2 text-sm font-medium text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100 transition-colors"
               >
                 <UserPlus className="h-4 w-4" />
                 Sign Up

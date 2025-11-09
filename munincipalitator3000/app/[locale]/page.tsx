@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Link, useRouter } from '@/i18n/routing';
 import { useTranslations } from 'next-intl';
-import { Search, Calendar, CalendarRange, Upload, TrendingUp } from "lucide-react";
+import { Search, Upload, TrendingUp } from "lucide-react";
 import { useEffect, useState, useRef } from 'react';
 import { topicsApi } from '@/lib/api';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
@@ -225,9 +225,9 @@ export default function Home() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-[#e8f4f8] via-white to-[#e8f5e9] dark:from-[#0a0e12] dark:via-[#0f1419] dark:to-[#0d1410]">
+      <div className="flex min-h-screen items-center justify-center bg-zinc-50 dark:bg-zinc-950">
         <div className="text-center">
-          <div className="h-32 w-32 mx-auto animate-spin rounded-full border-b-2 border-[#4A8EC6] dark:border-[#7CB8E8] polderr-glow-blue"></div>
+          <div className="h-32 w-32 mx-auto animate-spin rounded-full border-b-2 border-zinc-900 dark:border-zinc-100"></div>
           <p className="mt-4 text-lg text-zinc-700 dark:text-zinc-300">Loading dashboard...</p>
         </div>
       </div>
@@ -236,17 +236,17 @@ export default function Home() {
 
   if (error) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-[#e8f4f8] via-white to-[#e8f5e9] dark:from-[#0a0e12] dark:via-[#0f1419] dark:to-[#0d1410]">
+      <div className="flex min-h-screen items-center justify-center bg-zinc-50 dark:bg-zinc-950">
         <div className="text-center">
           <p className="text-red-600 dark:text-red-400 text-xl mb-4">⚠️ {error}</p>
           <p className="text-zinc-700 dark:text-zinc-300">
             Make sure the backend is running at{' '}
-            <code className="bg-[#4A8EC6]/10 dark:bg-[#5B9ED3]/20 px-2 py-1 rounded">
+            <code className="bg-zinc-200 dark:bg-zinc-800 px-2 py-1 rounded">
               http://localhost:8000
             </code>
           </p>
           <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
-            Run: <code className="bg-[#4A8EC6]/10 dark:bg-[#5B9ED3]/20 px-2 py-1 rounded">python -m api.main</code>
+            Run: <code className="bg-zinc-200 dark:bg-zinc-800 px-2 py-1 rounded">python -m api.main</code>
           </p>
         </div>
       </div>
@@ -255,7 +255,7 @@ export default function Home() {
 
   if (trendingTopics.length === 0) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-[#e8f4f8] via-white to-[#e8f5e9] dark:from-[#0a0e12] dark:via-[#0f1419] dark:to-[#0d1410]">
+      <div className="flex min-h-screen items-center justify-center bg-zinc-50 dark:bg-zinc-950">
         <div className="text-center">
           <p className="text-zinc-700 dark:text-zinc-300 text-xl">No topics available</p>
         </div>
@@ -264,35 +264,35 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#e8f4f8] via-white to-[#e8f5e9] dark:from-[#0a0e12] dark:via-[#0f1419] dark:to-[#0d1410]">
+    <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950">
       <div className="mx-auto max-w-7xl p-6">
         {/* Header with Search */}
         <div className="mb-10 space-y-6">
           <div className="flex items-start justify-between">
-            <h1 className="text-5xl font-bold tracking-tight bg-gradient-to-r from-[#4A8EC6] to-[#6BC04A] bg-clip-text text-transparent">
+            <h1 className="text-5xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100">
               {t('dashboardTitle')}
             </h1>
 
-            {/* Report Export Buttons and Upload */}
+            {/* Action Buttons */}
             <div className="flex gap-3">
-              <Button
-                onClick={handleExportWeekly}
-                disabled={exportingWeekly}
-                variant="outline"
-                className="flex items-center gap-2 border-[#4A8EC6] text-[#4A8EC6] hover:bg-[#4A8EC6]/10 dark:border-[#7CB8E8] dark:text-[#7CB8E8] dark:hover:bg-[#7CB8E8]/10"
-              >
-                <Calendar className="h-4 w-4" />
-                {exportingWeekly ? 'Generating...' : 'Weekly Report'}
-              </Button>
-              <Button
-                onClick={handleExportMonthly}
-                disabled={exportingMonthly}
-                variant="outline"
-                className="flex items-center gap-2 border-[#4A8EC6] text-[#4A8EC6] hover:bg-[#4A8EC6]/10 dark:border-[#7CB8E8] dark:text-[#7CB8E8] dark:hover:bg-[#7CB8E8]/10"
-              >
-                <CalendarRange className="h-4 w-4" />
-                {exportingMonthly ? 'Generating...' : 'Monthly Report'}
-              </Button>
+              {/* Reports Dropdown */}
+              <div className="relative">
+                <select
+                  onChange={(e) => {
+                    if (e.target.value === 'weekly') handleExportWeekly();
+                    if (e.target.value === 'monthly') handleExportMonthly();
+                    e.target.value = '';
+                  }}
+                  disabled={exportingWeekly || exportingMonthly}
+                  className="h-10 px-4 py-2 border border-zinc-300 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800 bg-transparent cursor-pointer focus:outline-none focus:ring-2 focus:ring-zinc-400 dark:focus:ring-zinc-600"
+                >
+                  <option value="">
+                    {exportingWeekly || exportingMonthly ? 'Generating...' : '📊 Export Report'}
+                  </option>
+                  <option value="weekly">Weekly Report</option>
+                  <option value="monthly">Monthly Report</option>
+                </select>
+              </div>
 
               {/* File Upload */}
               <div className="flex items-center gap-2">
@@ -306,24 +306,20 @@ export default function Home() {
                 />
                 <Button
                   variant="outline"
-                  className="flex items-center gap-2 border-[#6BC04A] text-[#6BC04A] hover:bg-[#6BC04A]/10 dark:border-[#7ACC58] dark:text-[#7ACC58] dark:hover:bg-[#7ACC58]/10"
                   onClick={() => fileInputRef.current?.click()}
                   disabled={uploading}
                   type="button"
                 >
-                  <Upload className="h-4 w-4" />
-                  {uploading ? 'Uploading...' : 'Upload Post'}
+                  <Upload className="h-4 w-4 mr-2" />
+                  {uploading ? 'Uploading...' : 'Upload'}
                 </Button>
               </div>
 
               {/* Show Trends Button */}
               <Link href="/engagementtrends">
-                <Button
-                  variant="outline"
-                  className="flex items-center gap-2 border-[#6BC04A] text-[#6BC04A] hover:bg-[#6BC04A]/10 dark:border-[#7ACC58] dark:text-[#7ACC58] dark:hover:bg-[#7ACC58]/10"
-                >
-                  <TrendingUp className="h-4 w-4" />
-                  Show Trends
+                <Button variant="outline">
+                  <TrendingUp className="h-4 w-4 mr-2" />
+                  Trends
                 </Button>
               </Link>
             </div>
@@ -364,20 +360,18 @@ export default function Home() {
 
             return (
               <Link key={topic.id} href={`/topics/${topic.id}`}>
-                <Card className="border-2 border-[#4A8EC6]/20 transition-all hover:shadow-lg hover:border-[#4A8EC6] hover:shadow-[#4A8EC6]/20 dark:border-[#5B9ED3]/20 dark:hover:border-[#5B9ED3] dark:hover:shadow-[#5B9ED3]/20 cursor-pointer">
+                <Card className="border border-zinc-200 dark:border-zinc-800 transition-all hover:shadow-lg hover:border-zinc-300 dark:hover:border-zinc-700 cursor-pointer bg-white dark:bg-zinc-900">
                   <CardHeader>
                     <div className="flex items-start justify-between">
                       <div className="flex items-center gap-4">
-                        <div className="inline-flex rounded-lg p-3 bg-gradient-to-br from-[#4A8EC6]/10 to-[#6BC04A]/10 dark:from-[#5B9ED3]/20 dark:to-[#7ACC58]/20">
-                          <span className="text-4xl">{topic.icon}</span>
-                        </div>
+                        <span className="text-4xl">{topic.icon}</span>
                         <CardTitle className="text-2xl">{topic.name}</CardTitle>
                       </div>
-                      <div className="flex flex-col gap-1 text-right">
-                        <span className="text-sm text-red-600 dark:text-red-400">
+                      <div className="flex flex-col gap-1 text-right text-sm text-zinc-600 dark:text-zinc-400">
+                        <span>
                           {topic.actionables?.misinformation || 0} misinformation
                         </span>
-                        <span className="text-sm text-[#4A8EC6] dark:text-[#7CB8E8]">
+                        <span>
                           {topic.actionables?.questions || 0} questions
                         </span>
                       </div>
@@ -386,7 +380,7 @@ export default function Home() {
                   <CardContent className="space-y-4">
                     {/* Engagement Chart */}
                     {chartData.length > 0 ? (
-                      <div className="h-80 w-full bg-white dark:bg-zinc-900 p-4 rounded-lg border border-zinc-200 dark:border-zinc-800">
+                      <div className="h-80 w-full p-4">
                         <ResponsiveContainer width="100%" height="100%">
                           <LineChart data={chartData}>
                             <CartesianGrid strokeDasharray="3 3" className="stroke-zinc-200 dark:stroke-zinc-800" />
@@ -456,8 +450,8 @@ export default function Home() {
                         </ResponsiveContainer>
                       </div>
                     ) : (
-                      <div className="h-64 w-full flex items-center justify-center bg-zinc-100 dark:bg-zinc-800 rounded-lg">
-                        <p className="text-zinc-500 dark:text-zinc-400">No engagement data available</p>
+                      <div className="h-64 w-full flex items-center justify-center">
+                        <p className="text-zinc-400 dark:text-zinc-600">No engagement data available</p>
                       </div>
                     )}
                   </CardContent>
