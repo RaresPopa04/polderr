@@ -15,7 +15,7 @@ from pathlib import Path
 from typing import Dict, List, Optional
 
 CSV_DIR = Path(os.getenv("CSV_EVENTS_DIR", Path(__file__).resolve().parent.parent / "csv_timestamps"))
-SNAPSHOT_INTERVAL_MINUTES = 20
+SNAPSHOT_INTERVAL_MINUTES = int(os.getenv("CSV_SNAPSHOT_INTERVAL_MINUTES", 60))
 
 EVENT_COLORS = [
     "#2563eb",
@@ -313,15 +313,37 @@ def _load_csv_events_internal() -> List[CsvEvent]:
     events_by_link: Dict[str, CsvEvent] = {}
     next_id = 1
 
+    expected_columns = 5
+
     for snapshot_index, csv_file in enumerate(csv_files):
         with csv_file.open("r", encoding="utf-8") as handle:
-            reader = csv.DictReader(handle)
+            reader = csv.reader(handle)
+            header = next(reader, None)
+            if header:
+                expected_columns = max(expected_columns, len(header))
+
             for row in reader:
-                link = row.get("link", "") or f"event-{next_id}"
-                comments_payload = _parse_comments(row.get("comments_json", "") or "")
-                likes = _safe_int(row.get("likes", 0))
-                message = row.get("message", "")
-                date_iso = row.get("date_iso8601", "") or datetime.utcnow().isoformat()
+                if not row or all(not (cell or "").strip() for cell in row):
+                    continue
+
+                link = (row[0].strip() if len(row) > 0 else "") or f"event-{next_id}"
+                message = row[1].strip() if len(row) > 1 else ""
+                date_iso = (row[2].strip() if len(row) > 2 else "") or datetime.utcnow().isoformat()
+
+                if len(row) >= 4:
+                    if len(row) >= expected_columns:
+                        comment_tokens = row[3:-1]
+                        likes_raw = row[-1]
+                    else:
+                        comment_tokens = row[3:]
+                        likes_raw = ""
+                else:
+                    comment_tokens = []
+                    likes_raw = ""
+
+                comments_raw = ",".join(token for token in comment_tokens if token)
+                comments_payload = _parse_comments(comments_raw)
+                likes = _safe_int((likes_raw or "").strip(), 0)
 
                 if link not in events_by_link:
                     events_by_link[link] = CsvEvent(

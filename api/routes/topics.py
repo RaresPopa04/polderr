@@ -49,7 +49,7 @@ async def list_topics():
 
 
 @router.get("/topics/{topic_id}")
-async def get_topic(topic_id: str):
+async def get_topic(topic_id: int):
     """
     Get a specific topic with all its events
     """
