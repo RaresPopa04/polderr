@@ -1,8 +1,14 @@
 """
 Posts API endpoints
 """
+import uuid
+from datetime import datetime
+
 from fastapi import APIRouter, HTTPException
 from database import db
+from fastapi import HTTPException, UploadFile, File, FastAPI
+
+from models.Post import Post
 
 router = APIRouter()
 
@@ -124,3 +130,22 @@ async def get_posts_by_topic(topic_name: str):
         ]
     }
 
+@router.post("/posts")
+async def list_events(upload: UploadFile = File(...)):
+    content: bytes = upload.file.read()
+    filename: str = upload.filename
+
+    file = File(content=content, path=filename)
+    txt = file.read()
+
+    unique_id = str(uuid.uuid4())  # ← generate a random unique ID
+
+    post = Post(
+        "Manual Upload " + filename + " " + unique_id,
+        txt,
+        datetime.now(),
+        "Manual Upload"
+    )
+
+    db.add_post(post)
+    return {"status": "ok", "uuid": unique_id}

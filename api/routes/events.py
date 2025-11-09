@@ -2,6 +2,9 @@
 Events API endpoints
 """
 from fastapi import APIRouter, HTTPException
+
+from api.csv_events import get_csv_events
+from api.mock_data import TOPICS_DATA
 from database import db
 from Services.SentimentAnalysisService import SentimentAnalysisService
 from llm.LlmClient import LlmClient

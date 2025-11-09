@@ -61,6 +61,19 @@ if os.path.exists(csv_file):
 else:
     print(f"\nNote: CSV file '{csv_file}' not found in current directory.")
 
+posts = db.get_all_posts()
+
+post_batch_1 = posts[0:3]
+post_batch_2 = posts[3:6]
+post_batch_3 = posts[6:9]
+
+event1 = Event(post_batch_1)
+event2 = Event(post_batch_1)
+event3 = Event(post_batch_1)
+
+print('ceva')
+
+
 
 
 
