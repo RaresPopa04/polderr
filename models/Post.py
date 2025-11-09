@@ -92,21 +92,34 @@ class Post:
     @staticmethod
     def _generate_subject_description_static(content: str, llm_client: LlmClient) -> str:
         """
-        Generate a broad description of what the post is about, focusing on the subject and impacted groups.
-        Excludes specific posting details.
+        Generate a single defining proposition for embedding / cosine similarity.
+        The result is a concise, context-independent summary of the core issue or topic.
         """
-        subject_prompt = f"""Based on this post, extract the main subject and describe what it's about.
-Focus on the core topic or issue and who is affected or impacted. 
-Do NOT include details about when or where it was posted.
-Write 1-2 sentences about the subject matter only.
+        subject_prompt = f"""You are preparing text for semantic embeddings in an analysis system.
 
-Post:
-{content}
+    From the following post, extract exactly ONE concise, factual sentence that describes
+    the central issue, topic, or initiative discussed — focusing on what it is about and
+    who is affected or involved.
 
-Subject Description:"""
-        
-        subject_description = llm_client.generate_response(AzerionPromptTemplate(prompt=subject_prompt))
+    Requirements:
+    - Output exactly ONE sentence.
+    - Max ~20–25 words.
+    - Neutral, descriptive, and self-contained.
+    - Do NOT mention location (all content is from Rijswijk).
+    - Do NOT include timing or posting details.
+    - Do NOT mention “this post”, “the author”, or any platform.
+    - Use plain, declarative language in English.
+
+    Post:
+    \"\"\"{content}\"\"\"
+
+    Defining subject sentence:"""
+
+        subject_description = llm_client.generate_response(
+            AzerionPromptTemplate(prompt=subject_prompt)
+        )
         return subject_description.strip()
+
 
     @staticmethod
     def _generate_actionables(content: str, link: str, llm_client: LlmClient) -> List[Actionable]:

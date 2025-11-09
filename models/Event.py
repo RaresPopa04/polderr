@@ -189,27 +189,31 @@ Subject Description:"""
     @staticmethod
     def _generate_case_description_static(posts: List[Post], llm_client: LlmClient):
         """
-        Generate a concise, searchable description of what this event is about.
-        Optimized for semantic matching and search queries.
+        Generate a concise, embedding-optimized description summarizing what the event is about.
+        Intended for semantic search and topic similarity matching.
         """
         if not posts:
             return None
-        
-        total_context = ''
-        for post in posts:
-            total_context += post.content + ' '
 
-        case_description_prompt = f"""Based on the following posts, extract the main subject and topic of the event. 
-Write a clear, concise description (2-3 sentences) about what the subject is, without including details about when or where it was posted.
-Focus ONLY on the core topic, issue, or situation being discussed. Use clear, searchable language.
+        total_context = ' '.join(post.content for post in posts)
 
-Posts:
-{total_context}
+        case_description_prompt = f"""You are generating text for a semantic search index that groups social media discussions
+    about local issues and initiatives.
 
-Subject Description:"""
+    From the following posts, produce a concise and neutral summary (2–3 sentences)
+    that describes the main topic, issue, or situation discussed.
+    Focus on what the discussion is about and who or what it concerns.
+    Do NOT mention time, place, social platforms, or posting behavior.
+    Use clear, factual, and general language in English.
 
-        case_description = llm_client.generate_response(AzerionPromptTemplate(prompt=case_description_prompt))
+    Posts:
+    \"\"\"{total_context}\"\"\"
 
+    Event description:"""
+
+        case_description = llm_client.generate_response(
+            AzerionPromptTemplate(prompt=case_description_prompt)
+        )
         return case_description.strip()
 
     @staticmethod
