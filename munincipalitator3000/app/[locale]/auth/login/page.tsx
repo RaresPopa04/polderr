@@ -40,6 +40,8 @@ export default function LoginPage() {
             const data = await response.json();
             // Store the token
             localStorage.setItem('auth_token', data.access_token);
+            // Store the username
+            localStorage.setItem('username', username);
             
             // Redirect to home and refresh to update navbar
             window.location.href = '/';
@@ -51,10 +53,10 @@ export default function LoginPage() {
     };
 
     return (
-        <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 flex items-center justify-center p-6">
-            <Card className="w-full max-w-md">
+        <div className="min-h-screen bg-gradient-to-br from-[#e8f4f8] via-white to-[#e8f5e9] dark:from-[#0a0e12] dark:via-[#0f1419] dark:to-[#0d1410] flex items-center justify-center p-6">
+            <Card className="w-full max-w-md border-2 border-[#4A8EC6]/20 shadow-xl dark:border-[#5B9ED3]/20">
                 <CardHeader>
-                    <CardTitle className="text-2xl">Log In</CardTitle>
+                    <CardTitle className="text-2xl bg-gradient-to-r from-[#4A8EC6] to-[#6BC04A] bg-clip-text text-transparent">Log In</CardTitle>
                     <CardDescription>Sign in to your account</CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -91,15 +93,15 @@ export default function LoginPage() {
 
                         <Button 
                             type="submit" 
-                            className="w-full"
+                            className="w-full bg-gradient-to-r from-[#4A8EC6] to-[#6BC04A] hover:from-[#5B9ED3] hover:to-[#7ACC58]"
                             disabled={loading}
                         >
                             {loading ? 'Logging in...' : 'Log In'}
                         </Button>
 
-                        <div className="text-center text-sm text-zinc-600 dark:text-zinc-400">
+                        <div className="text-center text-sm text-zinc-700 dark:text-zinc-300">
                             Don't have an account?{' '}
-                            <Link href="/auth/signup" className="text-blue-600 dark:text-blue-400 hover:underline">
+                            <Link href="/auth/signup" className="text-[#4A8EC6] dark:text-[#7CB8E8] hover:underline font-medium">
                                 Sign up
                             </Link>
                         </div>

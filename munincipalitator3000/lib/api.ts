@@ -51,12 +51,12 @@ export const searchApi = {
  */
 export const forumApi = {
   getForumPosts: (topicId: string) => fetchApi<{ posts: ForumPost[] }>(`/api/topics/${topicId}/forum`),
-  createForumPost: (topicId: string, content: string) => fetchApi<ForumPost>(`/api/topics/${topicId}/forum`, {
+  createForumPost: (topicId: string, content: string, user_name: string = 'Anonymous') => fetchApi<ForumPost>(`/api/topics/${topicId}/forum`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ content }),
+    body: JSON.stringify({ content, user_name }),
   }),
 };
 
@@ -86,6 +86,7 @@ export interface ForumPost {
   id: number;
   content: string;
   timestamp: string;
+  user_name: string;
 }
 
 export interface EventListItem {

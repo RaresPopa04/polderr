@@ -35,10 +35,10 @@ export default function TopicsOverviewPage() {
 
     if (loading) {
         return (
-            <div className="flex min-h-screen items-center justify-center bg-zinc-50 dark:bg-zinc-950">
+            <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-[#e8f4f8] via-white to-[#e8f5e9] dark:from-[#0a0e12] dark:via-[#0f1419] dark:to-[#0d1410]">
                 <div className="text-center">
-                    <div className="h-32 w-32 mx-auto animate-spin rounded-full border-b-2 border-zinc-900 dark:border-zinc-50"></div>
-                    <p className="mt-4 text-lg text-zinc-600 dark:text-zinc-400">Loading topics...</p>
+                    <div className="h-32 w-32 mx-auto animate-spin rounded-full border-b-2 border-[#4A8EC6] dark:border-[#7CB8E8] polderr-glow-blue"></div>
+                    <p className="mt-4 text-lg text-zinc-700 dark:text-zinc-300">Loading topics...</p>
                 </div>
             </div>
         );
@@ -46,12 +46,12 @@ export default function TopicsOverviewPage() {
 
     if (error) {
         return (
-            <div className="flex min-h-screen items-center justify-center bg-zinc-50 dark:bg-zinc-950">
+            <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-[#e8f4f8] via-white to-[#e8f5e9] dark:from-[#0a0e12] dark:via-[#0f1419] dark:to-[#0d1410]">
                 <div className="text-center">
                     <p className="text-red-600 dark:text-red-400 text-xl mb-4">⚠️ {error}</p>
-                    <p className="text-zinc-600 dark:text-zinc-400">
+                    <p className="text-zinc-700 dark:text-zinc-300">
                         Make sure the backend is running at{' '}
-                        <code className="bg-zinc-200 dark:bg-zinc-800 px-2 py-1 rounded">
+                        <code className="bg-[#4A8EC6]/10 dark:bg-[#5B9ED3]/20 px-2 py-1 rounded">
                             http://localhost:8000
                         </code>
                     </p>
@@ -61,14 +61,14 @@ export default function TopicsOverviewPage() {
     }
 
     return (
-        <div className="min-h-screen bg-zinc-50 p-6 dark:bg-zinc-950">
+        <div className="min-h-screen bg-gradient-to-br from-[#e8f4f8] via-white to-[#e8f5e9] p-6 dark:from-[#0a0e12] dark:via-[#0f1419] dark:to-[#0d1410]">
             <div className="mx-auto max-w-7xl space-y-6">
                 {/* Header */}
                 <div className="space-y-2">
-                    <h1 className="text-4xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
+                    <h1 className="text-4xl font-bold tracking-tight bg-gradient-to-r from-[#4A8EC6] to-[#6BC04A] bg-clip-text text-transparent">
                         {t('title')}
                     </h1>
-                    <p className="text-lg text-zinc-600 dark:text-zinc-400">
+                    <p className="text-lg text-zinc-700 dark:text-zinc-300">
                         {t('subtitle')}
                     </p>
                 </div>
@@ -76,9 +76,9 @@ export default function TopicsOverviewPage() {
                 {/* Topics Grid */}
                 <div className="grid gap-6 md:grid-cols-2">
                     {topics.map((topic) => (
-                        <Card key={topic.id} className="transition-shadow hover:shadow-lg">
+                        <Card key={topic.id} className="border-2 border-[#4A8EC6]/20 transition-all hover:shadow-lg hover:border-[#4A8EC6] hover:shadow-[#4A8EC6]/20 dark:border-[#5B9ED3]/20 dark:hover:border-[#5B9ED3] dark:hover:shadow-[#5B9ED3]/20">
                             <CardHeader>
-                                <div className="mb-4 inline-flex rounded-lg p-3 bg-zinc-100 dark:bg-zinc-800">
+                                <div className="mb-4 inline-flex rounded-lg p-3 bg-gradient-to-br from-[#4A8EC6]/10 to-[#6BC04A]/10 dark:from-[#5B9ED3]/20 dark:to-[#7ACC58]/20">
                                     <span className="text-4xl">{topic.icon}</span>
                                 </div>
                                 <CardTitle className="text-2xl">{topic.name}</CardTitle>
@@ -92,12 +92,12 @@ export default function TopicsOverviewPage() {
                                         <span className="text-sm text-red-600 dark:text-red-400">
                                             {topic.actionables?.misinformation || 0} misinformation
                                         </span>
-                                        <span className="text-sm text-blue-600 dark:text-blue-400">
+                                        <span className="text-sm text-[#4A8EC6] dark:text-[#7CB8E8]">
                                             {topic.actionables?.questions || 0} questions
                                         </span>
                                     </div>
                                     <Link href={`/topics/${topic.id}`}>
-                                        <Button>
+                                        <Button className="bg-gradient-to-r from-[#4A8EC6] to-[#6BC04A] hover:from-[#5B9ED3] hover:to-[#7ACC58]">
                                             {t('viewTopic')}
                                             <ArrowRight className="ml-2 h-4 w-4" />
                                         </Button>

@@ -9,10 +9,11 @@ from llm.LlmClient import LlmClient
 import subprocess
 import tempfile
 import os
-import whisper
 from config.PrivateKeys import _api_key
 
-_WHISPER_MODEL = whisper.load_model("small")
+# Whisper is commented out - using Azerion API instead
+# import whisper
+# _WHISPER_MODEL = whisper.load_model("small")
 
 class File:
     _img_extensions = (".png", ".jpg", ".jpeg", ".webp")

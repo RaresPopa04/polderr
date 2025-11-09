@@ -1,8 +1,27 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* POLDERR Color Scheme - Light Mode */
+  --background: #f8f9fa;
+  --foreground: #1a1d23;
+
+  /* Primary Colors from Logo */
+  --primary-blue-light: #7CB8E8;
+  --primary-blue: #4A8EC6;
+  --primary-blue-dark: #2E6B9F;
+  --primary-green-light: #8FDB6F;
+  --primary-green: #6BC04A;
+  --primary-green-dark: #4A9B35;
+
+  /* Accent Colors */
+  --accent-glow: rgba(124, 184, 232, 0.3);
+  --accent-glow-green: rgba(139, 219, 111, 0.3);
+
+  /* Semantic Colors */
+  --success: var(--primary-green);
+  --info: var(--primary-blue);
+  --warning: #FFA726;
+  --danger: #EF5350;
 }
 
 @theme inline {
@@ -10,12 +29,33 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  /* Custom theme colors */
+  --color-primary: var(--primary-blue);
+  --color-primary-light: var(--primary-blue-light);
+  --color-primary-dark: var(--primary-blue-dark);
+  --color-secondary: var(--primary-green);
+  --color-secondary-light: var(--primary-green-light);
+  --color-secondary-dark: var(--primary-green-dark);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    /* POLDERR Dark Mode - Matches Logo Background */
+    --background: #0f1419;
+    --foreground: #e8edf2;
+
+    /* Slightly brighter colors for dark mode */
+    --primary-blue-light: #8FC5EE;
+    --primary-blue: #5B9ED3;
+    --primary-blue-dark: #4A8EC6;
+    --primary-green-light: #9DE57A;
+    --primary-green: #7ACC58;
+    --primary-green-dark: #6BC04A;
+
+    /* Enhanced glow for dark mode */
+    --accent-glow: rgba(124, 184, 232, 0.4);
+    --accent-glow-green: rgba(139, 219, 111, 0.4);
   }
 }
 
@@ -23,4 +63,25 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Polderr-specific utility classes */
+.polderr-gradient-blue {
+  background: linear-gradient(135deg, var(--primary-blue-light) 0%, var(--primary-blue-dark) 100%);
+}
+
+.polderr-gradient-green {
+  background: linear-gradient(135deg, var(--primary-green-light) 0%, var(--primary-green-dark) 100%);
+}
+
+.polderr-gradient-full {
+  background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-green) 100%);
+}
+
+.polderr-glow-blue {
+  box-shadow: 0 0 20px var(--accent-glow);
+}
+
+.polderr-glow-green {
+  box-shadow: 0 0 20px var(--accent-glow-green);
 }

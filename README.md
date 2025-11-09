@@ -4,6 +4,14 @@
 pip install -r requirements.txt
 ```
 
+```
+brew install ffmpeg
+```
+
+```
+ollama pull qwen3-vl:4b-instruct
+```
+
 ```bash
 python -m api.main
 ```
@@ -33,3 +41,8 @@ azerion hosted : gemini-embedding-001 for embeddings
 azerion hosted : mistral-large-2407-v1:0 for nlp decision making
 
 showcase via sample.png and sample.mp4
+
+
+## Chat
+
+Hey, PolderrAI
