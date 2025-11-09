@@ -140,7 +140,7 @@ def process_csv_files(llm_client):
 def save_database_to_json(filename: str = None):
     """Save the entire database to a JSON file"""
     if filename is None:
-        filename = f"db_generated_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
+        filename = "db_generated.json"
     
     print("\n" + "=" * 70)
     print("SAVING DATABASE TO JSON")
@@ -179,10 +179,10 @@ def save_database_to_json(filename: str = None):
             }
         }
         
-        # Save to file
+        # Save to file (models now handle datetime serialization automatically)
         print(f"\nWriting to file: {filename}")
         with open(filename, 'w', encoding='utf-8') as f:
-            json.dump(db_data, f, indent=2, ensure_ascii=False, cls=DateTimeEncoder)
+            json.dump(db_data, f, indent=2, ensure_ascii=False)
         
         print(f"\n✅ SUCCESS! Database saved to: {filename}")
         print(f"\nStats:")

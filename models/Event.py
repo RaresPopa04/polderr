@@ -40,7 +40,11 @@ class Event:
         decoder=lambda ids: []  # We'll handle reconstruction separately
     ))
     keywords: Optional[List[Keyword]] = None
-    date: Optional[datetime] = None
+    # Custom encoder/decoder for datetime serialization
+    date: Optional[datetime] = field(default=None, metadata=config(
+        encoder=lambda dt: dt.isoformat() if dt else None,
+        decoder=lambda s: datetime.fromisoformat(s) if s else None
+    ))
 
     @classmethod
     def create_with_enrichment(cls, posts: List[Post] = None, other_events: List['Event'] = None) -> 'Event':

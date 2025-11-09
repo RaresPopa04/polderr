@@ -19,28 +19,40 @@ app = FastAPI(
 
 @app.on_event("startup")
 async def startup_event():
-    """Process CSV data on startup"""
-    csv_file = "rijswijk_feed_news.csv"
+    """Load database from pre-generated JSON file on startup"""
     
-    if os.path.exists(csv_file):
+    json_file = "db_generated.json"
+    
+    if not os.path.exists(json_file):
         print("\n" + "=" * 70)
-        print("STARTUP: Processing CSV data...")
+        print("WARNING: No database file found!")
         print("=" * 70)
+        print("\nPlease run: python main_generate.py")
+        print("to generate the database JSON file first.\n")
+        print("Starting with empty database...")
+        print("=" * 70 + "\n")
+        return
+    
+    print("\n" + "=" * 70)
+    print("STARTUP: Loading database from JSON...")
+    print(f"File: {json_file}")
+    print("=" * 70)
+    
+    try:
+        llm_client = LlmClient()
+        service = EventProcessingService(llm_client)
+        service.load_database_from_json(json_file)
         
-        try:
-            llm_client = LlmClient()
-            service = EventProcessingService(llm_client)
-            service.process_csv_events_to_posts(csv_file)
-            
-            print(f"\n✓ Successfully processed CSV data!")
-            print(f"  Total Events: {len(db.get_all_events())}")
-            print(f"  Total Posts: {len(db.get_all_posts())}")
-            print("=" * 70 + "\n")
-        except Exception as e:
-            print(f"\n✗ Error processing CSV: {e}")
-            print("=" * 70 + "\n")
-    else:
-        print(f"\nWarning: CSV file '{csv_file}' not found. Starting with empty database.\n")
+        print(f"\n✓ Successfully loaded database!")
+        print(f"  Total Topics: {len(db.get_all_topics())}")
+        print(f"  Total Events: {len(db.get_all_events())}")
+        print(f"  Total Posts: {len(db.get_all_posts())}")
+        print("=" * 70 + "\n")
+        
+    except Exception as e:
+        print(f"\n✗ ERROR loading database: {e}")
+        print("=" * 70 + "\n")
+        raise
 
 # Configure CORS to allow Next.js frontend
 app.add_middleware(

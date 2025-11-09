@@ -39,15 +39,9 @@ class InMemoryDB:
     
     def get_topic_by_id(self, topic_id: int) -> Optional[Topic]:
         """Get a specific topic by ID"""
-        
-        print("getting topic by id: ", topic_id)
-        print("topics: ", self.topics)
         for topic in self.topics:
-            print("topic: ", topic.topic_id)
             if topic.topic_id == int(topic_id):
-                print("topic found: ", topic)
                 return topic
-        print("topic not found")
         return None
     
     def get_all_events_by_topic(self, topic: str) -> List[Event]:
@@ -71,10 +65,7 @@ class InMemoryDB:
     
     def add_event(self, event: Event) -> Event:
         self.events.append(event)
-        print("event added: ", event)
         event.event_id = len(self.events)
-        print("event id: ", event.event_id)
-        print("events: ", self.events)
         return event
     
     def update_event(self, event_id: int, updated_event: Event) -> Optional[Event]:

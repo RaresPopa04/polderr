@@ -15,7 +15,11 @@ from llm.PromptTemplates.BelastingdienstData import _belastingdienst_data
 class Post:
     link: str
     content: str
-    date: datetime
+    # Custom encoder/decoder for datetime serialization
+    date: datetime = field(metadata=config(
+        encoder=lambda dt: dt.isoformat() if dt else None,
+        decoder=lambda s: datetime.fromisoformat(s) if s else None
+    ))
     source: str
     satisfaction_rating: int = 0
     # Exclude from serialization to avoid issues with tuple serialization
