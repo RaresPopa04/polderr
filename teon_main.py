@@ -74,4 +74,4 @@ if __name__ == "__main__":
     
     # test_get_raport_for_event()
 
-    test_serialization_and_deserialization()
+    # test_serialization_and_deserialization()
