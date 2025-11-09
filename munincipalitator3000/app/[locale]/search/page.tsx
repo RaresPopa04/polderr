@@ -141,23 +141,17 @@ export default function SearchPage() {
                                             {t('createdTopic')}: {searchResult.name}
                                         </CardTitle>
                                         <CardDescription className="text-base space-y-2">
-                                            <div className="flex flex-wrap gap-2">
-                                                <span className="font-medium">{t('queryWords')}:</span>
-                                                {searchResult.query_words.map((word, i) => (
-                                                    <span key={i} className="inline-flex items-center gap-1 bg-white dark:bg-zinc-800 px-2 py-1 rounded text-sm">
-                                                        <Search className="h-3 w-3" />
-                                                        {word}
-                                                    </span>
-                                                ))}
-                                            </div>
-                                            <div className="flex flex-wrap gap-2">
-                                                <span className="font-medium">{t('keywordsMatched')}:</span>
-                                                {searchResult.keywords_found.map((keyword, i) => (
-                                                    <span key={i} className="inline-flex items-center gap-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 px-2 py-1 rounded text-sm">
-                                                        <Tag className="h-3 w-3" />
-                                                        {keyword}
-                                                    </span>
-                                                ))}
+                                            <div className="flex flex-wrap gap-4 text-sm">
+                                                <span className="inline-flex items-center gap-1.5">
+                                                    <Sparkles className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                                                    <span className="font-medium">Similarity Threshold:</span>
+                                                    <span className="text-zinc-900 dark:text-zinc-50">{(searchResult.similarity_threshold * 100).toFixed(0)}%</span>
+                                                </span>
+                                                <span className="inline-flex items-center gap-1.5">
+                                                    <Search className="h-4 w-4 text-zinc-600 dark:text-zinc-400" />
+                                                    <span className="font-medium">Events Searched:</span>
+                                                    <span className="text-zinc-900 dark:text-zinc-50">{searchResult.total_events_searched}</span>
+                                                </span>
                                             </div>
                                         </CardDescription>
                                     </div>
@@ -196,15 +190,27 @@ export default function SearchPage() {
                                 {searchResult.events.map((event) => (
                                     <Card key={event.event_id} className="transition-all hover:shadow-lg hover:border-zinc-400 dark:hover:border-zinc-600">
                                         <CardHeader>
-                                            <CardTitle className="text-xl">{event.name}</CardTitle>
-                                            <CardDescription className="text-sm flex items-center gap-2">
-                                                <Calendar className="h-4 w-4" />
-                                                {new Date(event.date).toLocaleDateString()}
-                                            </CardDescription>
+                                            <div className="flex items-start justify-between gap-2">
+                                                <div className="flex-1">
+                                                    <CardTitle className="text-xl">{event.name}</CardTitle>
+                                                    <CardDescription className="text-sm flex items-center gap-2">
+                                                        <Calendar className="h-4 w-4" />
+                                                        {new Date(event.date).toLocaleDateString()}
+                                                    </CardDescription>
+                                                </div>
+                                                {event.similarity_score !== undefined && (
+                                                    <div className="flex flex-col items-end">
+                                                        <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+                                                            {(event.similarity_score * 100).toFixed(0)}%
+                                                        </div>
+                                                        <span className="text-xs text-zinc-600 dark:text-zinc-400">similarity</span>
+                                                    </div>
+                                                )}
+                                            </div>
                                         </CardHeader>
                                         <CardContent className="space-y-4">
                                             <p className="text-sm text-zinc-700 dark:text-zinc-300">
-                                                {event.small_summary}
+                                                {event.case_description || event.small_summary}
                                             </p>
 
                                             {/* Keywords */}

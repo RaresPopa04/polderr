@@ -39,6 +39,7 @@ class InMemoryDB:
     
     def get_topic_by_id(self, topic_id: int) -> Optional[Topic]:
         """Get a specific topic by ID"""
+        
         for topic in self.topics:
             if topic.topic_id == int(topic_id):
                 return topic
@@ -84,12 +85,29 @@ class InMemoryDB:
                 return True
         return False
     
-    def get_events_by_topic_from_last_24_hours(self, topic: str) -> List[Event]:
-        """Get all events for a specific topic from the last 24 hours"""
+    def get_events_by_topic_from_last_24_hours(self, date: datetime, topic: str) -> List[Event]:
+        """Get all events for a specific topic from the last 72 hours"""
         events = []
+        cutoff_date = date - timedelta(hours=72)
+        
+        print(f"\n🔍 Searching for events with topic='{topic}', after {cutoff_date}")
+        
         for event in self.events:
-            if event.get_event_topic() == topic and event.date > datetime.now() - timedelta(hours=24):
+            event_topic_name = event.get_event_topic()
+            
+            print(f"  Event '{event.name}': topic='{event_topic_name}', date={event.date}")
+            
+            # Check if topic matches and event is within 72 hours
+            if event_topic_name == topic and event.date and event.date > cutoff_date:
+                print(f"    ✓ Match found!")
                 events.append(event)
+            else:
+                if event_topic_name != topic:
+                    print(f"    ✗ Topic mismatch")
+                elif not event.date or event.date <= cutoff_date:
+                    print(f"    ✗ Too old (cutoff: {cutoff_date})")
+                    
+        print(f"📊 Found {len(events)} matching events\n")
         return events
     
     # Post CRUD operations

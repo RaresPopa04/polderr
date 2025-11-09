@@ -19,6 +19,7 @@ from models.Post import Post
 # posts: List[Post] = None,
 # similar_events=None,
 # keywords: List[Keyword] = None,
+
 @dataclass_json
 @dataclass
 class Event:
@@ -29,6 +30,7 @@ class Event:
     name: Optional[str] = None
     small_summary: Optional[str] = None
     big_summary: Optional[str] = None
+    case_description: Optional[str] = None
     # Serialize posts as just links, not full objects
     posts: Optional[List[Post]] = field(default=None, metadata=config(
         encoder=lambda posts: [p.link for p in posts] if posts else [],
@@ -60,6 +62,7 @@ class Event:
         keywords = cls._extract_keywords(posts, llm_client)
         similar_events = cls._find_similar_events_static(keywords, other_events, llm_client)
         date = cls._find_most_recent_post_date(posts)
+        case_description = cls._generate_case_description_static(posts, llm_client)
         
         return cls(
             posts=posts,
@@ -68,7 +71,8 @@ class Event:
             big_summary=big_summary,
             similar_events=similar_events,
             keywords=keywords,
-            date=date
+            date=date,
+            case_description=case_description
         )
 
 
@@ -87,11 +91,14 @@ class Event:
         (self.small_summary, self.big_summary) = Event._generate_summaries(self.posts, llm_client)
         self.similar_events = Event._find_similar_events_static(self.keywords, other_events, llm_client)
         self.date = Event._find_most_recent_post_date(self.posts)
+        self.case_description = Event._generate_case_description_static(self.posts, llm_client)
         
     def get_event_topic(self) -> str:
+        """Returns the topic name (string) of this event based on its first post"""
         if not self.posts:
             return None
-        return self.posts[0].topic
+        # posts[0].topic is a Topic object, return its name
+        return self.posts[0].topic.name if self.posts[0].topic else None
 
     @staticmethod
     def _find_most_recent_post_date(posts: List[Post]) -> datetime:
@@ -154,7 +161,59 @@ class Event:
         return big_summary
 
     @staticmethod
-    def _find_similar_events_static(keywords: List[Keyword], other_events: List['Event'], llm_client: LlmClient):
+    def _generate_case_description_static(posts: List[Post], llm_client: LlmClient):
+        """
+        Generate a concise, searchable description of what this event is about.
+        Optimized for semantic matching and search queries.
+        """
+        if not posts:
+            return None
+        
+        total_context = ''
+        for post in posts:
+            total_context += post.content + ' '
+
+        case_description_prompt = f"""Based on the following posts, extract the main subject and topic of the event. 
+Write a clear, concise description (2-3 sentences) about what the subject is, without including details about when or where it was posted.
+Focus ONLY on the core topic, issue, or situation being discussed. Use clear, searchable language.
+
+Posts:
+{total_context}
+
+Subject Description:"""
+
+        case_description = llm_client.generate_response(AzerionPromptTemplate(prompt=case_description_prompt))
+
+        return case_description.strip()
+
+    @staticmethod
+    def _generate_case_description_static(posts: List[Post], llm_client: LlmClient):
+        """
+        Generate a concise, searchable description of what this event is about.
+        Optimized for semantic matching and search queries.
+        """
+        if not posts:
+            return None
+        
+        total_context = ''
+        for post in posts:
+            total_context += post.content + ' '
+
+        case_description_prompt = f"""Based on the following posts, extract the main subject and topic of the event. 
+Write a clear, concise description (2-3 sentences) about what the subject is, without including details about when or where it was posted.
+Focus ONLY on the core topic, issue, or situation being discussed. Use clear, searchable language.
+
+Posts:
+{total_context}
+
+Subject Description:"""
+
+        case_description = llm_client.generate_response(AzerionPromptTemplate(prompt=case_description_prompt))
+
+        return case_description.strip()
+
+    @staticmethod
+    def _find_similar_events_static(keywords: List[Keyword], other_events: List['Event'], llm_client: LlmClient) -> List['Event']:
         sim_events = []
         for event in other_events:
             if Event._events_are_similar_static(keywords, event, llm_client):

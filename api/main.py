@@ -4,10 +4,16 @@ FastAPI main application
 import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+
+from api.routes import topics, events, search
+from llm.LlmClient import LlmClient
+from Services.EventProcessingService import EventProcessingService
+from database import db
 from llm.LlmClient import LlmClient
 from Services.EventProcessingService import EventProcessingService
 from database import db
 from api.routes import topics, events, search, posts
+
 
 app = FastAPI(
     title="Polderr API",

@@ -53,8 +53,8 @@ export interface SearchResponse {
   topic_id: number;
   name: string;
   events: SearchEvent[];
-  keywords_found: string[];
-  query_words: string[];
+  total_events_searched: number;
+  similarity_threshold: number;
 }
 
 export interface SearchEvent {
@@ -62,6 +62,8 @@ export interface SearchEvent {
   name: string;
   small_summary: string;
   big_summary: string;
+  case_description?: string;
   date: string;
   keywords: string[];
+  similarity_score?: number;
 }
