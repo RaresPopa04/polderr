@@ -9,7 +9,7 @@ from llm.PromptTemplates.Prompts import build_sentiment_prompt
 from Services.EventAssigningService import EventAssigningService
 
 # CONFIGURATION: Control how many posts to process
-RIJSWIJK_FEED_LIMIT = 1  # Number of posts to process from rijswijk_feed_news.csv (None = all)
+RIJSWIJK_FEED_LIMIT = 10  # Number of posts to process from rijswijk_feed_news.csv (None = all)
 NUM_SNAPSHOT_FILES = 1   # Number of snapshot files to process (0-24)
 
 class EventProcessingService:
