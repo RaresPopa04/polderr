@@ -54,8 +54,7 @@ class EventAssigningService:
             print(f"✓ Post added to event '{event.name}' (similarity: {similarity:.3f})")
             return
         
-        # Create new event if no match found
-        new_event = Event(posts=[post], other_events=db.events)
+        new_event = Event.create_with_enrichment(posts=[post], other_events=db.events)
         
         print(f"✨ Event '{new_event.name}' created for post '{post.link}'")
         db.add_event(new_event)

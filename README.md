@@ -16,6 +16,11 @@ cd munincipalitator3000
 npm run dev
 ```
 
+### Re-generate the json with the data
+
+```
+python main_generate.py
+```
 
 1. a new post comes
 2. topic is assigned (find_topic_for_post)

@@ -9,20 +9,20 @@ from models.Post import Post
 from models.Topic import Topic
 
 # trafic
-post1 = Post(
-        content="The city is experiencing a lot of traffic jams lately. The roads are clogged with cars and the streets are gridlocked. The city is trying to find a solution to the problem. The city is trying to find a solution to the problem.",
-        link="niggaer",
-        date=datetime.datetime.now(),
-        source="Twitter",
-    )
+# post1 = Post.create_with_enrichment(
+#         link="niggaer",
+#         content="The city is experiencing a lot of traffic jams lately. The roads are clogged with cars and the streets are gridlocked. The city is trying to find a solution to the problem. The city is trying to find a solution to the problem.",
+#         date=datetime.datetime.now(),
+#         source="Twitter",
+#     )
 
-# environment
-post2 = Post(
-    content="The city is experiencing a lot of pollution lately. The air is thick with smoke and the streets are clogged with cars. The city is trying to find a solution to the problem. The city is trying to find a solution to the problem.",
-    link="",
-    date=datetime.datetime.now(),
-    source="Twitter",
-)
+# # environment
+# post2 = Post.create_with_enrichment(
+#     link="",
+#     content="The city is experiencing a lot of pollution lately. The air is thick with smoke and the streets are clogged with cars. The city is trying to find a solution to the problem. The city is trying to find a solution to the problem.",
+#     date=datetime.datetime.now(),
+#     source="Twitter",
+# )
 
 # traffic
 # event1 = Event(
@@ -54,26 +54,40 @@ def test_get_raport_for_event():
     print("raport for event: ", db.get_raport_for_event(post1.link))
 
 def test_serialization_and_deserialization():
-    from pydantic import TypeAdapter
     from models.Keyword import Keyword
     
-    # Create keywords
-    keywords = [Keyword(keyword="Rijswijk", emb=[0.1, 0.2, 0.3]), Keyword(keyword="Traffic", emb=[0.4, 0.5, 0.6])]
+    print("=" * 50)
+    print("Testing Keyword serialization/deserialization")
+    print("=" * 50)
     
-    # Serialize to JSON
-    adapter = TypeAdapter(list[Keyword])
-    json_str = adapter.dump_json(keywords, indent=2).decode('utf-8')
-    print("Serialized:", json_str)
+    # Create a single keyword
+    keyword = Keyword(keyword="Rijswijk", emb=[0.1, 0.2, 0.3])
+    print(f"\n1. Original keyword: {keyword}")
     
-    # Load from JSON
-    loaded = adapter.validate_json(json_str)
-    print("Loaded:", [k.keyword for k in loaded])
+    # Serialize to JSON string
+    json_str = keyword.to_json(indent=2)
+    print(f"\n2. Serialized to JSON:\n{json_str}")
+    
+    # Deserialize from JSON string
+    loaded_keyword = Keyword.from_json(json_str)
+    print(f"\n3. Deserialized keyword: {loaded_keyword}")
+    print(f"   - keyword field: {loaded_keyword.keyword}")
+    print(f"   - emb field: {loaded_keyword.emb}")
+    
+    # Also test to_dict() and from_dict()
+    keyword_dict = keyword.to_dict()
+    print(f"\n4. As dictionary: {keyword_dict}")
+    
+    from_dict_keyword = Keyword.from_dict(keyword_dict)
+    print(f"5. From dictionary: {from_dict_keyword}")
+    
+    print("\n" + "=" * 50)
+    print("✅ All serialization tests passed!")
+    print("=" * 50)
 
 if __name__ == "__main__":
     # test_find_topic_for_post()
     
     # test_get_raport_for_event()
 
-    # test_serialization_and_deserialization()
-
-    pass
+    test_serialization_and_deserialization()
