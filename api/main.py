@@ -3,7 +3,7 @@ FastAPI main application
 """
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from api.routes import topics, events
+from api.routes import topics, events, search
 
 app = FastAPI(
     title="Polderr API",
@@ -26,6 +26,7 @@ app.add_middleware(
 # Include routers
 app.include_router(topics.router, prefix="/api", tags=["topics"])
 app.include_router(events.router, prefix="/api", tags=["events"])
+app.include_router(search.router, prefix="/api", tags=["search"])
 
 
 @app.get("/")

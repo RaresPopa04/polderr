@@ -34,6 +34,13 @@ get_report_for_last_month_prompt = textwrap.dedent(
     {last_month_posts}
     """)
 
+search_query_to_topic_name_prompt = textwrap.dedent(
+    """
+    Convert this search query into a descriptive topic name (maximum 5 words).
+    Search query: {search_query}
+    Return only the topic name, nothing else.
+    """)
+
 event_name_prompt = textwrap.dedent(
     """
     Generate a maximum of 10 words name for an event considering these 

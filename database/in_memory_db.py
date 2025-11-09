@@ -5,6 +5,7 @@ from llm.AzerionPromptTemplate import AzerionPromptTemplate
 from llm.PromptTemplates.Prompts import get_report_for_event_prompt, get_report_for_last_month_prompt, get_report_for_last_week_prompt, get_report_for_topic_prompt
 from models.Event import Event
 from models.Post import Post
+from models.Keyword import Keyword
 from datetime import datetime, timedelta
 from models.Topic import Topic
 
@@ -174,6 +175,71 @@ class InMemoryDB:
             if topic.name == topic_name:
                 return topic
         return None
+    
+    def get_topic_by_id(self, topic_id: int) -> Optional[Topic]:
+        for topic in self.topics:
+            if topic.topic_id == topic_id:
+                return topic
+        return None
+    
+    def add_topic(self, topic: Topic) -> Topic:
+        # Generate new topic ID
+        if not topic.topic_id:
+            topic.topic_id = len(self.topics) + 1
+        self.topics.append(topic)
+        return topic
+    
+    def search_keywords_by_query(self, query_words: List[str]) -> List[Keyword]:
+        """
+        Search for keywords that contain any of the query words (substring matching).
+        Returns a list of matching keywords from all events.
+        """
+        matching_keywords = []
+        seen_keywords = set()  # Track unique keywords
+        
+        # Iterate through all events and their keywords
+        for event in self.events:
+            if not event.keywords:
+                continue
+            
+            for keyword in event.keywords:
+                # Check if any query word is a substring of this keyword (case-insensitive)
+                keyword_lower = keyword.keyword.lower()
+                for query_word in query_words:
+                    if query_word.lower() in keyword_lower:
+                        # Add only if we haven't seen this exact keyword yet
+                        if keyword.keyword not in seen_keywords:
+                            matching_keywords.append(keyword)
+                            seen_keywords.add(keyword.keyword)
+                        break  # Move to next keyword once we found a match
+        
+        return matching_keywords
+    
+    def get_events_by_keywords(self, keywords: List[Keyword]) -> List[Event]:
+        """
+        Get all events that contain any of the specified keywords.
+        Returns each event only once (deduplicated).
+        """
+        matching_events = []
+        seen_event_ids = set()
+        
+        # Convert keywords to a set of keyword strings for faster lookup
+        keyword_strings = {kw.keyword for kw in keywords}
+        
+        # Iterate through all events
+        for event in self.events:
+            if not event.keywords or event.event_id in seen_event_ids:
+                continue
+            
+            # Check if this event has any of the target keywords
+            for event_keyword in event.keywords:
+                if event_keyword.keyword in keyword_strings:
+                    matching_events.append(event)
+                    if event.event_id:
+                        seen_event_ids.add(event.event_id)
+                    break  # Move to next event once we found a match
+        
+        return matching_events
 
     def get_raport_for_topic(self, topic_id: int) -> Optional[str]:
         topic = self.get_topic_by_id(topic_id)
