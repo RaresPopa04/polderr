@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from datetime import datetime
 from typing import List, Optional
-from dataclasses_json import dataclass_json
+from dataclasses_json import dataclass_json, config
 
 from llm.AzerionPromptTemplate import AzerionPromptTemplate
 from llm.LlmClient import LlmClient
@@ -30,7 +30,8 @@ class Event:
     small_summary: Optional[str] = None
     big_summary: Optional[str] = None
     posts: Optional[List[Post]] = None
-    similar_events: Optional[List['Event']] = None
+    # Exclude similar_events from serialization to avoid circular reference
+    similar_events: Optional[List['Event']] = field(default=None, metadata=config(exclude=lambda x: True))
     keywords: Optional[List[Keyword]] = None
     date: Optional[datetime] = None
 

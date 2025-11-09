@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from datetime import datetime
 from typing import List, Optional, Tuple
-from dataclasses_json import dataclass_json
+from dataclasses_json import dataclass_json, config
 
 from llm.AzerionPromptTemplate import AzerionPromptTemplate
 from llm.LlmClient import LlmClient
@@ -18,8 +18,10 @@ class Post:
     date: datetime
     source: str
     satisfaction_rating: int = 0
-    engagement_rating: List[Tuple[datetime, int]] = field(default_factory=list)
-    actionables: List[Actionable] = field(default_factory=list)
+    # Exclude from serialization to avoid issues with tuple serialization
+    engagement_rating: List[Tuple[datetime, int]] = field(default_factory=list, metadata=config(exclude=lambda x: True))
+    # Exclude from serialization to avoid circular references
+    actionables: List[Actionable] = field(default_factory=list, metadata=config(exclude=lambda x: True))
     topic: str = ""
     
     @classmethod
