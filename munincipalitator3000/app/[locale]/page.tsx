@@ -376,7 +376,11 @@ export default function Home() {
                       <div className="flex items-center gap-4">
                         <span className="text-5xl group-hover:scale-110 transition-transform">{topic.icon}</span>
                         <div>
-                          <CardTitle className="text-2xl mb-1">{topic.name}</CardTitle>
+                          <CardTitle className="text-2xl mb-1">
+                            {topic.name === "Culture and Events" ? "Cultuur en Evenementen" :
+                              topic.name === "Public Administration" ? "Openbaar Bestuur" :
+                                topic.name}
+                          </CardTitle>
                         </div>
                       </div>
                       <div className="flex flex-col gap-2 text-right">
