@@ -1,13 +1,11 @@
 from pydantic.dataclasses import dataclass
 from pydantic import ConfigDict, Field
-from typing import Any
-import numpy as np
-
+from typing import List, Optional
 
 @dataclass(config=ConfigDict(arbitrary_types_allowed=True))
 class Keyword:
     keyword: str
-    emb: Any = Field(default=None, exclude=True)  # Exclude embedding from JSON serialization
+    emb: List[float]
 
     def __repr__(self):
         return self.keyword

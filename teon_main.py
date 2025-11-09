@@ -58,7 +58,7 @@ def test_serialization_and_deserialization():
     from models.Keyword import Keyword
     
     # Create keywords
-    keywords = [Keyword(keyword="Rijswijk"), Keyword(keyword="Traffic")]
+    keywords = [Keyword(keyword="Rijswijk", emb=[0.1, 0.2, 0.3]), Keyword(keyword="Traffic", emb=[0.4, 0.5, 0.6])]
     
     # Serialize to JSON
     adapter = TypeAdapter(list[Keyword])
