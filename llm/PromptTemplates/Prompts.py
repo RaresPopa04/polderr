@@ -3,7 +3,21 @@ import textwrap
 
 find_topic_for_post_prompt = textwrap.dedent(
     """
-    Chose one of these topics: {topics} for the post: {post_content}. Return only the topic name.
+    You are a topic categorization assistant. Your task is to assign the most relevant topic to a post.
+    
+    AVAILABLE TOPICS:
+    {topics}
+    
+    POST DESCRIPTION:
+    {post_description}
+    
+    INSTRUCTIONS:
+    - Read the post description carefully
+    - Choose the ONE topic from the list above that best matches the post's main subject
+    - If no topic is a good match, choose "Other"
+    - Return ONLY the exact topic name, nothing else
+    
+    TOPIC:
     """)
 
 get_report_for_event_prompt = textwrap.dedent(
