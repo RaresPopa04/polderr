@@ -92,10 +92,10 @@ class InMemoryDB:
         """Get all posts"""
         return self.posts
     
-    def get_post_by_id(self, post_id: int) -> Optional[Post]:
+    def get_post_by_id(self, link: str) -> Optional[Post]:
         """Get a specific post by ID"""
         for post in self.posts:
-            if post.post_id == post_id:
+            if post.link == link:
                 return post
         return None
     
@@ -108,22 +108,21 @@ class InMemoryDB:
     
     def add_post(self, post: Post) -> Post:
         """Add a new post"""
-        post.post_id = len(self.posts) + 1
         self.posts.append(post)
         return post
     
-    def update_post(self, post_id: int, updated_post: Post) -> Optional[Post]:
+    def update_post(self, link: str, updated_post: Post) -> Optional[Post]:
         """Update an existing post"""
         for i, post in enumerate(self.posts):
-            if post.post_id == post_id:
+            if post.link == link:
                 self.posts[i] = updated_post
                 return updated_post
         return None
     
-    def delete_post(self, post_id: int) -> bool:
+    def delete_post(self, link: str) -> bool:
         """Delete a post by ID"""
         for i, post in enumerate(self.posts):
-            if post.post_id == post_id:
+            if post.link == link:
                 self.posts.pop(i)
                 return True
         return False

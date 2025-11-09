@@ -51,7 +51,7 @@ def test_get_raport_for_event():
     print("posts: ", db.get_all_posts())
     print("events: ", db.get_all_events())
     print("topics: ", db.get_all_topics())
-    print("raport for event: ", db.get_raport_for_event(post1.post_id))
+    print("raport for event: ", db.get_raport_for_event(post1.link))
 
 def test_serialization_and_deserialization():
     from pydantic import TypeAdapter
