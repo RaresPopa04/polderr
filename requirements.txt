@@ -4,3 +4,8 @@ pydantic
 dataclasses-json
 requests
 numpy
+whisper
+python-docx
+PyPDF2
+Pillow
+python-multipart

@@ -47,6 +47,20 @@ export const searchApi = {
 };
 
 /**
+ * Forum API
+ */
+export const forumApi = {
+  getForumPosts: (topicId: string) => fetchApi<{ posts: ForumPost[] }>(`/api/topics/${topicId}/forum`),
+  createForumPost: (topicId: string, content: string) => fetchApi<ForumPost>(`/api/topics/${topicId}/forum`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ content }),
+  }),
+};
+
+/**
  * Type definitions
  */
 export interface SearchResponse {
@@ -66,4 +80,10 @@ export interface SearchEvent {
   date: string;
   keywords: string[];
   similarity_score?: number;
+}
+
+export interface ForumPost {
+  id: number;
+  content: string;
+  timestamp: string;
 }
