@@ -136,5 +136,5 @@ class Post:
                     base_link=link, 
                     content=actionable
                 ))
-        
-        return actionables_list
+
+        return actionables_list[:2]
