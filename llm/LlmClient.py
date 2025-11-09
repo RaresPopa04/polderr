@@ -9,6 +9,21 @@ class LlmClient:
         self.address = address
         self.api_key = _api_key
 
+    @staticmethod
+    def clean_response(text: str) -> str:
+        """Remove surrounding quotation marks and extra whitespace from AI responses"""
+        if not isinstance(text, str):
+            return text
+        
+        text = text.strip()
+        
+        # Remove surrounding quotes (both single and double)
+        if (text.startswith('"') and text.endswith('"')) or \
+           (text.startswith("'") and text.endswith("'")):
+            text = text[1:-1]
+        
+        return text.strip()
+
     def generate_response(self, prompt, endpoint = "chat/completions"):
         headers = {
             'Content-Type': 'application/json',
@@ -36,12 +51,14 @@ class LlmClient:
                     elif 'choices' in response_data and isinstance(response_data['choices'], list) \
                             and response_data['choices']:
                         message = response_data['choices'][0].get('message', {})
-                        return message.get('content', 'No content found')
+                        content = message.get('content', 'No content found')
+                        return self.clean_response(content)
 
                     # Handle Ollama /api/generate response
                     elif 'response' in response_data:
                         # e.g. {"model":"llama3.2-vision:11b", "response":"...", "done":true, ...}
-                        return response_data.get('response', '')
+                        content = response_data.get('response', '')
+                        return self.clean_response(content)
 
                     else:
                         return 'Invalid response structure'

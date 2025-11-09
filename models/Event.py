@@ -137,8 +137,11 @@ class Event:
         kws = []
         embedding_service = SemanticSimilarityService(llm_client)
         for kw in kw_list:
-            embedding = embedding_service.embed(kw)
-            kws.append(Keyword(kw, embedding))
+            # Clean each keyword to remove quotes and extra whitespace
+            cleaned_kw = LlmClient.clean_response(kw)
+            if cleaned_kw:  # Only add non-empty keywords
+                embedding = embedding_service.embed(cleaned_kw)
+                kws.append(Keyword(cleaned_kw, embedding))
 
         return kws
 

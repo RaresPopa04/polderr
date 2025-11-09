@@ -36,13 +36,63 @@ async def list_topics():
                 "name": event.name,
                 "data_points": []
             })
+        
+        # Get top 3 events by total engagement for this topic
+        events_with_engagement = []
+        for event in topic.events:
+            if not event.posts:
+                continue
+            
+            # Build interaction timeline
+            interaction_timeline = []
+            for post in event.posts:
+                if post.date:
+                    interaction_timeline.append({
+                        "date": post.date.isoformat(),
+                        "timestamp": int(post.date.timestamp()),
+                        "delta": 0,
+                        "prediction": False
+                    })
+                
+                if hasattr(post, 'delta_interactions') and post.delta_interactions:
+                    for delta_date, delta_value in post.delta_interactions:
+                        interaction_timeline.append({
+                            "date": delta_date.isoformat(),
+                            "timestamp": int(delta_date.timestamp()),
+                            "delta": delta_value,
+                            "prediction": False
+                        })
+            
+            # Sort and calculate cumulative
+            interaction_timeline.sort(key=lambda x: x["timestamp"])
+            cumulative = 0
+            for point in interaction_timeline:
+                cumulative += point["delta"]
+                point["total_interactions"] = cumulative
+            
+            # Get max engagement
+            max_engagement = cumulative if interaction_timeline else 0
+            
+            if interaction_timeline:
+                events_with_engagement.append({
+                    "event_id": event.event_id,
+                    "name": event.name,
+                    "timeline": interaction_timeline,
+                    "max_engagement": max_engagement
+                })
+        
+        # Sort by max engagement and get top 3
+        events_with_engagement.sort(key=lambda x: x["max_engagement"], reverse=True)
+        top_3_events = events_with_engagement[:3]
+        
         topics_data.append({
             "id": topic.topic_id,
             "name": topic.name,
             "icon": topic.icon,
             "events": events,
             "actionables": actionables,
-            "total_posts": total_posts
+            "total_posts": total_posts,
+            "top_events": top_3_events
         })
     
     topics_data.sort(key=lambda x: x["total_posts"], reverse=True)
@@ -95,13 +145,44 @@ async def get_topic(topic_id: int):
             "questions": questions
         }
         
+        # Build interaction timeline for this event
+        interaction_timeline = []
+        for post in event.posts:
+            if post.date:
+                interaction_timeline.append({
+                    "date": post.date.isoformat(),
+                    "timestamp": int(post.date.timestamp()),
+                    "delta": 0,
+                    "prediction": False
+                })
+            
+            if hasattr(post, 'delta_interactions') and post.delta_interactions:
+                for delta_date, delta_value in post.delta_interactions:
+                    interaction_timeline.append({
+                        "date": delta_date.isoformat(),
+                        "timestamp": int(delta_date.timestamp()),
+                        "delta": delta_value,
+                        "prediction": False
+                    })
+        
+        # Sort and calculate cumulative
+        interaction_timeline.sort(key=lambda x: x["timestamp"])
+        cumulative = 0
+        for point in interaction_timeline:
+            cumulative += point["delta"]
+            point["total_interactions"] = cumulative
+        
+        max_engagement = cumulative if interaction_timeline else 0
+        
         events.append({
             "id": event.event_id,
             "name": event.name,
             "short_summary": short_summary,
             "actionables": actionables,
             "date": event.date.isoformat() if event.date else None,
-            "sentiment": round(sentiment_average, 2)
+            "sentiment": round(sentiment_average, 2),
+            "engagement_timeline": interaction_timeline,
+            "max_engagement": max_engagement
         })
         
         # Add sentiment data point for chart
@@ -116,11 +197,16 @@ async def get_topic(topic_id: int):
     # Sort sentiment data by timestamp
     sentiment_data_points.sort(key=lambda x: x["timestamp"])
     
+    # Sort events by engagement and get top 3
+    events_sorted = sorted(events, key=lambda x: x.get("max_engagement", 0), reverse=True)
+    top_3_events = events_sorted[:3]
+    
     return_topic = {
         "id": topic.topic_id,
         "name": topic.name,
         "icon": topic.icon,
         "events": events,
+        "top_events": top_3_events,
         "total_actionables": {
             "misinformation": total_misinformation,
             "questions": total_questions

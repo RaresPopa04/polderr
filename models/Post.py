@@ -140,11 +140,13 @@ class Post:
         
         actionables_list = []
         for actionable in actionables_exerpts:
-            if actionable:
+            # Clean each actionable to remove quotes and extra whitespace
+            cleaned_actionable = LlmClient.clean_response(actionable)
+            if cleaned_actionable:
                 actionables_list.append(Actionable.create_with_enrichment(
                     actionable_id=str(len(actionables_exerpts)) + link, 
                     base_link=link, 
-                    content=actionable
+                    content=cleaned_actionable
                 ))
 
         return actionables_list[:2]
