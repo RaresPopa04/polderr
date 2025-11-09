@@ -2,13 +2,11 @@
 
 import { Link } from '@/i18n/routing';
 import { LanguageSwitcher } from './LanguageSwitcher';
-import { Search, Home, Hash, LogIn, UserPlus, LogOut } from 'lucide-react';
-import { useTranslations } from 'next-intl';
+import { LogIn, UserPlus, LogOut } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 export function Navbar() {
-  const t = useTranslations('Navbar');
   const router = useRouter();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
@@ -32,33 +30,7 @@ export function Navbar() {
         </Link>
 
         <div className="flex items-center gap-6">
-          <Link
-            href="/"
-            className="flex items-center gap-2 text-sm font-medium text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-50 transition-colors"
-          >
-            <Home className="h-4 w-4" />
-            {t('home')}
-          </Link>
-
-          <Link
-            href="/topics"
-            className="flex items-center gap-2 text-sm font-medium text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-50 transition-colors"
-          >
-            <Hash className="h-4 w-4" />
-            {t('topics')}
-          </Link>
-
-          <Link
-            href="/search"
-            className="flex items-center gap-2 text-sm font-medium text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-50 transition-colors"
-          >
-            <Search className="h-4 w-4" />
-            {t('search')}
-          </Link>
-
           <LanguageSwitcher />
-
-          <div className="border-l border-zinc-300 dark:border-zinc-700 h-6"></div>
 
           {isAuthenticated ? (
             <button
