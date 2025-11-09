@@ -9,17 +9,17 @@ from models.Post import Post
 from models.Topic import Topic
 
 # trafic
-post1 = Post(
-        content="The city is experiencing a lot of traffic jams lately. The roads are clogged with cars and the streets are gridlocked. The city is trying to find a solution to the problem. The city is trying to find a solution to the problem.",
+post1 = Post.create_with_enrichment(
         link="niggaer",
+        content="The city is experiencing a lot of traffic jams lately. The roads are clogged with cars and the streets are gridlocked. The city is trying to find a solution to the problem. The city is trying to find a solution to the problem.",
         date=datetime.datetime.now(),
         source="Twitter",
     )
 
 # environment
-post2 = Post(
-    content="The city is experiencing a lot of pollution lately. The air is thick with smoke and the streets are clogged with cars. The city is trying to find a solution to the problem. The city is trying to find a solution to the problem.",
+post2 = Post.create_with_enrichment(
     link="",
+    content="The city is experiencing a lot of pollution lately. The air is thick with smoke and the streets are clogged with cars. The city is trying to find a solution to the problem. The city is trying to find a solution to the problem.",
     date=datetime.datetime.now(),
     source="Twitter",
 )
