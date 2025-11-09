@@ -2,7 +2,7 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { ExternalLink, TrendingUp, Calendar, MessageCircle } from 'lucide-react';
+import { ExternalLink, TrendingUp, Calendar, MessageCircle, AlertTriangle, HelpCircle } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -83,22 +83,16 @@ export default function EventPage() {
       <div className="mx-auto max-w-7xl space-y-8">
         {/* Header */}
         <div className="space-y-4">
-          <div className="flex items-center gap-3">
-            <div
-              className="h-6 w-6 rounded-full"
-              style={{ backgroundColor: eventData.color || '#3b82f6' }}
-            />
-            <h1 className="text-5xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
-              {eventData.name}
-            </h1>
-          </div>
+          <h1 className="text-5xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
+            {eventData.name}
+          </h1>
           <p className="text-xl text-zinc-600 dark:text-zinc-400">
             {eventData.small_summary || 'No description available'}
           </p>
         </div>
 
         {/* Metrics */}
-        <div className="grid gap-6 md:grid-cols-3">
+        <div className="grid gap-6 md:grid-cols-2">
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-lg">
@@ -108,71 +102,52 @@ export default function EventPage() {
             </CardHeader>
             <CardContent>
               <div className="text-4xl font-bold text-zinc-900 dark:text-zinc-50">
-                {eventData.engagement?.toLocaleString() || 0}
+                {eventData.interaction_timeline && eventData.interaction_timeline.length > 0
+                  ? eventData.interaction_timeline
+                      .filter((point: any) => !point.prediction)
+                      .reduce((max: number, point: any) => Math.max(max, point.total_interactions || 0), 0)
+                      .toLocaleString()
+                  : 0}
               </div>
             </CardContent>
           </Card>
 
-          {eventData.totalPosts !== undefined && (
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-lg">
-                  <MessageCircle className="h-5 w-5" />
-                  Total Posts
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-4xl font-bold text-zinc-900 dark:text-zinc-50">
-                  {eventData.totalPosts}
-                </div>
-              </CardContent>
-            </Card>
-          )}
-
-          {eventData.date && (
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-lg">
-                  <Calendar className="h-5 w-5" />
-                  Date
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">
-                  {new Date(eventData.date).toLocaleDateString()}
-                </div>
-              </CardContent>
-            </Card>
-          )}
-        </div>
-
-        {/* Engagement Timeline Chart */}
-        {eventData.engagementTimeline && eventData.engagementTimeline.length > 0 && (
           <Card>
             <CardHeader>
-              <CardTitle className="text-2xl">Engagement Timeline</CardTitle>
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <MessageCircle className="h-5 w-5" />
+                Total Posts
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-4xl font-bold text-zinc-900 dark:text-zinc-50">
+                {eventData.posts?.length || 0}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Total Interactions Timeline Chart */}
+        {eventData.interaction_timeline && eventData.interaction_timeline.length > 0 && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-2xl">Total Interactions Over Time</CardTitle>
               <CardDescription>
-                Log returns (approximate % change) for likes, comments, and combined engagement.
-                {eventData.engagementTimeline.some((point: any) => point.prediction) && (
-                  <span className="ml-1 text-amber-600 font-semibold">
-                    Last marker is a prediction via exponential smoothing.
-                  </span>
-                )}
+                Cumulative interactions across all posts. Dashed line shows predicted trajectory.
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="h-96">
                 <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={eventData.engagementTimeline}>
+                  <LineChart data={eventData.interaction_timeline}>
                     <CartesianGrid strokeDasharray="3 3" className="stroke-zinc-200 dark:stroke-zinc-800" />
                     <XAxis
-                      dataKey="timestamp"
+                      dataKey="date"
                       className="text-xs text-zinc-600 dark:text-zinc-400"
-                      tickFormatter={(value) => new Date(value).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
+                      tickFormatter={(value) => new Date(value).toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
                     />
                     <YAxis
                       className="text-xs text-zinc-600 dark:text-zinc-400"
-                      tickFormatter={(value) => formatPercent(value)}
                     />
                     <Tooltip
                       contentStyle={{
@@ -181,34 +156,77 @@ export default function EventPage() {
                         borderRadius: '8px'
                       }}
                       labelFormatter={(value) => new Date(value).toLocaleString()}
-                      formatter={(value: number, name: string) => [formatPercent(value ?? 0), name]}
+                      content={({ active, payload }) => {
+                        if (active && payload && payload.length) {
+                          const data = payload[0].payload;
+                          return (
+                            <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-3 shadow-lg">
+                              <p className="font-semibold text-zinc-900 dark:text-zinc-50">
+                                {new Date(data.date).toLocaleString()}
+                              </p>
+                              <p className="text-sm text-zinc-600 dark:text-zinc-400">
+                                Total: {data.total_interactions?.toLocaleString()} interactions
+                              </p>
+                              {data.prediction && (
+                                <p className="text-xs text-amber-600 dark:text-amber-400 mt-1">
+                                  📈 Predicted
+                                </p>
+                              )}
+                            </div>
+                          );
+                        }
+                        return null;
+                      }}
                     />
                     <Legend />
+                    {/* Render actual data (solid line) */}
                     <Line
                       type="monotone"
-                      dataKey="likeReturn"
-                      stroke="#f97316"
+                      dataKey="total_interactions"
+                      stroke="#3b82f6"
                       strokeWidth={3}
-                      name="Likes return"
-                      dot={renderReturnDot('#f97316')}
+                      name="Actual"
+                      connectNulls={false}
+                      data={eventData.interaction_timeline.filter((point: any) => !point.prediction)}
+                      dot={(props: any) => {
+                        const { cx, cy } = props;
+                        return <circle cx={cx} cy={cy} r={4} fill="#3b82f6" />;
+                      }}
                     />
-                    <Line
-                      type="monotone"
-                      dataKey="commentReturn"
-                      stroke="#22c55e"
-                      strokeWidth={3}
-                      name="Comments return"
-                      dot={renderReturnDot('#22c55e')}
-                    />
-                    <Line
-                      type="monotone"
-                      dataKey="engagementReturn"
-                      stroke="#2563eb"
-                      strokeWidth={2}
-                      strokeDasharray="5 3"
-                      name="Engagement return"
-                      dot={renderReturnDot('#2563eb')}
-                    />
+                    {/* Render prediction data (dashed line) - only if there's a prediction */}
+                    {eventData.interaction_timeline.some((point: any) => point.prediction) && (
+                      <Line
+                        type="monotone"
+                        dataKey="total_interactions"
+                        stroke="#f59e0b"
+                        strokeWidth={2}
+                        strokeDasharray="5 5"
+                        name="Predicted"
+                        connectNulls={false}
+                        data={[
+                          ...eventData.interaction_timeline.filter((point: any) => !point.prediction).slice(-1),
+                          ...eventData.interaction_timeline.filter((point: any) => point.prediction)
+                        ]}
+                        dot={(props: any) => {
+                          const { cx, cy, payload } = props;
+                          if (payload?.prediction) {
+                            return (
+                              <rect
+                                x={cx - 5}
+                                y={cy - 5}
+                                width={10}
+                                height={10}
+                                fill="white"
+                                stroke="#f59e0b"
+                                strokeWidth={2}
+                                transform={`rotate(45 ${cx} ${cy})`}
+                              />
+                            );
+                          }
+                          return <circle cx={cx} cy={cy} r={4} fill="#3b82f6" />;
+                        }}
+                      />
+                    )}
                   </LineChart>
                 </ResponsiveContainer>
               </div>
@@ -230,47 +248,126 @@ export default function EventPage() {
           </Card>
         )}
 
+        {/* Actionables */}
+        {eventData.actionables && eventData.actionables.length > 0 && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-2xl">Actionables</CardTitle>
+              <CardDescription>
+                Misinformation and questions that need responses
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {eventData.actionables.map((actionable: any, index: number) => (
+                  <div
+                    key={actionable.actionable_id || index}
+                    className={`rounded-lg border p-4 ${
+                      actionable.is_question
+                        ? 'border-blue-200 bg-blue-50 dark:border-blue-800 dark:bg-blue-950/20'
+                        : 'border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-950/20'
+                    }`}
+                  >
+                    <div className="flex items-start gap-3">
+                      {actionable.is_question ? (
+                        <HelpCircle className="h-5 w-5 text-blue-600 dark:text-blue-400 mt-0.5" />
+                      ) : (
+                        <AlertTriangle className="h-5 w-5 text-red-600 dark:text-red-400 mt-0.5" />
+                      )}
+                      <div className="flex-1">
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="flex-1">
+                            <p className={`font-medium ${
+                              actionable.is_question
+                                ? 'text-blue-900 dark:text-blue-100'
+                                : 'text-red-900 dark:text-red-100'
+                            }`}>
+                              {actionable.is_question ? 'Question' : 'Misinformation'}
+                            </p>
+                            <p className="mt-1 text-sm text-zinc-700 dark:text-zinc-300">
+                              "{actionable.content}"
+                            </p>
+                          </div>
+                          <a
+                            href={actionable.post_link}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
+                            title="View original post"
+                          >
+                            <ExternalLink className="h-4 w-4" />
+                          </a>
+                        </div>
+                        {actionable.proposed_response && (
+                          <div className="mt-3 pt-3 border-t border-zinc-200 dark:border-zinc-700">
+                            <p className="text-xs font-medium text-zinc-600 dark:text-zinc-400 mb-1">
+                              Proposed Response:
+                            </p>
+                            <p className="text-sm text-zinc-700 dark:text-zinc-300">
+                              {actionable.proposed_response}
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Posts */}
         {eventData.posts && eventData.posts.length > 0 && (
           <Card>
             <CardHeader>
               <CardTitle className="text-2xl">Related Posts</CardTitle>
               <CardDescription>
-                All social media posts related to this event
+                All posts related to this event ({eventData.posts.length} total)
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {eventData.posts.map((post: any) => (
+                {eventData.posts.map((post: any, index: number) => (
                   <div
-                    key={post.id}
+                    key={post.link || index}
                     className="rounded-lg border border-zinc-200 p-4 transition-colors hover:bg-zinc-50 dark:border-zinc-800 dark:hover:bg-zinc-900"
                   >
                     <div className="mb-2 flex items-start justify-between">
                       <div className="flex-1">
-                        <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">
-                          {post.title}
-                        </h3>
+                        <div className="flex items-center gap-2">
+                          <a
+                            href={post.link}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-lg font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 hover:underline"
+                          >
+                            View Post
+                          </a>
+                          <ExternalLink className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                        </div>
                         <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
                           {post.source} • {new Date(post.date).toLocaleDateString()}
                         </p>
                       </div>
-                      <a
-                        href={post.link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="ml-4 text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
-                      >
-                        <ExternalLink className="h-5 w-5" />
-                      </a>
+                      {post.satisfaction_rating !== undefined && (
+                        <div className="ml-4 flex items-center gap-2">
+                          <TrendingUp className={`h-4 w-4 ${
+                            post.satisfaction_rating >= 60
+                              ? 'text-green-600 dark:text-green-400'
+                              : post.satisfaction_rating >= 40
+                              ? 'text-yellow-600 dark:text-yellow-400'
+                              : 'text-red-600 dark:text-red-400'
+                          }`} />
+                          <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                            {post.satisfaction_rating}% sentiment
+                          </span>
+                        </div>
+                      )}
                     </div>
-                    <p className="mt-2 text-zinc-700 dark:text-zinc-300">
+                    <p className="mt-2 text-zinc-700 dark:text-zinc-300 line-clamp-3">
                       {post.content}
                     </p>
-                    <div className="mt-3 flex items-center gap-2 text-sm text-zinc-600 dark:text-zinc-400">
-                      <TrendingUp className="h-4 w-4" />
-                      <span>{post.engagement} engagement</span>
-                    </div>
                   </div>
                 ))}
               </div>

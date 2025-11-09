@@ -1,3 +1,4 @@
+from ntpath import exists
 from typing import List, Optional
 
 from llm.LlmClient import LlmClient
@@ -8,12 +9,13 @@ from models.Post import Post
 from models.Keyword import Keyword
 from datetime import datetime, timedelta
 from models.Topic import Topic
+from typing import Dict
 
 class InMemoryDB:
     """In-memory database using lists for posts and events"""
     
     def __init__(self):
-        self.posts: List[Post] = []
+        self.posts: Dict[str, Post] = {}
         self.events: List[Event] = []
         self.topics: List[Topic] = []
         
@@ -137,14 +139,11 @@ class InMemoryDB:
     # Post CRUD operations
     def get_all_posts(self) -> List[Post]:
         """Get all posts"""
-        return self.posts
+        return list(self.posts.values())
     
     def get_post_by_id(self, link: str) -> Optional[Post]:
         """Get a specific post by ID"""
-        for post in self.posts:
-            if post.link == link:
-                return post
-        return None
+        return self.posts.get(link)
     
     def get_posts_by_event(self, event_id: int) -> List[Post]:
         """Get all posts for a specific event"""
@@ -153,25 +152,34 @@ class InMemoryDB:
             return event.posts
         return []
     
-    def add_post(self, post: Post) -> Post:
+    def add_post(self, post: Post) -> bool:
         """Add a new post"""
-        self.posts.append(post)
-        return post
+        url = post.link
+        existing_post = self.posts.get(url)
+        if existing_post:
+            last_total_engagement = existing_post.total_engagement
+            print(f"Last total engagement: {last_total_engagement}")
+            print(f"New total engagement: {post.total_engagement}")
+            existing_post.total_engagement = post.total_engagement
+            existing_post.delta_interactions.append((post.date, post.total_engagement - last_total_engagement))
+            return False
+        
+        post.delta_interactions.append((post.date, post.total_engagement))
+        self.posts[url] = post
+        return True
     
     def update_post(self, link: str, updated_post: Post) -> Optional[Post]:
         """Update an existing post"""
-        for i, post in enumerate(self.posts):
-            if post.link == link:
-                self.posts[i] = updated_post
-                return updated_post
+        if link in self.posts:
+            self.posts[link] = updated_post
+            return updated_post
         return None
     
     def delete_post(self, link: str) -> bool:
         """Delete a post by ID"""
-        for i, post in enumerate(self.posts):
-            if post.link == link:
-                self.posts.pop(i)
-                return True
+        if link in self.posts:
+            del self.posts[link]
+            return True
         return False
     
     # Helper methods
