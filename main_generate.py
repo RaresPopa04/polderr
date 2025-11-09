@@ -14,8 +14,8 @@ from database import db
 
 
 # CONFIGURATION: Control how many posts to process
-RIJSWIJK_FEED_LIMIT = 10  # Number of posts to process from rijswijk_feed_news.csv (None = all)
-NUM_SNAPSHOT_FILES = 0    # Number of snapshot files to process (0-24)
+RIJSWIJK_FEED_LIMIT = 0  # Number of posts to process from rijswijk_feed_news.csv (None = all)
+NUM_SNAPSHOT_FILES = 2    # Number of snapshot files to process (0-24)
 
 # Custom JSON encoder to handle datetime objects
 class DateTimeEncoder(json.JSONEncoder):
@@ -35,15 +35,41 @@ def process_csv_row(row, llm_client, event_assigning_service):
         return False
     
     try:
+        # Extract basic fields
         link = row[0] if row[0] else "No link"
         content = row[1] if len(row) > 1 else ""
         date_str = row[2] if len(row) > 2 else datetime.now().isoformat()
+        
+        # Parse comments and likes based on CSV structure
+        # The CSV has: link, message, date_iso8601, comments_json, likes
+        # But comments_json may contain commas, so we need to find where it ends
+        
+        comment_count = 0
+        likes = 0
+        
+        if len(row) > 3 and row[3]:
+            try:
+                comments = json.loads(row[3])
+            except:
+                comments = []
+            comment_count = len(comments) if isinstance(comments, list) else 0
+        if len(row) > 4 and row[4]:
+            try:
+                likes = int(row[4])
+            except:
+                likes = 0
+        
+        total_engagement = likes + comment_count
+        
+        print(f"Parsed - Link: {link[:50]}... | Comments: {comment_count} | Likes: {likes} | Total: {total_engagement}")
 
+        # Parse date
         try:
             post_date = datetime.fromisoformat(date_str.replace('+01:00', ''))
         except:
             post_date = datetime.now()
 
+        # Determine source from link
         if 'feelgoodradio' in link:
             source = "Feelgood Radio - Nieuws"
         elif 'inrijswijk.com' in link:
@@ -58,10 +84,11 @@ def process_csv_row(row, llm_client, event_assigning_service):
             link=link,
             content=content,
             date=post_date,
-            source=source
+            source=source,
+            total_engagement=total_engagement
         )
-        db.add_post(post)
-        event_assigning_service.assign_posts_to_events(post)
+        if db.add_post(post):
+            event_assigning_service.assign_posts_to_events(post)
         return True
         
     except Exception as e:
@@ -123,7 +150,7 @@ def process_csv_files(llm_client):
             reader = csv.reader(file)
             next(reader)
 
-            needed_posts = 1
+            needed_posts = 10
 
             for row in reader:
                 if needed_posts <= 0:
@@ -179,10 +206,10 @@ def save_database_to_json(filename: str = None):
             }
         }
         
-        # Save to file (models now handle datetime serialization automatically)
+        # Save to file with custom datetime encoder
         print(f"\nWriting to file: {filename}")
         with open(filename, 'w', encoding='utf-8') as f:
-            json.dump(db_data, f, indent=2, ensure_ascii=False)
+            json.dump(db_data, f, indent=2, ensure_ascii=False, cls=DateTimeEncoder)
         
         print(f"\n✅ SUCCESS! Database saved to: {filename}")
         print(f"\nStats:")

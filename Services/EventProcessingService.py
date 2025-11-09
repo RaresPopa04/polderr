@@ -49,14 +49,32 @@ class EventProcessingService:
             else:
                 source = "Unknown Source"
 
+            # comments is a list of json with text and timestamp
+            comments = []
+            print(f"Comments: {row[3]}")
+            if len(row) > 3 and row[3]:
+                try:
+                    comments = json.loads(row[3])
+                except:
+                    comments = []
+            comment_count = len(comments) if isinstance(comments, list) else 0
+            likes = 0
+            if len(row) > 4 and row[4]:
+                try:
+                    likes = int(row[4])
+                except:
+                    likes = 0
+            total_engagement = likes + comment_count    
+
             post = Post.create_with_enrichment(
                 link=link,
                 content=content,
                 date=post_date,
-                source=source
+                source=source,
+                total_engagement=total_engagement
             )
-            db.add_post(post)
-            self.event_assigning_service.assign_posts_to_events(post)
+            if db.add_post(post):
+                self.event_assigning_service.assign_posts_to_events(post)
             return True
             
         except Exception as e:

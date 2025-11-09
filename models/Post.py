@@ -32,9 +32,18 @@ class Post:
         encoder=lambda t: t.name if hasattr(t, 'name') else str(t),
         decoder=lambda s: s
     ))
+    # Custom encoder/decoder for delta_interactions
+    delta_interactions: List[Tuple[datetime, int]] = field(
+        default_factory=list,
+        metadata=config(
+            encoder=lambda deltas: [[dt.isoformat(), val] for dt, val in deltas] if deltas else [],
+            decoder=lambda data: [(datetime.fromisoformat(item[0]), item[1]) for item in data] if data else []
+        )
+    )
+    total_engagement: int = 0
     
     @classmethod
-    def create_with_enrichment(cls, link: str, content: str, date: datetime, source: str) -> 'Post':
+    def create_with_enrichment(cls, link: str, content: str, date: datetime, source: str, total_engagement: int = 0) -> 'Post':
         """Factory method to create a Post with LLM enrichment"""
         from llm.find_topic_for_post import find_topic_for_post
         from database import db
@@ -56,7 +65,8 @@ class Post:
             engagement_rating=[],
             actionables=actionables,
             topic="",
-            subject_description=subject_description
+            subject_description=subject_description,
+            total_engagement=total_engagement
         )
         
         # Find topic (needs the post object)
