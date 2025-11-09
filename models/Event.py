@@ -27,6 +27,7 @@ class Event:
     name: Optional[str] = field(default=None)
     small_summary: Optional[str] = field(default=None)
     big_summary: Optional[str] = field(default=None)
+    case_description: Optional[str] = field(default=None)  # Concise description for matching/searching
     posts: Optional[List[Post]] = field(default=None)
     similar_events: Optional[List['Event']] = field(default=None)
     keywords: Optional[List[Keyword]] = field(default=None)
@@ -38,6 +39,7 @@ class Event:
         self.name = self.extract_name_from_posts(llm_client)
         
         (self.small_summary, self.big_summary) = self.generate_summaries(llm_client)
+        self.case_description = self.generate_case_description(llm_client)
         self.similar_events = self.find_similar_events(llm_client, other_events)
         self.keywords = self.extract_keywords(llm_client)
         self.date = self.find_most_recent_post_date()
@@ -53,13 +55,16 @@ class Event:
 
         self.keywords = self.extract_keywords(llm_client)
         (self.small_summary, self.big_summary) = self.generate_summaries(llm_client)
+        self.case_description = self.generate_case_description(llm_client)
         self.similar_events = self.find_similar_events(llm_client, other_events)
         self.date = self.find_most_recent_post_date()
         
     def get_event_topic(self) -> str:
+        """Returns the topic name (string) of this event based on its first post"""
         if not self.posts:
             return None
-        return self.posts[0].topic
+        # posts[0].topic is a Topic object, return its name
+        return self.posts[0].topic.name if self.posts[0].topic else None
 
     def find_most_recent_post_date(self) -> datetime:
         if not self.posts:
@@ -136,6 +141,31 @@ class Event:
         big_summary = llm_client.generate_response(AzerionPromptTemplate(prompt=big_summary_find_prompt))
 
         return big_summary
+
+    def generate_case_description(self, llm_client: LlmClient):
+        """
+        Generate a concise, searchable description of what this event is about.
+        Optimized for semantic matching and search queries.
+        """
+        if not self.posts:
+            return "No description available"
+        
+        total_context = ''
+        for post in self.posts:
+            total_context += post.content + ' '
+
+        case_description_prompt = f"""Based on the following posts, extract the main subject and topic of the event. 
+Write a clear, concise description (2-3 sentences) about what the subject is, without including details about when or where it was posted.
+Focus ONLY on the core topic, issue, or situation being discussed. Use clear, searchable language.
+
+Posts:
+{total_context}
+
+Subject Description:"""
+
+        case_description = llm_client.generate_response(AzerionPromptTemplate(prompt=case_description_prompt))
+
+        return case_description.strip()
 
     def find_similar_events(self, llm_client: LlmClient, other_events: List['Event'] = []):
         sim_events = []

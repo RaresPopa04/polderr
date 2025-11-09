@@ -11,6 +11,7 @@ from llm.PromptTemplates.Prompts import find_topic_for_post_prompt
 from llm.SemanticSimilarityService import cosine_similarity, embed_text_to_embedding
 from models.Post import Post
 from models.Topic import Topic
+from database import db
 
 
 def find_topic_for_post_old(post: Post, topics: List[Topic]) -> Topic:
@@ -31,8 +32,7 @@ def find_topic_for_post(post: Post, topics: List[Topic]) -> Topic:
     llm_client = LlmClient()
     prompt = find_topic_for_post_prompt.format(post_content=post.content, topics=topics)
     response = llm_client.generate_response(AzerionPromptTemplate(prompt=prompt))
-    print("response: ", response)
     for topic in topics:
         if topic.name == response:
             return topic
-    return Topic(topic_id=len(topics) + 1, name="Other", events=[])
+    return db.get_topic_by_name("Other")

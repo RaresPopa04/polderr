@@ -19,6 +19,7 @@ class Post:
     engagement_rating: List[Tuple[datetime, int]]
     actionables: List[Actionable]
     topic: str
+    subject_description: Optional[str] = None  # Broad subject description without posting details
     
     def __init__(self, link: str, content: str, date: datetime, source: str):
         from llm.find_topic_for_post import find_topic_for_post
@@ -34,13 +35,31 @@ class Post:
         self.satisfaction_rating = self.get_sentiment_score(content, llm_client)
         self.engagement_rating = []
         self.topic = find_topic_for_post(self, topics)
-
+        self.subject_description = self.generate_subject_description(content, llm_client)
         self.actionables = self.generate_actionables(llm_client)
 
     def get_sentiment_score(self, content: str, llm_client: LlmClient) -> int:
         sentiment_score = int(llm_client.generate_response(AzerionPromptTemplate(
             prompt = build_sentiment_prompt(content))))
         return max(0, min(100, sentiment_score))
+
+    def generate_subject_description(self, content: str, llm_client: LlmClient) -> str:
+        """
+        Generate a broad description of what the post is about, focusing on the subject and impacted groups.
+        Excludes specific posting details.
+        """
+        subject_prompt = f"""Based on this post, extract the main subject and describe what it's about.
+Focus on the core topic or issue and who is affected or impacted. 
+Do NOT include details about when or where it was posted.
+Write 1-2 sentences about the subject matter only.
+
+Post:
+{content}
+
+Subject Description:"""
+        
+        subject_description = llm_client.generate_response(AzerionPromptTemplate(prompt=subject_prompt))
+        return subject_description.strip()
 
     def generate_actionables(self, llm_client):
         find_actionables_prompt = event_find_actionable_exerpts_prompt.format(post_data=self.content, all_the_belastingdienst_data= _belastingdienst_data)

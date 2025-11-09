@@ -148,18 +148,22 @@ export default function TopicPage() {
                                             dataKey="sentiment" 
                                             stroke="#3b82f6" 
                                             strokeWidth={2}
-                                            dot={(props: any) => (
-                                                <Dot 
-                                                    {...props} 
-                                                    r={6} 
-                                                    fill="#3b82f6"
-                                                    style={{ cursor: 'pointer' }}
-                                                    onClick={() => {
-                                                        const eventId = topicData.sentiment_data[props.index].event_id;
-                                                        router.push(`/events/${eventId}`);
-                                                    }}
-                                                />
-                                            )}
+                                            dot={(props: any) => {
+                                                const { key, ...restProps } = props;
+                                                return (
+                                                    <Dot 
+                                                        key={key}
+                                                        {...restProps} 
+                                                        r={6} 
+                                                        fill="#3b82f6"
+                                                        style={{ cursor: 'pointer' }}
+                                                        onClick={() => {
+                                                            const eventId = topicData.sentiment_data[props.index].event_id;
+                                                            router.push(`/events/${eventId}`);
+                                                        }}
+                                                    />
+                                                );
+                                            }}
                                         />
                                     </LineChart>
                                 </ResponsiveContainer>
