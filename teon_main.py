@@ -53,7 +53,25 @@ def test_get_raport_for_event():
     print("topics: ", db.get_all_topics())
     print("raport for event: ", db.get_raport_for_event(post1.post_id))
 
+def test_serialization_and_deserialization():
+    from pydantic import TypeAdapter
+    from models.Keyword import Keyword
+    
+    # Create keywords
+    keywords = [Keyword(keyword="Rijswijk", emb=[0.1, 0.2, 0.3]), Keyword(keyword="Traffic", emb=[0.4, 0.5, 0.6])]
+    
+    # Serialize to JSON
+    adapter = TypeAdapter(list[Keyword])
+    json_str = adapter.dump_json(keywords, indent=2).decode('utf-8')
+    print("Serialized:", json_str)
+    
+    # Load from JSON
+    loaded = adapter.validate_json(json_str)
+    print("Loaded:", [k.keyword for k in loaded])
+
 if __name__ == "__main__":
     # test_find_topic_for_post()
     
-    test_get_raport_for_event()
+    # test_get_raport_for_event()
+
+    test_serialization_and_deserialization()
