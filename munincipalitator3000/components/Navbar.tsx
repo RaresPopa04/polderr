@@ -25,8 +25,8 @@ export function Navbar() {
 
   return (
     <nav className="sticky top-0 z-50 border-b border-[#4A8EC6]/20 bg-white/80 backdrop-blur-sm dark:border-[#5B9ED3]/30 dark:bg-[#0f1419]/90">
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-        <Link href="/" className="text-3xl font-bold bg-gradient-to-r from-[#4A8EC6] to-[#6BC04A] bg-clip-text text-transparent hover:from-[#5B9ED3] hover:to-[#7ACC58] transition-all tracking-tight">
+      <div className="mx-auto flex w-full items-center justify-between px-4 py-4">
+        <Link href="/" className="text-3xl font-bold bg-gradient-to-r from-[#4A8EC6] to-[#6BC04A] bg-clip-text text-transparent hover:from-[#5B9ED3] hover:to-[#7ACC58] transition-all tracking-tight ml-4">
           CivicLens
         </Link>
 

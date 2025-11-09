@@ -122,6 +122,19 @@
         "enterQueryDescription": "Gebruik de zoekbalk hierboven om evenementen en onderwerpen te vinden",
         "keywords": "trefwoorden"
     },
+    "TrendsPage": {
+        "title": "Betrokkenheid Trends",
+        "subtitle": "Monitor betrokkenheidspatronen in de tijd",
+        "backToDashboard": "Terug naar Dashboard",
+        "engagementOverTime": "Jaarlijks Betrokkenheid Overzicht",
+        "engagementDescription": "Volg hoe betrokkenheid verandert gedurende het jaar",
+        "engagement": "Betrokkenheid",
+        "time": "Maand",
+        "peakEngagement": "Piek Betrokkenheid",
+        "averageEngagement": "Gemiddelde Betrokkenheid",
+        "totalEngagement": "Totale Betrokkenheid",
+        "growthRate": "Jaarlijkse Groei"
+    },
     "TopicsPage": {
         "totalEvents": "Totaal Evenementen",
         "inThisTopic": "In dit onderwerp",
