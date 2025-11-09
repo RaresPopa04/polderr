@@ -3,7 +3,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link } from '@/i18n/routing';
-import { Hash, ArrowRight } from "lucide-react";
+import { Hash, ArrowRight, FileDown } from "lucide-react";
 import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 import { topicsApi } from '@/lib/api';
@@ -18,7 +18,11 @@ export default function TopicsOverviewPage() {
         async function loadTopics() {
             try {
                 const data = await topicsApi.listTopics();
-                setTopics(data.topics);
+                // Sort topics by total_posts in descending order
+                const sortedTopics = [...data.topics].sort((a, b) => 
+                    (b.total_posts || 0) - (a.total_posts || 0)
+                );
+                setTopics(sortedTopics);
                 setLoading(false);
             } catch (err) {
                 console.error('Failed to load topics:', err);
@@ -79,7 +83,7 @@ export default function TopicsOverviewPage() {
                                 </div>
                                 <CardTitle className="text-2xl">{topic.name}</CardTitle>
                                 <CardDescription className="text-base">
-                                    {topic.events?.length || 0} events monitoring this topic
+                                    {topic.events?.length || 0} events • {topic.total_posts || 0} posts
                                 </CardDescription>
                             </CardHeader>
                             <CardContent>

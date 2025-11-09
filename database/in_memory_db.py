@@ -145,6 +145,8 @@ class InMemoryDB:
             existing_post.total_engagement = post.total_engagement
             existing_post.delta_interactions.append((post.date, post.total_engagement - last_total_engagement))
             return False
+        
+        post.delta_interactions.append((post.date, post.total_engagement))
         self.posts[url] = post
         return True
     
@@ -273,8 +275,15 @@ class InMemoryDB:
         topic = self.get_topic_by_id(topic_id)
         if not topic:
             return None
+        
+        # Collect all posts from all events in this topic
+        all_posts = []
+        for event in topic.events:
+            if event.posts:
+                all_posts.extend(event.posts)
+        
         llm_client = LlmClient()
-        return llm_client.generate_response(AzerionPromptTemplate(prompt=get_report_for_topic_prompt.format(topic_posts=topic.posts)))
+        return llm_client.generate_response(AzerionPromptTemplate(prompt=get_report_for_topic_prompt.format(topic_posts=all_posts)))
 
     def get_raport_for_last_week(self, ) -> Optional[str]:
         llm_client = LlmClient()

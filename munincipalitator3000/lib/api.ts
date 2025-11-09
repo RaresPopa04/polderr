@@ -117,9 +117,10 @@ export interface EventActionable {
 export interface InteractionTimelinePoint {
   date: string;
   timestamp: number;
-  interactions: number;
-  post_link: string;
+  delta: number;
+  post_link: string | null;
   total_interactions: number;
+  prediction: boolean;
 }
 
 export interface EventDetail {

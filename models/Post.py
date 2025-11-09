@@ -32,7 +32,14 @@ class Post:
         encoder=lambda t: t.name if hasattr(t, 'name') else str(t),
         decoder=lambda s: s
     ))
-    delta_interactions: List[Tuple[datetime, int]] = field(default_factory=list)
+    # Custom encoder/decoder for delta_interactions
+    delta_interactions: List[Tuple[datetime, int]] = field(
+        default_factory=list,
+        metadata=config(
+            encoder=lambda deltas: [[dt.isoformat(), val] for dt, val in deltas] if deltas else [],
+            decoder=lambda data: [(datetime.fromisoformat(item[0]), item[1]) for item in data] if data else []
+        )
+    )
     total_engagement: int = 0
     
     @classmethod

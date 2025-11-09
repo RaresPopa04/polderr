@@ -83,22 +83,16 @@ export default function EventPage() {
       <div className="mx-auto max-w-7xl space-y-8">
         {/* Header */}
         <div className="space-y-4">
-          <div className="flex items-center gap-3">
-            <div
-              className="h-6 w-6 rounded-full"
-              style={{ backgroundColor: eventData.color || '#3b82f6' }}
-            />
-            <h1 className="text-5xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
-              {eventData.name}
-            </h1>
-          </div>
+          <h1 className="text-5xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
+            {eventData.name}
+          </h1>
           <p className="text-xl text-zinc-600 dark:text-zinc-400">
             {eventData.small_summary || 'No description available'}
           </p>
         </div>
 
         {/* Metrics */}
-        <div className="grid gap-6 md:grid-cols-3">
+        <div className="grid gap-6 md:grid-cols-2">
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-lg">
@@ -108,42 +102,29 @@ export default function EventPage() {
             </CardHeader>
             <CardContent>
               <div className="text-4xl font-bold text-zinc-900 dark:text-zinc-50">
-                {eventData.engagement?.toLocaleString() || 0}
+                {eventData.interaction_timeline && eventData.interaction_timeline.length > 0
+                  ? eventData.interaction_timeline
+                      .filter((point: any) => !point.prediction)
+                      .reduce((max: number, point: any) => Math.max(max, point.total_interactions || 0), 0)
+                      .toLocaleString()
+                  : 0}
               </div>
             </CardContent>
           </Card>
 
-          {eventData.totalPosts !== undefined && (
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-lg">
-                  <MessageCircle className="h-5 w-5" />
-                  Total Posts
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-4xl font-bold text-zinc-900 dark:text-zinc-50">
-                  {eventData.totalPosts}
-                </div>
-              </CardContent>
-            </Card>
-          )}
-
-          {eventData.date && (
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-lg">
-                  <Calendar className="h-5 w-5" />
-                  Date
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">
-                  {new Date(eventData.date).toLocaleDateString()}
-                </div>
-              </CardContent>
-            </Card>
-          )}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <MessageCircle className="h-5 w-5" />
+                Total Posts
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-4xl font-bold text-zinc-900 dark:text-zinc-50">
+                {eventData.posts?.length || 0}
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Total Interactions Timeline Chart */}
@@ -152,7 +133,7 @@ export default function EventPage() {
             <CardHeader>
               <CardTitle className="text-2xl">Total Interactions Over Time</CardTitle>
               <CardDescription>
-                Cumulative interactions across all posts related to this event
+                Cumulative interactions across all posts. Dashed line shows predicted trajectory.
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -163,7 +144,7 @@ export default function EventPage() {
                     <XAxis
                       dataKey="date"
                       className="text-xs text-zinc-600 dark:text-zinc-400"
-                      tickFormatter={(value) => new Date(value).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                      tickFormatter={(value) => new Date(value).toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
                     />
                     <YAxis
                       className="text-xs text-zinc-600 dark:text-zinc-400"
@@ -175,17 +156,77 @@ export default function EventPage() {
                         borderRadius: '8px'
                       }}
                       labelFormatter={(value) => new Date(value).toLocaleString()}
-                      formatter={(value: number) => [value.toLocaleString(), 'Total Interactions']}
+                      content={({ active, payload }) => {
+                        if (active && payload && payload.length) {
+                          const data = payload[0].payload;
+                          return (
+                            <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-3 shadow-lg">
+                              <p className="font-semibold text-zinc-900 dark:text-zinc-50">
+                                {new Date(data.date).toLocaleString()}
+                              </p>
+                              <p className="text-sm text-zinc-600 dark:text-zinc-400">
+                                Total: {data.total_interactions?.toLocaleString()} interactions
+                              </p>
+                              {data.prediction && (
+                                <p className="text-xs text-amber-600 dark:text-amber-400 mt-1">
+                                  📈 Predicted
+                                </p>
+                              )}
+                            </div>
+                          );
+                        }
+                        return null;
+                      }}
                     />
                     <Legend />
+                    {/* Render actual data (solid line) */}
                     <Line
                       type="monotone"
                       dataKey="total_interactions"
                       stroke="#3b82f6"
                       strokeWidth={3}
-                      name="Total Interactions"
-                      dot={{ fill: '#3b82f6', r: 4 }}
+                      name="Actual"
+                      connectNulls={false}
+                      data={eventData.interaction_timeline.filter((point: any) => !point.prediction)}
+                      dot={(props: any) => {
+                        const { cx, cy } = props;
+                        return <circle cx={cx} cy={cy} r={4} fill="#3b82f6" />;
+                      }}
                     />
+                    {/* Render prediction data (dashed line) - only if there's a prediction */}
+                    {eventData.interaction_timeline.some((point: any) => point.prediction) && (
+                      <Line
+                        type="monotone"
+                        dataKey="total_interactions"
+                        stroke="#f59e0b"
+                        strokeWidth={2}
+                        strokeDasharray="5 5"
+                        name="Predicted"
+                        connectNulls={false}
+                        data={[
+                          ...eventData.interaction_timeline.filter((point: any) => !point.prediction).slice(-1),
+                          ...eventData.interaction_timeline.filter((point: any) => point.prediction)
+                        ]}
+                        dot={(props: any) => {
+                          const { cx, cy, payload } = props;
+                          if (payload?.prediction) {
+                            return (
+                              <rect
+                                x={cx - 5}
+                                y={cy - 5}
+                                width={10}
+                                height={10}
+                                fill="white"
+                                stroke="#f59e0b"
+                                strokeWidth={2}
+                                transform={`rotate(45 ${cx} ${cy})`}
+                              />
+                            );
+                          }
+                          return <circle cx={cx} cy={cy} r={4} fill="#3b82f6" />;
+                        }}
+                      />
+                    )}
                   </LineChart>
                 </ResponsiveContainer>
               </div>

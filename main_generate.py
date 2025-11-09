@@ -15,7 +15,7 @@ from database import db
 
 # CONFIGURATION: Control how many posts to process
 RIJSWIJK_FEED_LIMIT = 0  # Number of posts to process from rijswijk_feed_news.csv (None = all)
-NUM_SNAPSHOT_FILES = 3    # Number of snapshot files to process (0-24)
+NUM_SNAPSHOT_FILES = 2    # Number of snapshot files to process (0-24)
 
 # Custom JSON encoder to handle datetime objects
 class DateTimeEncoder(json.JSONEncoder):
@@ -47,40 +47,17 @@ def process_csv_row(row, llm_client, event_assigning_service):
         comment_count = 0
         likes = 0
         
-        if len(row) > 3:
-            # Find the comments field - it starts with '[{' and ends with '}]'
-            # Join all fields from index 3 onwards until we complete the JSON array
-            remaining_fields = row[3:]
-            comments_str = ""
-            likes_str = ""
-            
-            # Look for the pattern where comments end (find '}]' followed by a number)
-            for i, field in enumerate(remaining_fields):
-                if i == 0:
-                    comments_str = field
-                elif '}]' in field:
-                    # This field contains the end of comments JSON
-                    # Split on '}]' to separate comments from likes
-                    parts = field.split('}]', 1)
-                    comments_str += ',' + parts[0] + '}]'
-                    if len(parts) > 1 and parts[1]:
-                        likes_str = parts[1].strip()
-                    # Next field might be likes if we didn't find it yet
-                    if not likes_str and i + 1 < len(remaining_fields):
-                        likes_str = remaining_fields[i + 1]
-                    break
-                else:
-                    comments_str += ',' + field
-            
-            # Count comments by counting '{' characters (each comment is an object)
-            comment_count = comments_str.count('{')
-            
-            # Parse likes
-            if likes_str:
-                try:
-                    likes = int(likes_str.strip())
-                except:
-                    likes = 0
+        if len(row) > 3 and row[3]:
+            try:
+                comments = json.loads(row[3])
+            except:
+                comments = []
+            comment_count = len(comments) if isinstance(comments, list) else 0
+        if len(row) > 4 and row[4]:
+            try:
+                likes = int(row[4])
+            except:
+                likes = 0
         
         total_engagement = likes + comment_count
         
@@ -110,8 +87,8 @@ def process_csv_row(row, llm_client, event_assigning_service):
             source=source,
             total_engagement=total_engagement
         )
-        db.add_post(post)
-        event_assigning_service.assign_posts_to_events(post)
+        if db.add_post(post):
+            event_assigning_service.assign_posts_to_events(post)
         return True
         
     except Exception as e:
@@ -173,7 +150,7 @@ def process_csv_files(llm_client):
             reader = csv.reader(file)
             next(reader)
 
-            needed_posts = 1
+            needed_posts = 10
 
             for row in reader:
                 if needed_posts <= 0:

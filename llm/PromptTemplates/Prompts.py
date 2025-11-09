@@ -23,28 +23,28 @@ find_topic_for_post_prompt = textwrap.dedent(
 get_report_for_event_prompt = textwrap.dedent(
     """
     Generate a report for an event considering these 
-    news articles / conversations about it. Return only the report.
+    news articles / conversations about it. Return only the report. The only headings you are allowed to use are #, ##, ###.
     {event_posts}
     """)
 
 get_report_for_topic_prompt = textwrap.dedent(
     """
     Generate a report for a topic considering these 
-    news articles / conversations about it. Return only the report.
+    news articles / conversations about it. Return only the report. The only headings you are allowed to use are #, ##, ###.
     {topic_posts}
     """)
 
 get_report_for_last_week_prompt = textwrap.dedent(
     """
     Generate a report for the last week considering these 
-    news articles / conversations about it. Return only the report.
+    news articles / conversations about it. Return only the report. The only headings you are allowed to use are #, ##, ###.
     {last_week_posts}
     """)
 
 get_report_for_last_month_prompt = textwrap.dedent(
     """
     Generate a report for the last month considering these 
-    news articles / conversations about it. Return only the report.
+    news articles / conversations about it. Return only the report. The only headings you are allowed to use are #, ##, ###.
     {last_month_posts}
     """)
 

@@ -2,7 +2,7 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Link } from '@/i18n/routing';
-import { TrendingUp, Calendar, MessageCircle, AlertTriangle, HelpCircle } from "lucide-react";
+import { TrendingUp, Calendar, MessageCircle, AlertTriangle, HelpCircle, FileDown } from "lucide-react";
 import { useTranslations } from 'next-intl';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -21,6 +21,7 @@ export default function TopicPage() {
     const [error, setError] = useState<string | null>(null);
     const [forumPosts, setForumPosts] = useState<ForumPost[]>([]);
     const [newPostContent, setNewPostContent] = useState('');
+    const [exportingPdf, setExportingPdf] = useState(false);
 
     useEffect(() => {
         async function loadTopic() {
@@ -61,6 +62,34 @@ export default function TopicPage() {
         }
     };
 
+    const handleExportPdf = async () => {
+        setExportingPdf(true);
+        try {
+            const response = await fetch(`http://localhost:8000/api/reports/topic/${topicId}/pdf`);
+
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.detail || 'Failed to export PDF');
+            }
+
+            // Download the PDF
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `topic_${topicId}_report.pdf`;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+        } catch (err: any) {
+            console.error('Failed to export PDF:', err);
+            alert(err.message || 'Failed to export PDF');
+        } finally {
+            setExportingPdf(false);
+        }
+    };
+
     if (loading) {
         return (
             <div className="flex min-h-screen items-center justify-center bg-zinc-50 dark:bg-zinc-950">
@@ -96,16 +125,26 @@ export default function TopicPage() {
                     <div className="flex-1">
                         {/* Header */}
                         <div className="mb-8 space-y-4">
-                            <div className="flex items-center gap-4">
-                                <span className="text-6xl">{topicData.icon}</span>
-                                <div>
-                                    <h1 className="text-5xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
-                                        {topicData.name}
-                                    </h1>
-                                    <p className="mt-2 text-lg text-zinc-600 dark:text-zinc-400">
-                                        {topicData.events?.length || 0} active events
-                                    </p>
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-4">
+                                    <span className="text-6xl">{topicData.icon}</span>
+                                    <div>
+                                        <h1 className="text-5xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
+                                            {topicData.name}
+                                        </h1>
+                                        <p className="mt-2 text-lg text-zinc-600 dark:text-zinc-400">
+                                            {topicData.events?.length || 0} active events
+                                        </p>
+                                    </div>
                                 </div>
+                                <Button
+                                    onClick={handleExportPdf}
+                                    disabled={exportingPdf}
+                                    className="flex items-center gap-2"
+                                >
+                                    <FileDown className="h-4 w-4" />
+                                    {exportingPdf ? 'Generating...' : 'Export to PDF'}
+                                </Button>
                             </div>
 
                             {/* Total Actionables Summary */}
