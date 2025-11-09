@@ -8,6 +8,10 @@ from llm.AzerionPromptTemplate import AzerionPromptTemplate
 from llm.PromptTemplates.Prompts import build_sentiment_prompt
 from Services.EventAssigningService import EventAssigningService
 
+# CONFIGURATION: Control how many posts to process
+RIJSWIJK_FEED_LIMIT = 1  # Number of posts to process from rijswijk_feed_news.csv (None = all)
+NUM_SNAPSHOT_FILES = 1   # Number of snapshot files to process (0-24)
+
 class EventProcessingService:
     def __init__(self, llm_client:LlmClient):
         self.llm_client = llm_client
@@ -57,10 +61,14 @@ class EventProcessingService:
 
     def process_csv_events_to_posts(self, csv_file: str = None):
         """
-        Process rijswijk_feed_news.csv first, then all 24 hourly CSV snapshot files
+        Process rijswijk_feed_news.csv first, then snapshot files from csv_timestamps/
         and convert rows to Post objects in the database
         
         DOES NOT USE THE CSV_FILE INPUT - processes rijswijk_feed_news.csv then all snapshots
+        
+        Configuration:
+            RIJSWIJK_FEED_LIMIT: Number of posts to process from rijswijk_feed_news.csv (None = all)
+            NUM_SNAPSHOT_FILES: Number of snapshot files to process (0-24)
         
         CSV format: link, message, date_iso8601, comments_json
 
@@ -72,7 +80,8 @@ class EventProcessingService:
         
         # First, process rijswijk_feed_news.csv from the project root
         rijswijk_file = "rijswijk_feed_news.csv"
-        print(f"\n[1] Processing {rijswijk_file}...")
+        limit_msg = f" (limit: {RIJSWIJK_FEED_LIMIT})" if RIJSWIJK_FEED_LIMIT else " (no limit)"
+        print(f"\n[1] Processing {rijswijk_file}{limit_msg}...")
         
         if os.path.exists(rijswijk_file):
             with open(rijswijk_file, 'r', encoding='utf-8') as file:
@@ -81,6 +90,10 @@ class EventProcessingService:
                 
                 row_count = 0
                 for row in reader:
+                    # Check if we've reached the limit
+                    if RIJSWIJK_FEED_LIMIT is not None and row_count >= RIJSWIJK_FEED_LIMIT:
+                        break
+                    
                     if self._process_csv_row(row):
                         row_count += 1
                 
@@ -88,9 +101,9 @@ class EventProcessingService:
         else:
             print(f"Warning: File '{rijswijk_file}' not found, skipping...")
         
-        # Then process all 24 hourly CSV files from csv_timestamps directory
+        # Then process snapshot CSV files from csv_timestamps directory
         csv_directory = "csv_timestamps"
-        csv_files = [f"snapshot_{i:02d}.csv" for i in range(2)]
+        csv_files = [f"snapshot_{i:02d}.csv" for i in range(NUM_SNAPSHOT_FILES)]
         
         print(f"\n[2] Processing {len(csv_files)} snapshot files from {csv_directory}/")
         
