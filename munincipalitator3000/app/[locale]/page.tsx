@@ -5,8 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Link, useRouter } from '@/i18n/routing';
 import { useTranslations } from 'next-intl';
-import { Search, Calendar, CalendarRange, Upload, ArrowRight } from "lucide-react";
-import { Search, Calendar, CalendarRange, Upload, TrendingUp } from "lucide-react";
+import { Search, Calendar, CalendarRange, Upload, ArrowRight, TrendingUp } from "lucide-react";
 import { useEffect, useState, useRef } from 'react';
 import { topicsApi } from '@/lib/api';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
@@ -31,7 +30,7 @@ export default function Home() {
     try {
       const data = await topicsApi.listTopics();
       console.log('Loaded topics:', data.topics);
-      
+
       // Log top_events for each topic
       data.topics.forEach((topic: any) => {
         console.log(`Topic ${topic.name} has ${topic.top_events?.length || 0} top events`);
@@ -41,9 +40,9 @@ export default function Home() {
           });
         }
       });
-      
+
       // Sort topics by total_posts in descending order
-      const sortedTopics = [...data.topics].sort((a, b) => 
+      const sortedTopics = [...data.topics].sort((a, b) =>
         (b.total_posts || 0) - (a.total_posts || 0)
       );
       setTrendingTopics(sortedTopics);
@@ -62,7 +61,7 @@ export default function Home() {
   // Function to merge timelines for multiple events
   const mergeTimelines = (topEvents: any[]) => {
     console.log('mergeTimelines called with:', topEvents.length, 'events');
-    
+
     if (!topEvents || topEvents.length === 0) {
       console.log('No top events provided');
       return [];
@@ -74,14 +73,14 @@ export default function Home() {
     topEvents.forEach((event, idx) => {
       // Support both 'timeline' and 'engagement_timeline' field names
       const timeline = event.timeline || event.engagement_timeline;
-      
+
       console.log(`Processing event ${idx}: ${event.name}`, {
         has_timeline: !!event.timeline,
         has_engagement_timeline: !!event.engagement_timeline,
         timeline_length: timeline?.length || 0,
         first_point: timeline?.[0]
       });
-      
+
       // Check if event has timeline data
       if (!timeline || timeline.length === 0) {
         console.warn(`Event ${event.name} has no timeline data`);
@@ -353,16 +352,16 @@ export default function Home() {
         {/* Topics Grid with Engagement Graphs */}
         <div className="grid gap-6 md:grid-cols-2">
           {trendingTopics.map((topic) => {
-            const chartData = topic.top_events && topic.top_events.length > 0 
-              ? mergeTimelines(topic.top_events) 
+            const chartData = topic.top_events && topic.top_events.length > 0
+              ? mergeTimelines(topic.top_events)
               : [];
-            
+
             console.log(`Topic ${topic.name}:`, {
               top_events_count: topic.top_events?.length || 0,
               chartData_length: chartData.length,
               chartData: chartData.slice(0, 3) // Log first 3 points
             });
-            
+
             return (
               <Card key={topic.id} className="border-2 border-[#4A8EC6]/20 transition-all hover:shadow-lg hover:border-[#4A8EC6] hover:shadow-[#4A8EC6]/20 dark:border-[#5B9ED3]/20 dark:hover:border-[#5B9ED3] dark:hover:shadow-[#5B9ED3]/20">
                 <CardHeader>
@@ -419,13 +418,13 @@ export default function Home() {
                                 return null;
                               }}
                             />
-                            <Legend 
+                            <Legend
                               content={({ payload }) => (
                                 <div className="flex flex-wrap gap-3 justify-center mt-4">
                                   {payload?.map((entry: any, index: number) => (
                                     <div key={index} className="flex items-center gap-2">
-                                      <div 
-                                        className="w-3 h-3 rounded-full" 
+                                      <div
+                                        className="w-3 h-3 rounded-full"
                                         style={{ backgroundColor: entry.color }}
                                       />
                                       <span className="text-xs text-zinc-700 dark:text-zinc-300 truncate max-w-[150px]">
