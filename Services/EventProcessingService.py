@@ -13,26 +13,89 @@ class EventProcessingService:
         self.llm_client = llm_client
         self.event_assigning_service = EventAssigningService(llm_client)
 
+    def _process_csv_row(self, row):
+        """
+        Process a single CSV row and create a Post object
+        
+        Returns: True if processed successfully, False otherwise
+        """
+        if len(row) < 3:
+            return False
+        
+        try:
+            link = row[0] if row[0] else "No link"
+            content = row[1] if len(row) > 1 else ""
+            date_str = row[2] if len(row) > 2 else datetime.now().isoformat()
+
+            try:
+                post_date = datetime.fromisoformat(date_str.replace('+01:00', ''))
+            except:
+                post_date = datetime.now()
+
+            if 'feelgoodradio' in link:
+                source = "Feelgood Radio - Nieuws"
+            elif 'inrijswijk.com' in link:
+                source = "InRijswijk.com"
+            elif 'ad.nl' in link:
+                source = "AD - Algemeen Dagblad"
+            else:
+                source = "Unknown Source"
+
+            post = Post(
+                link=link,
+                content=content,
+                date=post_date,
+                source=source
+            )
+            db.add_post(post)
+            self.event_assigning_service.assign_posts_to_events(post)
+            return True
+            
+        except Exception as e:
+            print(f"Error processing row: {e}")
+            return False
+
     def process_csv_events_to_posts(self, csv_file: str = None):
         """
-        Process all 24 hourly CSV files and convert rows to Post objects in the database
+        Process rijswijk_feed_news.csv first, then all 24 hourly CSV snapshot files
+        and convert rows to Post objects in the database
         
-        DOES NOT USE THE CSV_FILE INPUT, AS ALL THE CSV FILES WILL BE USED
+        DOES NOT USE THE CSV_FILE INPUT - processes rijswijk_feed_news.csv then all snapshots
         
         CSV format: link, message, date_iso8601, comments_json
 
         Returns: number of posts processed
         """
-        # Process all 24 hourly CSV files
-        csv_directory = "csv_timestamps"
-        csv_files = [f"snapshot_{i:02d}.csv" for i in range(24)]
-        
         print("\n" + "=" * 70)
-        print("PROCESSING 24 HOURLY CSV FILES")
+        print("PROCESSING CSV FILES")
         print("=" * 70)
         
+        # First, process rijswijk_feed_news.csv from the project root
+        rijswijk_file = "rijswijk_feed_news.csv"
+        print(f"\n[1] Processing {rijswijk_file}...")
+        
+        if os.path.exists(rijswijk_file):
+            with open(rijswijk_file, 'r', encoding='utf-8') as file:
+                reader = csv.reader(file)
+                next(reader)  # Skip header
+                
+                row_count = 0
+                for row in reader:
+                    if self._process_csv_row(row):
+                        row_count += 1
+                
+                print(f"Processed {row_count} posts from {rijswijk_file}")
+        else:
+            print(f"Warning: File '{rijswijk_file}' not found, skipping...")
+        
+        # Then process all 24 hourly CSV files from csv_timestamps directory
+        csv_directory = "csv_timestamps"
+        csv_files = [f"snapshot_{i:02d}.csv" for i in range(2)]
+        
+        print(f"\n[2] Processing {len(csv_files)} snapshot files from {csv_directory}/")
+        
         for i, csv_filename in enumerate(csv_files):
-            print(f"\n[{i+1}/24] Processing {csv_filename}...")
+            print(f"\n[{i+1}/{len(csv_files)}] Processing {csv_filename}...")
             csv_path = os.path.join(csv_directory, csv_filename)
             
             if not os.path.exists(csv_path):
@@ -46,44 +109,11 @@ class EventProcessingService:
                 needed_posts = 1
 
                 for row in reader:
-                    if len(row) < 3:
-                        continue
                     if needed_posts <= 0:
                         break
                     
-                    needed_posts -= 1
-
-                    try:
-                        link = row[0] if row[0] else "No link"
-                        content = row[1] if len(row) > 1 else ""
-                        date_str = row[2] if len(row) > 2 else datetime.now().isoformat()
-
-                        try:
-                            post_date = datetime.fromisoformat(date_str.replace('+01:00', ''))
-                        except:
-                            post_date = datetime.now()
-
-                        if 'feelgoodradio' in link:
-                            source = "Feelgood Radio - Nieuws"
-                        elif 'inrijswijk.com' in link:
-                            source = "InRijswijk.com"
-                        elif 'ad.nl' in link:
-                            source = "AD - Algemeen Dagblad"
-                        else:
-                            source = "Unknown Source"
-
-                        post = Post(
-                            link=link,
-                            content=content,
-                            date=post_date,
-                            source=source
-                        )
-                        db.add_post(post)
-                        self.event_assigning_service.assign_posts_to_events(post)
-
-                    except Exception as e:
-                        print(f"Error processing row: {e}")
-                        continue
+                    if self._process_csv_row(row):
+                        needed_posts -= 1
         
         print("\n" + "=" * 70)
         print("COMPLETED PROCESSING ALL FILES")
