@@ -22,7 +22,11 @@ class Post:
     engagement_rating: List[Tuple[datetime, int]] = field(default_factory=list, metadata=config(exclude=lambda x: True))
     # Exclude from serialization to avoid circular references
     actionables: List[Actionable] = field(default_factory=list, metadata=config(exclude=lambda x: True))
-    topic: str = ""
+    # Serialize topic as just the name, not the full object
+    topic: str = field(default="", metadata=config(
+        encoder=lambda t: t.name if hasattr(t, 'name') else str(t),
+        decoder=lambda s: s
+    ))
     
     @classmethod
     def create_with_enrichment(cls, link: str, content: str, date: datetime, source: str) -> 'Post':

@@ -29,9 +29,16 @@ class Event:
     name: Optional[str] = None
     small_summary: Optional[str] = None
     big_summary: Optional[str] = None
-    posts: Optional[List[Post]] = None
-    # Exclude similar_events from serialization to avoid circular reference
-    similar_events: Optional[List['Event']] = field(default=None, metadata=config(exclude=lambda x: True))
+    # Serialize posts as just links, not full objects
+    posts: Optional[List[Post]] = field(default=None, metadata=config(
+        encoder=lambda posts: [p.link for p in posts] if posts else [],
+        decoder=lambda links: []  # We'll handle reconstruction separately
+    ))
+    # Serialize similar_events as just IDs
+    similar_events: Optional[List['Event']] = field(default=None, metadata=config(
+        encoder=lambda events: [e.event_id for e in events if e and e.event_id] if events else [],
+        decoder=lambda ids: []  # We'll handle reconstruction separately
+    ))
     keywords: Optional[List[Keyword]] = None
     date: Optional[datetime] = None
 

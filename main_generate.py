@@ -157,49 +157,15 @@ def save_database_to_json(filename: str = None):
         print(f"  - Events: {len(all_events)}")
         print(f"  - Topics: {len(all_topics)}")
         
-        # Serialize manually with IDs/links as references (no nested objects!)
-        print("\nSerializing posts (with IDs only, no nested objects)...")
-        posts_data = []
-        for post in all_posts:
-            # Extract topic name if it's a Topic object, otherwise use as string
-            topic_name = post.topic.name if hasattr(post.topic, 'name') else str(post.topic)
-            
-            posts_data.append({
-                "link": post.link,
-                "content": post.content,
-                "date": post.date.isoformat() if post.date else None,
-                "source": post.source,
-                "satisfaction_rating": post.satisfaction_rating,
-                "topic": topic_name
-                # Skip engagement_rating and actionables
-            })
+        # Serialize using automatic to_dict() with custom encoders
+        print("\nSerializing posts...")
+        posts_data = [post.to_dict() for post in all_posts]
         
-        print("Serializing events (with post links and event IDs only)...")
-        events_data = []
-        for event in all_events:
-            events_data.append({
-                "event_id": event.event_id,
-                "name": event.name,
-                "small_summary": event.small_summary,
-                "big_summary": event.big_summary,
-                "date": event.date.isoformat() if event.date else None,
-                # Store only references, not full objects
-                "post_links": [p.link for p in (event.posts or [])],
-                "similar_event_ids": [e.event_id for e in (event.similar_events or []) if e.event_id],
-                "keywords": [{"keyword": kw.keyword, "emb": kw.emb} for kw in (event.keywords or [])]
-            })
+        print("Serializing events...")
+        events_data = [event.to_dict() for event in all_events]
         
-        print("Serializing topics (with event IDs only)...")
-        topics_data = []
-        for topic in all_topics:
-            topics_data.append({
-                "topic_id": topic.topic_id,
-                "name": topic.name,
-                "icon": topic.icon,
-                "actionables": topic.actionables,
-                # Store only event IDs, not full Event objects
-                "event_ids": [e.event_id for e in (topic.events or []) if e.event_id is not None]
-            })
+        print("Serializing topics...")
+        topics_data = [topic.to_dict() for topic in all_topics]
         
         db_data = {
             "posts": posts_data,
