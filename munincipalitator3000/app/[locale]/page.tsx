@@ -142,10 +142,10 @@ export default function Home() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-zinc-50 to-zinc-100 dark:from-zinc-950 dark:to-zinc-900">
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-[#e8f4f8] via-white to-[#e8f5e9] dark:from-[#0a0e12] dark:via-[#0f1419] dark:to-[#0d1410]">
         <div className="text-center">
-          <div className="h-32 w-32 mx-auto animate-spin rounded-full border-b-2 border-zinc-900 dark:border-zinc-50"></div>
-          <p className="mt-4 text-lg text-zinc-600 dark:text-zinc-400">Loading dashboard...</p>
+          <div className="h-32 w-32 mx-auto animate-spin rounded-full border-b-2 border-[#4A8EC6] dark:border-[#7CB8E8] polderr-glow-blue"></div>
+          <p className="mt-4 text-lg text-zinc-700 dark:text-zinc-300">Loading dashboard...</p>
         </div>
       </div>
     );
@@ -153,17 +153,17 @@ export default function Home() {
 
   if (error) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-zinc-50 to-zinc-100 dark:from-zinc-950 dark:to-zinc-900">
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-[#e8f4f8] via-white to-[#e8f5e9] dark:from-[#0a0e12] dark:via-[#0f1419] dark:to-[#0d1410]">
         <div className="text-center">
           <p className="text-red-600 dark:text-red-400 text-xl mb-4">⚠️ {error}</p>
-          <p className="text-zinc-600 dark:text-zinc-400">
+          <p className="text-zinc-700 dark:text-zinc-300">
             Make sure the backend is running at{' '}
-            <code className="bg-zinc-200 dark:bg-zinc-800 px-2 py-1 rounded">
+            <code className="bg-[#4A8EC6]/10 dark:bg-[#5B9ED3]/20 px-2 py-1 rounded">
               http://localhost:8000
             </code>
           </p>
-          <p className="mt-2 text-sm text-zinc-500 dark:text-zinc-500">
-            Run: <code className="bg-zinc-200 dark:bg-zinc-800 px-2 py-1 rounded">python -m api.main</code>
+          <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
+            Run: <code className="bg-[#4A8EC6]/10 dark:bg-[#5B9ED3]/20 px-2 py-1 rounded">python -m api.main</code>
           </p>
         </div>
       </div>
@@ -172,21 +172,21 @@ export default function Home() {
 
   if (trendingTopics.length === 0) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-zinc-50 to-zinc-100 dark:from-zinc-950 dark:to-zinc-900">
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-[#e8f4f8] via-white to-[#e8f5e9] dark:from-[#0a0e12] dark:via-[#0f1419] dark:to-[#0d1410]">
         <div className="text-center">
-          <p className="text-zinc-600 dark:text-zinc-400 text-xl">No topics available</p>
+          <p className="text-zinc-700 dark:text-zinc-300 text-xl">No topics available</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-zinc-50 to-zinc-100 dark:from-zinc-950 dark:to-zinc-900">
+    <div className="min-h-screen bg-gradient-to-br from-[#e8f4f8] via-white to-[#e8f5e9] dark:from-[#0a0e12] dark:via-[#0f1419] dark:to-[#0d1410]">
       <div className="mx-auto max-w-[1800px] p-8">
         {/* Header with Search */}
         <div className="mb-10 space-y-6">
           <div className="flex items-start justify-between">
-            <h1 className="text-5xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
+            <h1 className="text-5xl font-bold tracking-tight bg-gradient-to-r from-[#4A8EC6] to-[#6BC04A] bg-clip-text text-transparent">
               {t('dashboardTitle')}
             </h1>
 
@@ -196,7 +196,7 @@ export default function Home() {
                 onClick={handleExportWeekly}
                 disabled={exportingWeekly}
                 variant="outline"
-                className="flex items-center gap-2"
+                className="flex items-center gap-2 border-[#4A8EC6] text-[#4A8EC6] hover:bg-[#4A8EC6]/10 dark:border-[#7CB8E8] dark:text-[#7CB8E8] dark:hover:bg-[#7CB8E8]/10"
               >
                 <Calendar className="h-4 w-4" />
                 {exportingWeekly ? 'Generating...' : 'Weekly Report'}
@@ -205,7 +205,7 @@ export default function Home() {
                 onClick={handleExportMonthly}
                 disabled={exportingMonthly}
                 variant="outline"
-                className="flex items-center gap-2"
+                className="flex items-center gap-2 border-[#4A8EC6] text-[#4A8EC6] hover:bg-[#4A8EC6]/10 dark:border-[#7CB8E8] dark:text-[#7CB8E8] dark:hover:bg-[#7CB8E8]/10"
               >
                 <CalendarRange className="h-4 w-4" />
                 {exportingMonthly ? 'Generating...' : 'Monthly Report'}
@@ -223,7 +223,7 @@ export default function Home() {
                 />
                 <Button
                   variant="outline"
-                  className="flex items-center gap-2"
+                  className="flex items-center gap-2 border-[#6BC04A] text-[#6BC04A] hover:bg-[#6BC04A]/10 dark:border-[#7ACC58] dark:text-[#7ACC58] dark:hover:bg-[#7ACC58]/10"
                   onClick={() => fileInputRef.current?.click()}
                   disabled={uploading}
                   type="button"
@@ -267,7 +267,7 @@ export default function Home() {
 
             return (
               <Link key={topic.id} href={`/topics/${topic.id}`} className="block">
-                <Card className="cursor-pointer border-2 shadow-lg transition-all hover:border-zinc-400 hover:shadow-2xl dark:hover:border-zinc-600">
+                <Card className="cursor-pointer border-2 border-[#4A8EC6]/20 shadow-lg transition-all hover:border-[#4A8EC6] hover:shadow-2xl hover:shadow-[#4A8EC6]/20 dark:border-[#5B9ED3]/20 dark:hover:border-[#5B9ED3] dark:hover:shadow-[#5B9ED3]/20">
                   <CardHeader className="pb-6">
                     <div className="flex items-center gap-4">
                       <span className="text-4xl">{topic.icon}</span>
@@ -284,9 +284,9 @@ export default function Home() {
                       {/* Left: Legend */}
                       <div className="space-y-4">
                         {topic.events.map((event: any) => (
-                          <div key={event.id} className="flex items-center gap-4 rounded-lg bg-zinc-50 p-3 dark:bg-zinc-900">
+                          <div key={event.id} className="flex items-center gap-4 rounded-lg bg-gradient-to-r from-[#4A8EC6]/5 to-[#6BC04A]/5 p-3 dark:from-[#5B9ED3]/10 dark:to-[#7ACC58]/10 border border-[#4A8EC6]/10 dark:border-[#5B9ED3]/20">
                             <div
-                              className="h-4 w-4 shrink-0 rounded-full shadow-sm"
+                              className="h-4 w-4 shrink-0 rounded-full shadow-sm ring-2 ring-white dark:ring-[#0f1419]"
                               style={{ backgroundColor: event.color }}
                             />
                             <div className="flex-1 min-w-0">
@@ -302,12 +302,12 @@ export default function Home() {
                       </div>
 
                       {/* Center: Line Graph */}
-                      <div className="relative h-48 rounded-lg border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-950">
+                      <div className="relative h-48 rounded-lg border border-[#4A8EC6]/20 bg-white/50 backdrop-blur-sm p-4 dark:border-[#5B9ED3]/30 dark:bg-[#0f1419]/50">
                         <svg className="h-full w-full" viewBox="0 0 800 240" preserveAspectRatio="xMidYMid meet">
                           {/* Background grid */}
                           <defs>
                             <pattern id={`grid-${topic.id}`} width="80" height="60" patternUnits="userSpaceOnUse">
-                              <path d="M 80 0 L 0 0 0 60" fill="none" stroke="currentColor" strokeWidth="0.5" className="text-zinc-200 dark:text-zinc-800" />
+                              <path d="M 80 0 L 0 0 0 60" fill="none" stroke="currentColor" strokeWidth="0.5" className="text-[#4A8EC6]/20 dark:text-[#5B9ED3]/20" />
                             </pattern>
                           </defs>
                           <rect width="800" height="240" fill={`url(#grid-${topic.id})`} />
@@ -375,7 +375,7 @@ export default function Home() {
 
                       {/* Right: Actionables */}
                       <div className="flex flex-col justify-center space-y-6">
-                        <div className="rounded-lg bg-red-50 p-4 text-center dark:bg-red-950/20">
+                        <div className="rounded-lg bg-gradient-to-br from-red-50 to-red-100 p-4 text-center border-2 border-red-200 dark:from-red-950/20 dark:to-red-900/20 dark:border-red-800/30 shadow-sm">
                           <div className="text-4xl font-bold text-red-600 dark:text-red-400">
                             {topic.actionables.misinformation}
                           </div>
@@ -383,11 +383,11 @@ export default function Home() {
                             {t('misinformation')}
                           </div>
                         </div>
-                        <div className="rounded-lg bg-blue-50 p-4 text-center dark:bg-blue-950/20">
-                          <div className="text-4xl font-bold text-blue-600 dark:text-blue-400">
+                        <div className="rounded-lg bg-gradient-to-br from-[#7CB8E8]/20 to-[#4A8EC6]/30 p-4 text-center border-2 border-[#4A8EC6]/40 dark:from-[#5B9ED3]/20 dark:to-[#4A8EC6]/20 dark:border-[#5B9ED3]/40 shadow-sm">
+                          <div className="text-4xl font-bold text-[#2E6B9F] dark:text-[#7CB8E8]">
                             {topic.actionables.questions}
                           </div>
-                          <div className="text-sm font-medium text-blue-700 dark:text-blue-300 mt-2">
+                          <div className="text-sm font-medium text-[#4A8EC6] dark:text-[#8FC5EE] mt-2">
                             {t('questions')}
                           </div>
                         </div>

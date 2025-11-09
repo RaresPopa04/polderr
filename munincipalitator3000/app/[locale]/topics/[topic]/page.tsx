@@ -98,10 +98,10 @@ export default function TopicPage() {
 
     if (loading) {
         return (
-            <div className="flex min-h-screen items-center justify-center bg-zinc-50 dark:bg-zinc-950">
+            <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-[#e8f4f8] via-white to-[#e8f5e9] dark:from-[#0a0e12] dark:via-[#0f1419] dark:to-[#0d1410]">
                 <div className="text-center">
-                    <div className="h-32 w-32 mx-auto animate-spin rounded-full border-b-2 border-zinc-900 dark:border-zinc-50"></div>
-                    <p className="mt-4 text-lg text-zinc-600 dark:text-zinc-400">Loading topic...</p>
+                    <div className="h-32 w-32 mx-auto animate-spin rounded-full border-b-2 border-[#4A8EC6] dark:border-[#7CB8E8] polderr-glow-blue"></div>
+                    <p className="mt-4 text-lg text-zinc-700 dark:text-zinc-300">Loading topic...</p>
                 </div>
             </div>
         );
@@ -109,12 +109,12 @@ export default function TopicPage() {
 
     if (error || !topicData) {
         return (
-            <div className="flex min-h-screen items-center justify-center bg-zinc-50 dark:bg-zinc-950">
+            <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-[#e8f4f8] via-white to-[#e8f5e9] dark:from-[#0a0e12] dark:via-[#0f1419] dark:to-[#0d1410]">
                 <div className="text-center">
                     <p className="text-red-600 dark:text-red-400 text-xl mb-4">⚠️ {error || 'Topic not found'}</p>
-                    <p className="text-zinc-600 dark:text-zinc-400">
+                    <p className="text-zinc-700 dark:text-zinc-300">
                         Make sure the backend is running at{' '}
-                        <code className="bg-zinc-200 dark:bg-zinc-800 px-2 py-1 rounded">
+                        <code className="bg-[#4A8EC6]/10 dark:bg-[#5B9ED3]/20 px-2 py-1 rounded">
                             http://localhost:8000
                         </code>
                     </p>
@@ -124,7 +124,7 @@ export default function TopicPage() {
     }
 
     return (
-        <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950">
+        <div className="min-h-screen bg-gradient-to-br from-[#e8f4f8] via-white to-[#e8f5e9] dark:from-[#0a0e12] dark:via-[#0f1419] dark:to-[#0d1410]">
             <div className="mx-auto max-w-7xl p-6">
                 <div className="flex gap-6">
                     {/* Main Content */}
@@ -135,10 +135,10 @@ export default function TopicPage() {
                                 <div className="flex items-center gap-4">
                                     <span className="text-6xl">{topicData.icon}</span>
                                     <div>
-                                        <h1 className="text-5xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
+                                        <h1 className="text-5xl font-bold tracking-tight bg-gradient-to-r from-[#4A8EC6] to-[#6BC04A] bg-clip-text text-transparent">
                                             {topicData.name}
                                         </h1>
-                                        <p className="mt-2 text-lg text-zinc-600 dark:text-zinc-400">
+                                        <p className="mt-2 text-lg text-zinc-700 dark:text-zinc-300">
                                             {topicData.events?.length || 0} active events
                                         </p>
                                     </div>
@@ -146,7 +146,8 @@ export default function TopicPage() {
                                 <Button
                                     onClick={handleExportPdf}
                                     disabled={exportingPdf}
-                                    className="flex items-center gap-2"
+                                    variant="outline"
+                                    className="flex items-center gap-2 border-[#4A8EC6] text-[#4A8EC6] hover:bg-[#4A8EC6]/10 dark:border-[#7CB8E8] dark:text-[#7CB8E8] dark:hover:bg-[#7CB8E8]/10"
                                 >
                                     <FileDown className="h-4 w-4" />
                                     {exportingPdf ? 'Generating...' : 'Export to PDF'}
@@ -155,7 +156,7 @@ export default function TopicPage() {
 
                             {/* Total Actionables Summary */}
                             <div className="flex gap-6">
-                                <div className="rounded-lg bg-red-50 px-6 py-4 dark:bg-red-950/20">
+                                <div className="rounded-lg bg-gradient-to-br from-red-50 to-red-100 px-6 py-4 border-2 border-red-200 dark:from-red-950/20 dark:to-red-900/20 dark:border-red-800/30 shadow-sm">
                                     <div className="flex items-center gap-2 mb-1">
                                         <AlertTriangle className="h-5 w-5 text-red-600 dark:text-red-400" />
                                         <div className="text-sm font-medium text-red-700 dark:text-red-300">
@@ -166,14 +167,14 @@ export default function TopicPage() {
                                         {topicData.total_actionables?.misinformation || 0}
                                     </div>
                                 </div>
-                                <div className="rounded-lg bg-blue-50 px-6 py-4 dark:bg-blue-950/20">
+                                <div className="rounded-lg bg-gradient-to-br from-[#7CB8E8]/20 to-[#4A8EC6]/30 px-6 py-4 border-2 border-[#4A8EC6]/40 dark:from-[#5B9ED3]/20 dark:to-[#4A8EC6]/20 dark:border-[#5B9ED3]/40 shadow-sm">
                                     <div className="flex items-center gap-2 mb-1">
-                                        <HelpCircle className="h-5 w-5 text-blue-600 dark:text-blue-400" />
-                                        <div className="text-sm font-medium text-blue-700 dark:text-blue-300">
+                                        <HelpCircle className="h-5 w-5 text-[#2E6B9F] dark:text-[#7CB8E8]" />
+                                        <div className="text-sm font-medium text-[#4A8EC6] dark:text-[#8FC5EE]">
                                             Total Questions
                                         </div>
                                     </div>
-                                    <div className="text-3xl font-bold text-blue-600 dark:text-blue-400">
+                                    <div className="text-3xl font-bold text-[#2E6B9F] dark:text-[#7CB8E8]">
                                         {topicData.total_actionables?.questions || 0}
                                     </div>
                                 </div>
@@ -182,7 +183,7 @@ export default function TopicPage() {
 
                         {/* Sentiment Analysis Chart */}
                         {topicData.sentiment_data && topicData.sentiment_data.length > 0 && (
-                            <Card className="mb-8">
+                            <Card className="mb-8 border-2 border-[#4A8EC6]/20 dark:border-[#5B9ED3]/20">
                                 <CardHeader>
                                     <CardTitle>Sentiment Over Time</CardTitle>
                                     <CardDescription>Click on any point to view that event</CardDescription>
@@ -250,13 +251,13 @@ export default function TopicPage() {
 
                         {/* Events List */}
                         <div className="space-y-6">
-                            <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">Events</h2>
+                            <h2 className="text-2xl font-bold bg-gradient-to-r from-[#4A8EC6] to-[#6BC04A] bg-clip-text text-transparent">Events</h2>
 
                             {topicData.events && topicData.events.length > 0 ? (
                                 <div className="space-y-6">
                                     {topicData.events.map((event: any) => (
                                         <Link key={event.id} href={`/events/${event.id}`} className="block">
-                                            <Card className="cursor-pointer transition-all hover:shadow-lg hover:border-zinc-400 dark:hover:border-zinc-600">
+                                            <Card className="cursor-pointer border-2 border-[#4A8EC6]/20 transition-all hover:shadow-lg hover:border-[#4A8EC6] hover:shadow-[#4A8EC6]/20 dark:border-[#5B9ED3]/20 dark:hover:border-[#5B9ED3] dark:hover:shadow-[#5B9ED3]/20">
                                                 <CardHeader>
                                                     <div className="flex items-start justify-between">
                                                         <div className="flex-1">
@@ -268,7 +269,7 @@ export default function TopicPage() {
                                                             {/* Individual Event Actionables */}
                                                             <div className="flex gap-3 mt-3">
                                                                 {event.actionables?.misinformation > 0 && (
-                                                                    <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-red-50 dark:bg-red-950/20">
+                                                                    <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-gradient-to-br from-red-50 to-red-100 border border-red-200 dark:from-red-950/20 dark:to-red-900/20 dark:border-red-800/30">
                                                                         <AlertTriangle className="h-4 w-4 text-red-600 dark:text-red-400" />
                                                                         <span className="text-sm font-medium text-red-700 dark:text-red-300">
                                                                             {event.actionables.misinformation} Misinformation
@@ -276,9 +277,9 @@ export default function TopicPage() {
                                                                     </div>
                                                                 )}
                                                                 {event.actionables?.questions > 0 && (
-                                                                    <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-blue-50 dark:bg-blue-950/20">
-                                                                        <HelpCircle className="h-4 w-4 text-blue-600 dark:text-blue-400" />
-                                                                        <span className="text-sm font-medium text-blue-700 dark:text-blue-300">
+                                                                    <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-gradient-to-br from-[#7CB8E8]/20 to-[#4A8EC6]/30 border border-[#4A8EC6]/40 dark:from-[#5B9ED3]/20 dark:to-[#4A8EC6]/20 dark:border-[#5B9ED3]/40">
+                                                                        <HelpCircle className="h-4 w-4 text-[#4A8EC6] dark:text-[#7CB8E8]" />
+                                                                        <span className="text-sm font-medium text-[#4A8EC6] dark:text-[#8FC5EE]">
                                                                             {event.actionables.questions} Questions
                                                                         </span>
                                                                     </div>
@@ -319,7 +320,7 @@ export default function TopicPage() {
 
                     {/* Forum Sidebar */}
                     <div className="w-80 flex-shrink-0">
-                        <Card className="sticky top-6 h-[80vh] flex flex-col">
+                        <Card className="sticky top-6 h-[80vh] flex flex-col border-2 border-[#4A8EC6]/20 dark:border-[#5B9ED3]/20">
                             <CardHeader className="flex-shrink-0">
                                 <CardTitle className="flex items-center gap-2">
                                     <MessageCircle className="h-5 w-5" />

@@ -53,10 +53,10 @@ export default function SignupPage() {
     };
 
     return (
-        <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 flex items-center justify-center p-6">
-            <Card className="w-full max-w-md">
+        <div className="min-h-screen bg-gradient-to-br from-[#e8f4f8] via-white to-[#e8f5e9] dark:from-[#0a0e12] dark:via-[#0f1419] dark:to-[#0d1410] flex items-center justify-center p-6">
+            <Card className="w-full max-w-md border-2 border-[#6BC04A]/20 shadow-xl dark:border-[#7ACC58]/20">
                 <CardHeader>
-                    <CardTitle className="text-2xl">Sign Up</CardTitle>
+                    <CardTitle className="text-2xl bg-gradient-to-r from-[#4A8EC6] to-[#6BC04A] bg-clip-text text-transparent">Sign Up</CardTitle>
                     <CardDescription>Create a new account</CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -93,15 +93,15 @@ export default function SignupPage() {
 
                         <Button
                             type="submit"
-                            className="w-full"
+                            className="w-full bg-gradient-to-r from-[#4A8EC6] to-[#6BC04A] hover:from-[#5B9ED3] hover:to-[#7ACC58]"
                             disabled={loading}
                         >
                             {loading ? 'Signing up...' : 'Sign Up'}
                         </Button>
 
-                        <div className="text-center text-sm text-zinc-600 dark:text-zinc-400">
+                        <div className="text-center text-sm text-zinc-700 dark:text-zinc-300">
                             Already have an account?{' '}
-                            <Link href="/auth/login" className="text-blue-600 dark:text-blue-400 hover:underline">
+                            <Link href="/auth/login" className="text-[#6BC04A] dark:text-[#7ACC58] hover:underline font-medium">
                                 Log in
                             </Link>
                         </div>
