@@ -11,9 +11,10 @@ from llm.AzerionPromptTemplate import AzerionPromptTemplate
 from llm.PromptTemplates.Prompts import build_sentiment_prompt
 from Services.EventAssigningService import EventAssigningService
 
-# CONFIGURATION: Control how many posts to process
-RIJSWIJK_FEED_LIMIT = 10  # Number of posts to process from rijswijk_feed_news.csv (None = all)
-NUM_SNAPSHOT_FILES = 2   # Number of snapshot files to process (0-24)
+
+# # CONFIGURATION: Control how many posts to process
+# RIJSWIJK_FEED_LIMIT = 0  # Number of posts to process from rijswijk_feed_news.csv (None = all)
+# NUM_SNAPSHOT_FILES = 2   # Number of snapshot files to process (0-24)
 
 class EventProcessingService:
     def __init__(self, llm_client:LlmClient):
@@ -62,78 +63,78 @@ class EventProcessingService:
             print(f"Error processing row: {e}")
             return False
 
-    def process_csv_events_to_posts(self, csv_file: str = None):
-        """
-        Process rijswijk_feed_news.csv first, then snapshot files from csv_timestamps/
-        and convert rows to Post objects in the database
+    # def process_csv_events_to_posts(self, csv_file: str = None):
+    #     """
+    #     Process rijswijk_feed_news.csv first, then snapshot files from csv_timestamps/
+    #     and convert rows to Post objects in the database
         
-        DOES NOT USE THE CSV_FILE INPUT - processes rijswijk_feed_news.csv then all snapshots
+    #     DOES NOT USE THE CSV_FILE INPUT - processes rijswijk_feed_news.csv then all snapshots
         
-        Configuration:
-            RIJSWIJK_FEED_LIMIT: Number of posts to process from rijswijk_feed_news.csv (None = all)
-            NUM_SNAPSHOT_FILES: Number of snapshot files to process (0-24)
+    #     Configuration:
+    #         RIJSWIJK_FEED_LIMIT: Number of posts to process from rijswijk_feed_news.csv (None = all)
+    #         NUM_SNAPSHOT_FILES: Number of snapshot files to process (0-24)
         
-        CSV format: link, message, date_iso8601, comments_json
+    #     CSV format: link, message, date_iso8601, comments_json
 
-        Returns: number of posts processed
-        """
-        print("\n" + "=" * 70)
-        print("PROCESSING CSV FILES")
-        print("=" * 70)
+    #     Returns: number of posts processed
+    #     """
+    #     print("\n" + "=" * 70)
+    #     print("PROCESSING CSV FILES")
+    #     print("=" * 70)
         
-        # First, process rijswijk_feed_news.csv from the project root
-        rijswijk_file = "rijswijk_feed_news.csv"
-        limit_msg = f" (limit: {RIJSWIJK_FEED_LIMIT})" if RIJSWIJK_FEED_LIMIT else " (no limit)"
-        print(f"\n[1] Processing {rijswijk_file}{limit_msg}...")
+    #     # First, process rijswijk_feed_news.csv from the project root
+    #     rijswijk_file = "rijswijk_feed_news.csv"
+    #     # limit_msg = f" (limit: {RIJSWIJK_FEED_LIMIT})" if RIJSWIJK_FEED_LIMIT else " (no limit)"
+    #     print(f"\n[1] Processing {rijswijk_file}{limit_msg}...")
         
-        if os.path.exists(rijswijk_file):
-            with open(rijswijk_file, 'r', encoding='utf-8') as file:
-                reader = csv.reader(file)
-                next(reader)  # Skip header
+    #     if os.path.exists(rijswijk_file):
+    #         with open(rijswijk_file, 'r', encoding='utf-8') as file:
+    #             reader = csv.reader(file)
+    #             next(reader)  # Skip header
                 
-                row_count = 0
-                for row in reader:
-                    # Check if we've reached the limit
-                    if RIJSWIJK_FEED_LIMIT is not None and row_count >= RIJSWIJK_FEED_LIMIT:
-                        break
+    #             row_count = 0
+    #             for row in reader:
+    #                 # Check if we've reached the limit
+    #                 if RIJSWIJK_FEED_LIMIT is not None and row_count >= RIJSWIJK_FEED_LIMIT:
+    #                     break
                     
-                    if self._process_csv_row(row):
-                        row_count += 1
+    #                 if self._process_csv_row(row):
+    #                     row_count += 1
                 
-                print(f"Processed {row_count} posts from {rijswijk_file}")
-        else:
-            print(f"Warning: File '{rijswijk_file}' not found, skipping...")
+    #             print(f"Processed {row_count} posts from {rijswijk_file}")
+    #     else:
+    #         print(f"Warning: File '{rijswijk_file}' not found, skipping...")
         
-        # Then process snapshot CSV files from csv_timestamps directory
-        csv_directory = "csv_timestamps"
-        csv_files = [f"snapshot_{i:02d}.csv" for i in range(NUM_SNAPSHOT_FILES)]
+    #     # Then process snapshot CSV files from csv_timestamps directory
+    #     csv_directory = "csv_timestamps"
+    #     csv_files = [f"snapshot_{i:02d}.csv" for i in range(NUM_SNAPSHOT_FILES)]
         
-        print(f"\n[2] Processing {len(csv_files)} snapshot files from {csv_directory}/")
+    #     print(f"\n[2] Processing {len(csv_files)} snapshot files from {csv_directory}/")
         
-        for i, csv_filename in enumerate(csv_files):
-            print(f"\n[{i+1}/{len(csv_files)}] Processing {csv_filename}...")
-            csv_path = os.path.join(csv_directory, csv_filename)
+    #     for i, csv_filename in enumerate(csv_files):
+    #         print(f"\n[{i+1}/{len(csv_files)}] Processing {csv_filename}...")
+    #         csv_path = os.path.join(csv_directory, csv_filename)
             
-            if not os.path.exists(csv_path):
-                print(f"Warning: File '{csv_path}' not found, skipping...")
-                continue
+    #         if not os.path.exists(csv_path):
+    #             print(f"Warning: File '{csv_path}' not found, skipping...")
+    #             continue
                 
-            with open(csv_path, 'r', encoding='utf-8') as file:
-                reader = csv.reader(file)
-                next(reader)
+    #         with open(csv_path, 'r', encoding='utf-8') as file:
+    #             reader = csv.reader(file)
+    #             next(reader)
 
-                needed_posts = 1
+    #             needed_posts = 1
 
-                for row in reader:
-                    if needed_posts <= 0:
-                        break
+    #             for row in reader:
+    #                 if needed_posts <= 0:
+    #                     break
                     
-                    if self._process_csv_row(row):
-                        needed_posts -= 1
+    #                 if self._process_csv_row(row):
+    #                     needed_posts -= 1
         
-        print("\n" + "=" * 70)
-        print("COMPLETED PROCESSING ALL FILES")
-        print("=" * 70)
+    #     print("\n" + "=" * 70)
+    #     print("COMPLETED PROCESSING ALL FILES")
+    #     print("=" * 70)
 
     def load_database_from_json(self, json_file: str):
         """
