@@ -193,18 +193,26 @@ class EventProcessingService:
             print("Loading topics...")
             topics_data = data.get('topics', [])
             for topic_dict in topics_data:
-                # Reconstruct events from IDs
+                # Reconstruct events from IDs (save them before from_dict wipes them)
                 event_ids = topic_dict.get('events', [])
-                topic_dict['events'] = [events_by_id[eid] for eid in event_ids if eid in events_by_id]
+                print(f"  Topic '{topic_dict.get('name')}' has event IDs: {event_ids}")
+                reconstructed_events = [events_by_id[eid] for eid in event_ids if eid in events_by_id]
+                print(f"  Reconstructed to {len(reconstructed_events)} event objects")
                 
+                # Create topic (decoder will set events to [])
                 topic = Topic.from_dict(topic_dict)
+                # Now manually assign the reconstructed events
+                topic.events = reconstructed_events
+                
                 # Update existing topic or add new one
                 existing_topic = db.get_topic_by_id(topic.topic_id)
                 if existing_topic:
                     existing_topic.events = topic.events
+                    print(f"  Updated existing topic, now has {len(existing_topic.events)} events")
                     existing_topic.actionables = topic.actionables
                 else:
                     db.add_topic(topic)
+                    print(f"  Added new topic with {len(topic.events)} events")
             
             metadata = data.get('metadata', {})
             
