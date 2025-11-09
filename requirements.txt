@@ -11,3 +11,5 @@ Pillow
 python-multipart
 pyjwt
 bcrypt
+reportlab
+markdown2
