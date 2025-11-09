@@ -18,7 +18,6 @@ class Post:
     satisfaction_rating: int
     engagement_rating: List[Tuple[datetime, int]]
     actionables: List[Actionable]
-    post_id: Optional[int] = field(default=None)
     topic: Optional[str] = field(default=None)
     
     def __init__(self, link: str, content: str, date: datetime, source: str):
