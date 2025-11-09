@@ -30,16 +30,37 @@ def show_database_stats():
     for post in posts[:10]:
         print(f"Post: {post.link} and rating {post.satisfaction_rating}")
     
-
-
-def process_csv_data(csv_file: str):
+# link,message,date_iso8601,comments_json
+# "link","message","date_iso8601","comments_json","likes"
+def process_csv_data(csv_file: str = None):
+    """Process all 24 hourly CSV files and load data into memory. DOES NOT USE THE CSV_FILE INPUT, AS ALL THE CSV FILES WILL BE USED"""
+    
     print("Initializing LLM client...")
     llm_client = LlmClient()
     
     print("Creating Event Processing Service...")
     service = EventProcessingService(llm_client)
     
-    service.process_csv_events_to_posts(csv_file)
+    # Process all 24 hourly CSV files
+    csv_directory = "csv_timestamps"
+    csv_files = [f"snapshot_{i:02d}.csv" for i in range(24)]
+    
+    print("\n" + "=" * 70)
+    print("PROCESSING 24 HOURLY CSV FILES")
+    print("=" * 70)
+    
+    for i, csv_filename in enumerate(csv_files):
+        print(f"Processing {csv_filename}...")
+        csv_path = os.path.join(csv_directory, csv_filename)
+        if os.path.exists(csv_path):
+            print(f"\n[{i+1}/24] Processing {csv_filename}...")
+            service.process_csv_events_to_posts(csv_path)
+        else:
+            print(f"\n[{i+1}/24] Warning: File '{csv_path}' not found, skipping...")
+    
+    print("\n" + "=" * 70)
+    print("COMPLETED PROCESSING ALL FILES")
+    print("=" * 70)
     
     for event in db.get_all_events():
         print(f"Event: {event.name}")
@@ -49,16 +70,8 @@ def process_csv_data(csv_file: str):
         print(f"Event similar events: {[e.name for e in event.similar_events] if event.similar_events else []}")
         print(f"Event posts: {[p.link for p in event.posts] if event.posts else []}")
         print("-" * 70)
-    print(f"\n✓ Successfully processed posts!")
+    print(f"\n✓ Successfully processed all posts!")
         
-csv_file = "rijswijk_feed_news.csv"
-if os.path.exists(csv_file):
-        process_csv_data(csv_file)
-        show_database_stats()
-else:
-    print(f"\nNote: CSV file '{csv_file}' not found in current directory.")
-
-
-
-
-
+# Process all CSV files and show stats
+process_csv_data()
+show_database_stats()
