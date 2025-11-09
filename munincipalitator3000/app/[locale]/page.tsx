@@ -225,10 +225,10 @@ export default function Home() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-zinc-50 dark:bg-zinc-950">
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-50 via-white to-slate-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
         <div className="text-center">
-          <div className="h-32 w-32 mx-auto animate-spin rounded-full border-b-2 border-zinc-900 dark:border-zinc-100"></div>
-          <p className="mt-4 text-lg text-zinc-700 dark:text-zinc-300">Loading dashboard...</p>
+          <div className="h-16 w-16 mx-auto animate-spin rounded-full border-4 border-slate-200 dark:border-slate-800 border-t-[#4A8EC6]"></div>
+          <p className="mt-6 text-lg font-medium text-slate-700 dark:text-slate-300">Loading dashboard...</p>
         </div>
       </div>
     );
@@ -236,18 +236,22 @@ export default function Home() {
 
   if (error) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-zinc-50 dark:bg-zinc-950">
-        <div className="text-center">
-          <p className="text-red-600 dark:text-red-400 text-xl mb-4">⚠️ {error}</p>
-          <p className="text-zinc-700 dark:text-zinc-300">
-            Make sure the backend is running at{' '}
-            <code className="bg-zinc-200 dark:bg-zinc-800 px-2 py-1 rounded">
-              http://localhost:8000
-            </code>
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-50 via-white to-slate-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 p-6">
+        <div className="max-w-md w-full bg-white dark:bg-slate-900 rounded-xl border border-red-200 dark:border-red-900 shadow-lg p-8 text-center">
+          <div className="text-5xl mb-4">⚠️</div>
+          <p className="text-red-600 dark:text-red-400 text-xl font-bold mb-4">{error}</p>
+          <p className="text-slate-700 dark:text-slate-300 mb-2">
+            Make sure the backend is running at
           </p>
-          <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
-            Run: <code className="bg-zinc-200 dark:bg-zinc-800 px-2 py-1 rounded">python -m api.main</code>
+          <code className="block bg-slate-100 dark:bg-slate-800 px-4 py-2 rounded-lg text-sm font-mono mb-4">
+            http://localhost:8000
+          </code>
+          <p className="text-sm text-slate-600 dark:text-slate-400">
+            Run:
           </p>
+          <code className="block bg-slate-100 dark:bg-slate-800 px-4 py-2 rounded-lg text-sm font-mono mt-2">
+            python -m api.main
+          </code>
         </div>
       </div>
     );
@@ -255,26 +259,35 @@ export default function Home() {
 
   if (trendingTopics.length === 0) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-zinc-50 dark:bg-zinc-950">
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-50 via-white to-slate-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
         <div className="text-center">
-          <p className="text-zinc-700 dark:text-zinc-300 text-xl">No topics available</p>
+          <div className="text-6xl mb-4">📊</div>
+          <p className="text-slate-700 dark:text-slate-300 text-xl font-medium">No topics available</p>
+          <p className="text-slate-500 dark:text-slate-500 text-sm mt-2">Check back later for updates</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950">
-      <div className="mx-auto max-w-7xl p-6">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
+      <div className="mx-auto max-w-7xl p-6 md:p-8">
         {/* Header with Search */}
-        <div className="mb-10 space-y-6">
-          <div className="flex items-start justify-between">
-            <h1 className="text-5xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100">
-              {t('dashboardTitle')}
-            </h1>
+        <div className="mb-12 space-y-8">
+          <div className="flex items-start justify-between flex-wrap gap-4">
+            <div>
+              <h1 className="text-5xl md:text-6xl font-bold tracking-tight mb-2">
+                <span className="bg-gradient-to-r from-[#4A8EC6] to-[#6BC04A] bg-clip-text text-transparent">
+                  {t('dashboardTitle')}
+                </span>
+              </h1>
+              <p className="text-slate-600 dark:text-slate-400 text-lg mt-2">
+                Monitor civic engagement and community insights
+              </p>
+            </div>
 
             {/* Action Buttons */}
-            <div className="flex gap-3">
+            <div className="flex gap-3 flex-wrap">
               {/* Reports Dropdown */}
               <div className="relative">
                 <select
@@ -284,7 +297,7 @@ export default function Home() {
                     e.target.value = '';
                   }}
                   disabled={exportingWeekly || exportingMonthly}
-                  className="h-10 px-4 py-2 border border-zinc-300 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800 bg-transparent cursor-pointer focus:outline-none focus:ring-2 focus:ring-zinc-400 dark:focus:ring-zinc-600"
+                  className="h-10 px-4 py-2 border-2 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 hover:border-slate-300 dark:hover:border-slate-600 bg-white dark:bg-slate-900 cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#4A8EC6] font-semibold text-sm transition-all shadow-sm"
                 >
                   <option value="">
                     {exportingWeekly || exportingMonthly ? 'Generating...' : '📊 Export Report'}
@@ -333,20 +346,20 @@ export default function Home() {
                 router.push(`/search?q=${encodeURIComponent(searchQuery)}`);
               }
             }}
-            className="relative mx-auto max-w-2xl"
+            className="relative mx-auto max-w-3xl"
           >
-            <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-zinc-400" />
+            <Search className="absolute left-5 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
             <Input
               placeholder={t('searchPlaceholder')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="h-14 pl-12 text-base shadow-sm"
+              className="h-16 pl-14 pr-6 text-base shadow-md border-2 border-slate-200 dark:border-slate-700 focus:border-[#4A8EC6] dark:focus:border-[#4A8EC6] rounded-xl bg-white dark:bg-slate-900 placeholder:text-slate-400"
             />
           </form>
         </div>
 
         {/* Topics Grid with Engagement Graphs */}
-        <div className="grid gap-6 md:grid-cols-2">
+        <div className="grid gap-8 md:grid-cols-2">
           {trendingTopics.map((topic) => {
             const chartData = topic.top_events && topic.top_events.length > 0
               ? mergeTimelines(topic.top_events)
@@ -360,56 +373,64 @@ export default function Home() {
 
             return (
               <Link key={topic.id} href={`/topics/${topic.id}`}>
-                <Card className="border border-zinc-200 dark:border-zinc-800 transition-all hover:shadow-lg hover:border-zinc-300 dark:hover:border-zinc-700 cursor-pointer bg-white dark:bg-zinc-900">
-                  <CardHeader>
-                    <div className="flex items-start justify-between">
+                <Card className="group border-2 border-slate-200 dark:border-slate-800 transition-all duration-300 hover:shadow-2xl hover:shadow-[#4A8EC6]/10 hover:border-[#4A8EC6]/50 dark:hover:border-[#4A8EC6]/50 hover:-translate-y-1 cursor-pointer bg-white dark:bg-slate-900">
+                  <CardHeader className="pb-4">
+                    <div className="flex items-start justify-between gap-4">
                       <div className="flex items-center gap-4">
-                        <span className="text-4xl">{topic.icon}</span>
-                        <CardTitle className="text-2xl">{topic.name}</CardTitle>
+                        <span className="text-5xl group-hover:scale-110 transition-transform">{topic.icon}</span>
+                        <div>
+                          <CardTitle className="text-2xl mb-1">{topic.name}</CardTitle>
+                        </div>
                       </div>
-                      <div className="flex flex-col gap-1 text-right text-sm text-zinc-600 dark:text-zinc-400">
-                        <span>
-                          {topic.actionables?.misinformation || 0} misinformation
-                        </span>
-                        <span>
-                          {topic.actionables?.questions || 0} questions
-                        </span>
+                      <div className="flex flex-col gap-2 text-right">
+                        <div className="bg-red-50 dark:bg-red-900/20 px-3 py-1.5 rounded-lg border border-red-200 dark:border-red-800">
+                          <span className="text-xs font-semibold text-red-700 dark:text-red-300">
+                            {topic.actionables?.misinformation || 0} misinformation
+                          </span>
+                        </div>
+                        <div className="bg-blue-50 dark:bg-blue-900/20 px-3 py-1.5 rounded-lg border border-blue-200 dark:border-blue-800">
+                          <span className="text-xs font-semibold text-blue-700 dark:text-blue-300">
+                            {topic.actionables?.questions || 0} questions
+                          </span>
+                        </div>
                       </div>
                     </div>
                   </CardHeader>
-                  <CardContent className="space-y-4">
+                  <CardContent className="space-y-4 pt-2">
                     {/* Engagement Chart */}
                     {chartData.length > 0 ? (
-                      <div className="h-80 w-full p-4">
+                      <div className="h-80 w-full p-2">
                         <ResponsiveContainer width="100%" height="100%">
                           <LineChart data={chartData}>
-                            <CartesianGrid strokeDasharray="3 3" className="stroke-zinc-200 dark:stroke-zinc-800" />
+                            <CartesianGrid strokeDasharray="3 3" className="stroke-slate-200 dark:stroke-slate-800" opacity={0.5} />
                             <XAxis
                               dataKey="date"
-                              className="text-xs text-zinc-600 dark:text-zinc-400"
+                              className="text-xs text-slate-600 dark:text-slate-400"
                               tickFormatter={(value) => {
                                 const date = new Date(value);
                                 return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
                               }}
+                              stroke="#94a3b8"
                             />
-                            <YAxis className="text-xs text-zinc-600 dark:text-zinc-400" />
+                            <YAxis className="text-xs text-slate-600 dark:text-slate-400" stroke="#94a3b8" />
                             <Tooltip
                               contentStyle={{
-                                backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                                border: '1px solid #e4e4e7',
-                                borderRadius: '8px'
+                                backgroundColor: 'rgba(255, 255, 255, 0.98)',
+                                border: '2px solid #e2e8f0',
+                                borderRadius: '12px',
+                                boxShadow: '0 10px 25px rgba(0, 0, 0, 0.1)'
                               }}
                               labelFormatter={(value) => new Date(value).toLocaleDateString()}
                               content={({ active, payload }) => {
                                 if (active && payload && payload.length) {
                                   return (
-                                    <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-3 shadow-lg">
-                                      <p className="font-semibold text-zinc-900 dark:text-zinc-50 mb-2">
+                                    <div className="bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 rounded-xl p-4 shadow-xl">
+                                      <p className="font-bold text-slate-900 dark:text-slate-50 mb-3 text-sm">
                                         {new Date(payload[0].payload.date).toLocaleDateString()}
                                       </p>
                                       {payload.map((entry: any, index: number) => (
-                                        <p key={index} className="text-sm" style={{ color: entry.color }}>
-                                          {topic.top_events[index]?.name}: {entry.value} interactions
+                                        <p key={index} className="text-sm font-medium mb-1" style={{ color: entry.color }}>
+                                          {topic.top_events[index]?.name}: <span className="font-bold">{entry.value}</span> interactions
                                         </p>
                                       ))}
                                     </div>
@@ -420,14 +441,14 @@ export default function Home() {
                             />
                             <Legend
                               content={({ payload }) => (
-                                <div className="flex flex-wrap gap-3 justify-center mt-4">
+                                <div className="flex flex-wrap gap-3 justify-center mt-4 px-2">
                                   {payload?.map((entry: any, index: number) => (
-                                    <div key={index} className="flex items-center gap-2">
+                                    <div key={index} className="flex items-center gap-2 bg-slate-50 dark:bg-slate-800 px-3 py-1.5 rounded-lg">
                                       <div
-                                        className="w-3 h-3 rounded-full"
+                                        className="w-3 h-3 rounded-full shadow-sm"
                                         style={{ backgroundColor: entry.color }}
                                       />
-                                      <span className="text-xs text-zinc-700 dark:text-zinc-300 truncate max-w-[150px]">
+                                      <span className="text-xs font-semibold text-slate-700 dark:text-slate-300 truncate max-w-[150px]">
                                         {topic.top_events[index]?.name || `Event ${index + 1}`}
                                       </span>
                                     </div>
@@ -441,8 +462,9 @@ export default function Home() {
                                 type="monotone"
                                 dataKey={`event_${idx}`}
                                 stroke={eventColors[idx]}
-                                strokeWidth={2}
-                                dot={{ fill: eventColors[idx], r: 3 }}
+                                strokeWidth={3}
+                                dot={{ fill: eventColors[idx], r: 4, strokeWidth: 2, stroke: '#fff' }}
+                                activeDot={{ r: 6, strokeWidth: 2 }}
                                 name={event.name}
                               />
                             ))}
@@ -450,8 +472,9 @@ export default function Home() {
                         </ResponsiveContainer>
                       </div>
                     ) : (
-                      <div className="h-64 w-full flex items-center justify-center">
-                        <p className="text-zinc-400 dark:text-zinc-600">No engagement data available</p>
+                      <div className="h-64 w-full flex flex-col items-center justify-center bg-slate-50 dark:bg-slate-800/50 rounded-xl">
+                        <div className="text-4xl mb-2">📊</div>
+                        <p className="text-slate-500 dark:text-slate-400 font-medium">No engagement data available</p>
                       </div>
                     )}
                   </CardContent>
