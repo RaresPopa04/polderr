@@ -18,7 +18,7 @@ class Post:
     satisfaction_rating: int
     engagement_rating: List[Tuple[datetime, int]]
     actionables: List[Actionable]
-    topic: Optional[str] = field(default=None)
+    topic: str
     
     def __init__(self, link: str, content: str, date: datetime, source: str):
         from llm.find_topic_for_post import find_topic_for_post
