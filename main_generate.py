@@ -14,8 +14,8 @@ from database import db
 
 
 # CONFIGURATION: Control how many posts to process
-RIJSWIJK_FEED_LIMIT = 10  # Number of posts to process from rijswijk_feed_news.csv (None = all)
-NUM_SNAPSHOT_FILES = 0    # Number of snapshot files to process (0-24)
+RIJSWIJK_FEED_LIMIT = 0  # Number of posts to process from rijswijk_feed_news.csv (None = all)
+NUM_SNAPSHOT_FILES = 3    # Number of snapshot files to process (0-24)
 
 # Custom JSON encoder to handle datetime objects
 class DateTimeEncoder(json.JSONEncoder):
@@ -35,15 +35,64 @@ def process_csv_row(row, llm_client, event_assigning_service):
         return False
     
     try:
+        # Extract basic fields
         link = row[0] if row[0] else "No link"
         content = row[1] if len(row) > 1 else ""
         date_str = row[2] if len(row) > 2 else datetime.now().isoformat()
+        
+        # Parse comments and likes based on CSV structure
+        # The CSV has: link, message, date_iso8601, comments_json, likes
+        # But comments_json may contain commas, so we need to find where it ends
+        
+        comment_count = 0
+        likes = 0
+        
+        if len(row) > 3:
+            # Find the comments field - it starts with '[{' and ends with '}]'
+            # Join all fields from index 3 onwards until we complete the JSON array
+            remaining_fields = row[3:]
+            comments_str = ""
+            likes_str = ""
+            
+            # Look for the pattern where comments end (find '}]' followed by a number)
+            for i, field in enumerate(remaining_fields):
+                if i == 0:
+                    comments_str = field
+                elif '}]' in field:
+                    # This field contains the end of comments JSON
+                    # Split on '}]' to separate comments from likes
+                    parts = field.split('}]', 1)
+                    comments_str += ',' + parts[0] + '}]'
+                    if len(parts) > 1 and parts[1]:
+                        likes_str = parts[1].strip()
+                    # Next field might be likes if we didn't find it yet
+                    if not likes_str and i + 1 < len(remaining_fields):
+                        likes_str = remaining_fields[i + 1]
+                    break
+                else:
+                    comments_str += ',' + field
+            
+            # Count comments by counting '{' characters (each comment is an object)
+            comment_count = comments_str.count('{')
+            
+            # Parse likes
+            if likes_str:
+                try:
+                    likes = int(likes_str.strip())
+                except:
+                    likes = 0
+        
+        total_engagement = likes + comment_count
+        
+        print(f"Parsed - Link: {link[:50]}... | Comments: {comment_count} | Likes: {likes} | Total: {total_engagement}")
 
+        # Parse date
         try:
             post_date = datetime.fromisoformat(date_str.replace('+01:00', ''))
         except:
             post_date = datetime.now()
 
+        # Determine source from link
         if 'feelgoodradio' in link:
             source = "Feelgood Radio - Nieuws"
         elif 'inrijswijk.com' in link:
@@ -58,7 +107,8 @@ def process_csv_row(row, llm_client, event_assigning_service):
             link=link,
             content=content,
             date=post_date,
-            source=source
+            source=source,
+            total_engagement=total_engagement
         )
         db.add_post(post)
         event_assigning_service.assign_posts_to_events(post)
@@ -179,10 +229,10 @@ def save_database_to_json(filename: str = None):
             }
         }
         
-        # Save to file (models now handle datetime serialization automatically)
+        # Save to file with custom datetime encoder
         print(f"\nWriting to file: {filename}")
         with open(filename, 'w', encoding='utf-8') as f:
-            json.dump(db_data, f, indent=2, ensure_ascii=False)
+            json.dump(db_data, f, indent=2, ensure_ascii=False, cls=DateTimeEncoder)
         
         print(f"\n✅ SUCCESS! Database saved to: {filename}")
         print(f"\nStats:")
