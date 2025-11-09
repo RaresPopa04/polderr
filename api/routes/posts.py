@@ -2,6 +2,7 @@
 Posts API endpoints
 """
 import uuid
+from collections import defaultdict
 from datetime import datetime
 
 from fastapi import APIRouter, HTTPException
@@ -138,7 +139,7 @@ async def list_events(upload: UploadFile = File(...)):
     file = File(content=content, path=filename)
     txt = file.read()
 
-    unique_id = str(uuid.uuid4())  # ← generate a random unique ID
+    unique_id = str(uuid.uuid4())
 
     post = Post(
         "Manual Upload " + filename + " " + unique_id,
@@ -149,3 +150,20 @@ async def list_events(upload: UploadFile = File(...)):
 
     db.add_post(post)
     return {"status": "ok", "uuid": unique_id}
+
+@router.get("/engagement_data")
+async def list_engagement_data():
+    posts = db.get_all_posts()
+    date_to_ratings = defaultdict(list)
+
+    for post in posts:
+        date_to_ratings[post.date].append(post.engagement_rating)
+
+    datapoints = [
+        {"date": date, "engagement_rating": sum(ratings) / len(ratings)}
+        for date, ratings in date_to_ratings.items()
+    ]
+
+    sorted_datapoints = sorted(datapoints, key=lambda x: x["date"])
+    return sorted_datapoints
+
