@@ -281,9 +281,6 @@ export default function Home() {
                   {t('dashboardTitle')}
                 </span>
               </h1>
-              <p className="text-slate-600 dark:text-slate-400 text-lg mt-2">
-                Monitor civic engagement and community insights
-              </p>
             </div>
 
             {/* Action Buttons */}
@@ -385,12 +382,12 @@ export default function Home() {
                       <div className="flex flex-col gap-2 text-right">
                         <div className="bg-red-50 dark:bg-red-900/20 px-3 py-1.5 rounded-lg border border-red-200 dark:border-red-800">
                           <span className="text-xs font-semibold text-red-700 dark:text-red-300">
-                            {topic.actionables?.misinformation || 0} misinformation
+                            {topic.actionables?.misinformation || 0} {t('misinformation')}
                           </span>
                         </div>
                         <div className="bg-blue-50 dark:bg-blue-900/20 px-3 py-1.5 rounded-lg border border-blue-200 dark:border-blue-800">
                           <span className="text-xs font-semibold text-blue-700 dark:text-blue-300">
-                            {topic.actionables?.questions || 0} questions
+                            {topic.actionables?.questions || 0} {t('questions')}
                           </span>
                         </div>
                       </div>
