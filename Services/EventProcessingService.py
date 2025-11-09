@@ -24,14 +24,15 @@ class EventProcessingService:
             reader = csv.reader(file)
             next(reader)
 
-            needed_posts = 4
+            needed_posts = 1
 
             for row in reader:
                 if len(row) < 3:
                     continue
-                needed_posts -= 1
                 if needed_posts <= 0:
                     break
+                
+                needed_posts -= 1
 
                 try:
                     link = row[0] if row[0] else "No link"

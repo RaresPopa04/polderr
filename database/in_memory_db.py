@@ -18,16 +18,16 @@ class InMemoryDB:
         self.topics: List[Topic] = []
         
         self.topics = [
-            Topic(topic_id=1, name="Traffic", events=[]), 
-            Topic(topic_id=2, name="Environment", events=[]),
-            Topic(topic_id=3, name="Crime", events=[]),
-            Topic(topic_id=4, name="Health", events=[]),
-            Topic(topic_id=5, name="Education", events=[]),
-            Topic(topic_id=6, name="Transportation", events=[]),
-            Topic(topic_id=7, name="Economy", events=[]),
-            Topic(topic_id=8, name="Culture", events=[]),
-            Topic(topic_id=9, name="Politics", events=[]),
-            Topic(topic_id=10, name="Other", events=[]),
+            Topic(topic_id=1, name="Traffic", events=[], icon="🚦"), 
+            Topic(topic_id=2, name="Environment", events=[], icon="🌱"),
+            Topic(topic_id=3, name="Crime", events=[], icon="🚨"),
+            Topic(topic_id=4, name="Health", events=[], icon="🏥"),
+            Topic(topic_id=5, name="Education", events=[], icon="📚"),
+            Topic(topic_id=6, name="Transportation", events=[], icon="🚌"),
+            Topic(topic_id=7, name="Economy", events=[], icon="💰"),
+            Topic(topic_id=8, name="Culture", events=[], icon="🎭"),
+            Topic(topic_id=9, name="Politics", events=[], icon="🏛️"),
+            Topic(topic_id=10, name="Other", events=[], icon="📋"),
         ]
         
         
