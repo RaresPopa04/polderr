@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Link } from '@/i18n/routing';
 import { useTranslations } from 'next-intl';
 import { Search, ArrowLeft, Sparkles, Calendar, Tag } from "lucide-react";
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { searchApi, type SearchResponse } from '@/lib/api';
 
@@ -20,9 +20,12 @@ export default function SearchPage() {
     const [searchResult, setSearchResult] = useState<SearchResponse | null>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const lastSearchedQueryRef = useRef<string | null>(null);
 
     useEffect(() => {
-        if (queryParam && queryParam.trim()) {
+        // Prevent duplicate searches for the same query
+        if (queryParam && queryParam.trim() && queryParam !== lastSearchedQueryRef.current) {
+            lastSearchedQueryRef.current = queryParam;
             performSearch(queryParam);
         }
     }, [queryParam]);
@@ -48,7 +51,7 @@ export default function SearchPage() {
         e.preventDefault();
         if (query.trim()) {
             router.push(`?q=${encodeURIComponent(query)}`);
-            performSearch(query);
+            // Note: performSearch will be triggered by the useEffect when queryParam changes
         }
     };
 
