@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Link, useRouter } from '@/i18n/routing';
 import { useTranslations } from 'next-intl';
-import { Search, Calendar, CalendarRange, Upload, ArrowRight, TrendingUp } from "lucide-react";
+import { Search, Calendar, CalendarRange, Upload, TrendingUp } from "lucide-react";
 import { useEffect, useState, useRef } from 'react';
 import { topicsApi } from '@/lib/api';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
@@ -363,23 +363,29 @@ export default function Home() {
             });
 
             return (
-              <Card key={topic.id} className="border-2 border-[#4A8EC6]/20 transition-all hover:shadow-lg hover:border-[#4A8EC6] hover:shadow-[#4A8EC6]/20 dark:border-[#5B9ED3]/20 dark:hover:border-[#5B9ED3] dark:hover:shadow-[#5B9ED3]/20">
-                <CardHeader>
-                  <div className="mb-4 inline-flex rounded-lg p-3 bg-gradient-to-br from-[#4A8EC6]/10 to-[#6BC04A]/10 dark:from-[#5B9ED3]/20 dark:to-[#7ACC58]/20">
-                    <span className="text-4xl">{topic.icon}</span>
-                  </div>
-                  <CardTitle className="text-2xl">{topic.name}</CardTitle>
-                  <CardDescription className="text-base">
-                    {topic.events?.length || 0} events • {topic.total_posts || 0} posts
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {/* Engagement Chart */}
-                  {chartData.length > 0 ? (
-                    <div className="space-y-2">
-                      <h3 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">
-                        Top {topic.top_events?.length || 0} Events Engagement
-                      </h3>
+              <Link key={topic.id} href={`/topics/${topic.id}`}>
+                <Card className="border-2 border-[#4A8EC6]/20 transition-all hover:shadow-lg hover:border-[#4A8EC6] hover:shadow-[#4A8EC6]/20 dark:border-[#5B9ED3]/20 dark:hover:border-[#5B9ED3] dark:hover:shadow-[#5B9ED3]/20 cursor-pointer">
+                  <CardHeader>
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-center gap-4">
+                        <div className="inline-flex rounded-lg p-3 bg-gradient-to-br from-[#4A8EC6]/10 to-[#6BC04A]/10 dark:from-[#5B9ED3]/20 dark:to-[#7ACC58]/20">
+                          <span className="text-4xl">{topic.icon}</span>
+                        </div>
+                        <CardTitle className="text-2xl">{topic.name}</CardTitle>
+                      </div>
+                      <div className="flex flex-col gap-1 text-right">
+                        <span className="text-sm text-red-600 dark:text-red-400">
+                          {topic.actionables?.misinformation || 0} misinformation
+                        </span>
+                        <span className="text-sm text-[#4A8EC6] dark:text-[#7CB8E8]">
+                          {topic.actionables?.questions || 0} questions
+                        </span>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    {/* Engagement Chart */}
+                    {chartData.length > 0 ? (
                       <div className="h-80 w-full bg-white dark:bg-zinc-900 p-4 rounded-lg border border-zinc-200 dark:border-zinc-800">
                         <ResponsiveContainer width="100%" height="100%">
                           <LineChart data={chartData}>
@@ -449,32 +455,14 @@ export default function Home() {
                           </LineChart>
                         </ResponsiveContainer>
                       </div>
-                    </div>
-                  ) : (
-                    <div className="h-64 w-full flex items-center justify-center bg-zinc-100 dark:bg-zinc-800 rounded-lg">
-                      <p className="text-zinc-500 dark:text-zinc-400">No engagement data available</p>
-                    </div>
-                  )}
-
-                  {/* Stats and Action Button */}
-                  <div className="flex items-center justify-between pt-4 border-t border-zinc-200 dark:border-zinc-800">
-                    <div className="flex gap-4">
-                      <span className="text-sm text-red-600 dark:text-red-400">
-                        {topic.actionables?.misinformation || 0} misinformation
-                      </span>
-                      <span className="text-sm text-[#4A8EC6] dark:text-[#7CB8E8]">
-                        {topic.actionables?.questions || 0} questions
-                      </span>
-                    </div>
-                    <Link href={`/topics/${topic.id}`}>
-                      <Button className="bg-gradient-to-r from-[#4A8EC6] to-[#6BC04A] hover:from-[#5B9ED3] hover:to-[#7ACC58]">
-                        View Topic
-                        <ArrowRight className="ml-2 h-4 w-4" />
-                      </Button>
-                    </Link>
-                  </div>
-                </CardContent>
-              </Card>
+                    ) : (
+                      <div className="h-64 w-full flex items-center justify-center bg-zinc-100 dark:bg-zinc-800 rounded-lg">
+                        <p className="text-zinc-500 dark:text-zinc-400">No engagement data available</p>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              </Link>
             );
           })}
         </div>
