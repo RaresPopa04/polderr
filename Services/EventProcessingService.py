@@ -170,14 +170,18 @@ class EventProcessingService:
             events_data = data.get('events', [])
             events_by_id = {}
             for event_dict in events_data:
-                # Reconstruct posts from links
+                # Reconstruct posts from links (save them before from_dict wipes them)
                 post_links = event_dict.get('posts', [])
-                event_dict['posts'] = [posts_by_link[link] for link in post_links if link in posts_by_link]
+                reconstructed_posts = [posts_by_link[link] for link in post_links if link in posts_by_link]
                 
                 # Clear similar_events for now (will reconstruct after all events loaded)
                 event_dict['similar_events'] = []
                 
+                # Create event (decoder will set posts to [])
                 event = Event.from_dict(event_dict)
+                # Now manually assign the reconstructed posts
+                event.posts = reconstructed_posts
+                
                 db.add_event(event)
                 if event.event_id:
                     events_by_id[event.event_id] = event
