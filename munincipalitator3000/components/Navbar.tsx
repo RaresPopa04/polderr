@@ -35,27 +35,27 @@ export function Navbar() {
           {isAuthenticated ? (
             <button
               onClick={handleLogout}
-              className="flex items-center gap-2 text-sm font-medium text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-50 transition-colors"
-            >
+            className="flex items-center gap-2 text-sm font-medium text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-50 transition-colors"
+          >
               <LogOut className="h-4 w-4" />
               Logout
             </button>
           ) : (
             <>
-              <Link
+          <Link
                 href="/auth/login"
-                className="flex items-center gap-2 text-sm font-medium text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-50 transition-colors"
-              >
+            className="flex items-center gap-2 text-sm font-medium text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-50 transition-colors"
+          >
                 <LogIn className="h-4 w-4" />
                 Login
-              </Link>
-              <Link
+          </Link>
+          <Link
                 href="/auth/signup"
                 className="flex items-center gap-2 text-sm font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
-              >
+          >
                 <UserPlus className="h-4 w-4" />
                 Sign Up
-              </Link>
+          </Link>
             </>
           )}
         </div>

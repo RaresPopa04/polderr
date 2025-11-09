@@ -4,6 +4,10 @@
 pip install -r requirements.txt
 ```
 
+```
+brew install ffmpeg
+```
+
 ```bash
 python -m api.main
 ```

@@ -30,7 +30,7 @@ from pathlib import Path
 from models.File import File
 
 # Path to any test file you want to try
-test_path = "/Users/user/IdeaProjects/polderr/sample.mp4"  # can be .jpg, .pdf, .mp4, etc.
+test_path = "/Users/t.neagoe/Documents/projects/polderr/sample.mp4"  # can be .jpg, .pdf, .mp4, etc.
 
 if not Path(test_path).exists():
     print(f"File not found: {test_path}")
