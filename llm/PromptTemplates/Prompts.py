@@ -3,34 +3,48 @@ import textwrap
 
 find_topic_for_post_prompt = textwrap.dedent(
     """
-    Chose one of these topics: {topics} for the post: {post_content}. Return only the topic name.
+    You are a topic categorization assistant. Your task is to assign the most relevant topic to a post.
+    
+    AVAILABLE TOPICS:
+    {topics}
+    
+    POST DESCRIPTION:
+    {post_description}
+    
+    INSTRUCTIONS:
+    - Read the post description carefully
+    - Choose the ONE topic from the list above that best matches the post's main subject
+    - If no topic is a good match, choose "Other"
+    - Return ONLY the exact topic name, nothing else
+    
+    TOPIC:
     """)
 
 get_report_for_event_prompt = textwrap.dedent(
     """
     Generate a report for an event considering these 
-    news articles / conversations about it. Return only the report.
+    news articles / conversations about it. Return only the report. The only headings you are allowed to use are #, ##, ###.
     {event_posts}
     """)
 
 get_report_for_topic_prompt = textwrap.dedent(
     """
     Generate a report for a topic considering these 
-    news articles / conversations about it. Return only the report.
+    news articles / conversations about it. Return only the report. The only headings you are allowed to use are #, ##, ###.
     {topic_posts}
     """)
 
 get_report_for_last_week_prompt = textwrap.dedent(
     """
     Generate a report for the last week considering these 
-    news articles / conversations about it. Return only the report.
+    news articles / conversations about it. Return only the report. The only headings you are allowed to use are #, ##, ###.
     {last_week_posts}
     """)
 
 get_report_for_last_month_prompt = textwrap.dedent(
     """
     Generate a report for the last month considering these 
-    news articles / conversations about it. Return only the report.
+    news articles / conversations about it. Return only the report. The only headings you are allowed to use are #, ##, ###.
     {last_month_posts}
     """)
 

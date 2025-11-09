@@ -2,9 +2,10 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { Link, useRouter } from '@/i18n/routing';
 import { useTranslations } from 'next-intl';
-import { Search } from "lucide-react";
+import { Search, Calendar, CalendarRange } from "lucide-react";
 import { useEffect, useState } from 'react';
 import { topicsApi } from '@/lib/api';
 
@@ -15,6 +16,8 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [exportingWeekly, setExportingWeekly] = useState(false);
+  const [exportingMonthly, setExportingMonthly] = useState(false);
 
   useEffect(() => {
     async function loadDashboard() {
@@ -31,6 +34,60 @@ export default function Home() {
 
     loadDashboard();
   }, []);
+
+  const handleExportWeekly = async () => {
+    setExportingWeekly(true);
+    try {
+      const response = await fetch(`http://localhost:8000/api/reports/weekly/pdf`);
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.detail || 'Failed to export PDF');
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `weekly_report.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (err: any) {
+      console.error('Failed to export PDF:', err);
+      alert(err.message || 'Failed to export PDF');
+    } finally {
+      setExportingWeekly(false);
+    }
+  };
+
+  const handleExportMonthly = async () => {
+    setExportingMonthly(true);
+    try {
+      const response = await fetch(`http://localhost:8000/api/reports/monthly/pdf`);
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.detail || 'Failed to export PDF');
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `monthly_report.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (err: any) {
+      console.error('Failed to export PDF:', err);
+      alert(err.message || 'Failed to export PDF');
+    } finally {
+      setExportingMonthly(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -77,11 +134,32 @@ export default function Home() {
       <div className="mx-auto max-w-[1800px] p-8">
         {/* Header with Search */}
         <div className="mb-10 space-y-6">
-          <div>
+          <div className="flex items-start justify-between">
             <h1 className="text-5xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
               {t('dashboardTitle')}
             </h1>
 
+            {/* Report Export Buttons */}
+            <div className="flex gap-3">
+              <Button
+                onClick={handleExportWeekly}
+                disabled={exportingWeekly}
+                variant="outline"
+                className="flex items-center gap-2"
+              >
+                <Calendar className="h-4 w-4" />
+                {exportingWeekly ? 'Generating...' : 'Weekly Report'}
+              </Button>
+              <Button
+                onClick={handleExportMonthly}
+                disabled={exportingMonthly}
+                variant="outline"
+                className="flex items-center gap-2"
+              >
+                <CalendarRange className="h-4 w-4" />
+                {exportingMonthly ? 'Generating...' : 'Monthly Report'}
+              </Button>
+            </div>
           </div>
 
           {/* Search Bar */}

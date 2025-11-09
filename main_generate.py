@@ -14,7 +14,7 @@ from database import db
 
 
 # CONFIGURATION: Control how many posts to process
-RIJSWIJK_FEED_LIMIT = 5  # Number of posts to process from rijswijk_feed_news.csv (None = all)
+RIJSWIJK_FEED_LIMIT = 10  # Number of posts to process from rijswijk_feed_news.csv (None = all)
 NUM_SNAPSHOT_FILES = 0    # Number of snapshot files to process (0-24)
 
 # Custom JSON encoder to handle datetime objects

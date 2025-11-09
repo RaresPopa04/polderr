@@ -18,17 +18,23 @@ class InMemoryDB:
         self.topics: List[Topic] = []
         
         self.topics = [
-            Topic(topic_id=1, name="Traffic", events=[], icon="🚦"), 
-            Topic(topic_id=2, name="Environment", events=[], icon="🌱"),
-            Topic(topic_id=3, name="Crime", events=[], icon="🚨"),
-            Topic(topic_id=4, name="Health", events=[], icon="🏥"),
-            Topic(topic_id=5, name="Education", events=[], icon="📚"),
-            Topic(topic_id=6, name="Transportation", events=[], icon="🚌"),
-            Topic(topic_id=7, name="Economy", events=[], icon="💰"),
-            Topic(topic_id=8, name="Culture", events=[], icon="🎭"),
-            Topic(topic_id=9, name="Politics", events=[], icon="🏛️"),
-            Topic(topic_id=10, name="Other", events=[], icon="📋"),
+            Topic(topic_id=1,  name="Traffic and Safety",        events=[], icon="🚦"),
+            Topic(topic_id=2,  name="Mobility and Transport",    events=[], icon="🚌"),
+            Topic(topic_id=3,  name="Environment and Greenery",  events=[], icon="🌳"),
+            Topic(topic_id=4,  name="Public Works and Housing",  events=[], icon="🏗️"),
+            Topic(topic_id=5,  name="Community and Social Life", events=[], icon="🤝"),
+            Topic(topic_id=6,  name="Culture and Events",        events=[], icon="🎭"),
+            Topic(topic_id=7,  name="Waste and Cleanliness",     events=[], icon="🗑️"),
+            Topic(topic_id=8,  name="Health and Wellbeing",      events=[], icon="🏥"),
+            Topic(topic_id=9,  name="Education and Youth",       events=[], icon="🏫"),
+            Topic(topic_id=10, name="Local Economy and Shops",   events=[], icon="💰"),
+            Topic(topic_id=11, name="Public Administration",     events=[], icon="🏛️"),
+            Topic(topic_id=12, name="Safety and Crime",          events=[], icon="🚨"),
+            Topic(topic_id=13, name="Sustainability and Energy", events=[], icon="⚡"),
+            Topic(topic_id=14, name="Digital Services",          events=[], icon="💻"),
+            Topic(topic_id=15, name="Other",                     events=[], icon="📋"),
         ]
+
         
         
     
@@ -279,8 +285,15 @@ class InMemoryDB:
         topic = self.get_topic_by_id(topic_id)
         if not topic:
             return None
+        
+        # Collect all posts from all events in this topic
+        all_posts = []
+        for event in topic.events:
+            if event.posts:
+                all_posts.extend(event.posts)
+        
         llm_client = LlmClient()
-        return llm_client.generate_response(AzerionPromptTemplate(prompt=get_report_for_topic_prompt.format(topic_posts=topic.posts)))
+        return llm_client.generate_response(AzerionPromptTemplate(prompt=get_report_for_topic_prompt.format(topic_posts=all_posts)))
 
     def get_raport_for_last_week(self, ) -> Optional[str]:
         llm_client = LlmClient()
