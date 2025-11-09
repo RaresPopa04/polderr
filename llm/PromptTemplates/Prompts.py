@@ -112,6 +112,20 @@ actionable_proposed_answer_prompt = textwrap.dedent(
     misinformation. Return the answer of the question or the corrected response to the misinformation.
     {raw_citation}
     """)
+
+_forum_response_prompt = textwrap.dedent(
+    """
+    Consider the following source of truth information from the Dutch Municipality:
+    {belastingdienst_info}
+    Consider the following topic specific information which is relevant for this conversation:
+    {topic_data}
+    Consider the previous conversation history:
+    {previous_conversation}
+    Generate a short response about 30 words for the following, Return ONLY the response :
+    {query}
+    """
+)
+
 import json
 from textwrap import dedent
 

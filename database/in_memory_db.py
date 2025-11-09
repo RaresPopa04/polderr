@@ -42,6 +42,24 @@ class InMemoryDB:
     def get_all_topics(self) -> List[Topic]:
         """Get all topics"""
         return self.topics
+
+    def get_topic_forum_posts(self, topic_id: int):
+        """Get all posts belonging to a topic (across all its events)"""
+        topic = self.get_topic_by_id(topic_id)
+        if not topic:
+            return []
+
+        posts = []
+        for forum_post in topic.forum.posts:
+            posts.append(forum_post)
+        return posts
+
+    def get_topic_events(self, topic_id: int):
+        """Get all events for a specific topic by topic_id"""
+        topic = self.get_topic_by_id(topic_id)
+        if topic:
+            return topic.events
+        return []
     
     def get_topic_by_id(self, topic_id: int) -> Optional[Topic]:
         """Get a specific topic by ID"""
