@@ -122,6 +122,19 @@
     "enterQueryDescription": "Use the search bar above to find events and topics",
     "keywords": "keywords"
   },
+  "TrendsPage": {
+    "title": "Engagement Trends",
+    "subtitle": "Monitor engagement patterns over time",
+    "backToDashboard": "Back to Dashboard",
+    "engagementOverTime": "Annual Engagement Overview",
+    "engagementDescription": "Track how engagement changes throughout the year",
+    "engagement": "Engagement",
+    "time": "Month",
+    "peakEngagement": "Peak Engagement",
+    "averageEngagement": "Average Engagement",
+    "totalEngagement": "Total Engagement",
+    "growthRate": "Annual Growth"
+  },
   "TopicsPage": {
     "totalEvents": "Total Events",
     "inThisTopic": "In this topic",

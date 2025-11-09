@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Link, useRouter } from '@/i18n/routing';
 import { useTranslations } from 'next-intl';
-import { Search, Calendar, CalendarRange, Upload } from "lucide-react";
+import { Search, Calendar, CalendarRange, Upload, TrendingUp } from "lucide-react";
 import { useEffect, useState, useRef } from 'react';
 import { topicsApi } from '@/lib/api';
 
@@ -232,6 +232,17 @@ export default function Home() {
                   {uploading ? 'Uploading...' : 'Upload Post'}
                 </Button>
               </div>
+
+              {/* Show Trends Button */}
+              <Link href="/trends">
+                <Button
+                  variant="outline"
+                  className="flex items-center gap-2 border-[#6BC04A] text-[#6BC04A] hover:bg-[#6BC04A]/10 dark:border-[#7ACC58] dark:text-[#7ACC58] dark:hover:bg-[#7ACC58]/10"
+                >
+                  <TrendingUp className="h-4 w-4" />
+                  Show Trends
+                </Button>
+              </Link>
             </div>
           </div>
 
