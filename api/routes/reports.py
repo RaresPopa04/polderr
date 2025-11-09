@@ -18,7 +18,7 @@ from database import db
 router = APIRouter()
 
 # Create reports directory if it doesn't exist
-REPORTS_DIR = "generated_reports"
+REPORTS_DIR = os.path.abspath("generated_reports")
 os.makedirs(REPORTS_DIR, exist_ok=True)
 
 def generate_pdf(content: str, title: str, filename: str) -> str:
