@@ -63,27 +63,64 @@ async def get_topic(topic_id: int):
     llm_client = LlmClient()
     sentiment_analysis_service = SentimentAnalysisService(llm_client)
     
+    # Calculate total actionables across all events
+    total_misinformation = 0
+    total_questions = 0
+    
     events = []
+    sentiment_data_points = []
+    
     for event in topic.events:
+        if not event.posts:
+            continue
+            
         short_summary = event.small_summary
         misinformation = sum(1 for post in event.posts for actionable in post.actionables if actionable.is_question == "False")
         questions = sum(1 for post in event.posts for actionable in post.actionables if actionable.is_question == "True")
+        
+        # Add to totals
+        total_misinformation += misinformation
+        total_questions += questions
+        
+        # Calculate sentiment for this event
+        sentiment_average = sum(post.satisfaction_rating for post in event.posts) / len(event.posts)
+        
         actionables = {
             "misinformation": misinformation,
             "questions": questions
         }
+        
         events.append({
             "id": event.event_id,
             "name": event.name,
             "short_summary": short_summary,
-            "actionables": actionables
+            "actionables": actionables,
+            "date": event.date.isoformat() if event.date else None,
+            "sentiment": round(sentiment_average, 2)
         })
+        
+        # Add sentiment data point for chart
+        sentiment_data_points.append({
+            "event_id": event.event_id,
+            "event_name": event.name,
+            "sentiment": round(sentiment_average, 2),
+            "date": event.date.isoformat() if event.date else None,
+            "timestamp": int(event.date.timestamp()) if event.date else 0
+        })
+    
+    # Sort sentiment data by timestamp
+    sentiment_data_points.sort(key=lambda x: x["timestamp"])
+    
     return_topic = {
         "id": topic.topic_id,
-        "data_points": sentiment_analysis_service.analyze_sentiment(topic.name),
         "name": topic.name,
         "icon": topic.icon,
         "events": events,
+        "total_actionables": {
+            "misinformation": total_misinformation,
+            "questions": total_questions
+        },
+        "sentiment_data": sentiment_data_points
     }
     return return_topic
     

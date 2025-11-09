@@ -39,6 +39,9 @@ class InMemoryDB:
     
     def get_topic_by_id(self, topic_id: int) -> Optional[Topic]:
         """Get a specific topic by ID"""
+        
+        print("getting topic by id: ", topic_id)
+        print("topics: ", self.topics)
         for topic in self.topics:
             print("topic: ", topic.topic_id)
             if topic.topic_id == int(topic_id):
@@ -183,12 +186,6 @@ class InMemoryDB:
     def get_topic_by_name(self, topic_name: str) -> Optional[Topic]:
         for topic in self.topics:
             if topic.name == topic_name:
-                return topic
-        return None
-    
-    def get_topic_by_id(self, topic_id: int) -> Optional[Topic]:
-        for topic in self.topics:
-            if topic.topic_id == topic_id:
                 return topic
         return None
     
