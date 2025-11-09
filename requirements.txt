@@ -9,3 +9,5 @@ python-docx
 PyPDF2
 Pillow
 python-multipart
+pyjwt
+bcrypt
