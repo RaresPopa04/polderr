@@ -38,7 +38,21 @@
     "event2": "Traffic Safety Discussion",
     "event3": "Recycling Program Update",
     "misinformation": "Misinformation",
-    "questions": "Questions"
+    "questions": "Questions",
+    "loadingDashboard": "Loading dashboard...",
+    "backendError": "Make sure the backend is running at",
+    "runCommand": "Run:",
+    "noTopics": "No topics available",
+    "noTopicsDescription": "Check back later for updates",
+    "exportReport": "📊 Export Report",
+    "generating": "Generating...",
+    "weeklyReport": "Weekly Report",
+    "monthlyReport": "Monthly Report",
+    "uploading": "Uploading...",
+    "upload": "Upload",
+    "trends": "Trends",
+    "interactions": "interactions",
+    "noEngagementData": "No engagement data available"
   },
   "EventsPage": {
     "title": "Events Overview",

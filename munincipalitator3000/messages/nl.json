@@ -38,7 +38,21 @@
         "event2": "Verkeersveiligheid Discussie",
         "event3": "Update Recyclingprogramma",
         "misinformation": "Desinformatie",
-        "questions": "Vragen"
+        "questions": "Vragen",
+        "loadingDashboard": "Dashboard laden...",
+        "backendError": "Zorg ervoor dat de backend draait op",
+        "runCommand": "Uitvoeren:",
+        "noTopics": "Geen onderwerpen beschikbaar",
+        "noTopicsDescription": "Kom later terug voor updates",
+        "exportReport": "📊 Rapport Exporteren",
+        "generating": "Genereren...",
+        "weeklyReport": "Wekelijks Rapport",
+        "monthlyReport": "Maandelijks Rapport",
+        "uploading": "Uploaden...",
+        "upload": "Uploaden",
+        "trends": "Trends",
+        "interactions": "interacties",
+        "noEngagementData": "Geen betrokkenheidsgegevens beschikbaar"
     },
     "EventsPage": {
         "title": "Evenementen Overzicht",
