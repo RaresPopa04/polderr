@@ -18,6 +18,7 @@ export function Navbar() {
 
   const handleLogout = () => {
     localStorage.removeItem('auth_token');
+    localStorage.removeItem('username');
     setIsAuthenticated(false);
     router.push('/');
   };

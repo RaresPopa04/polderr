@@ -40,6 +40,8 @@ export default function SignupPage() {
             const data = await response.json();
             // Store the token
             localStorage.setItem('auth_token', data.access_token);
+            // Store the username
+            localStorage.setItem('username', username);
 
             // Redirect to home and refresh to update navbar
             window.location.href = '/';
