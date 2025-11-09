@@ -97,8 +97,16 @@ class Event:
         """Returns the topic name (string) of this event based on its first post"""
         if not self.posts:
             return None
-        # posts[0].topic is a Topic object, return its name
-        return self.posts[0].topic.name if self.posts[0].topic else None
+        
+        topic = self.posts[0].topic
+        if not topic:
+            return None
+        
+        # Handle both Topic object and string
+        if hasattr(topic, 'name'):
+            return topic.name  # It's a Topic object
+        else:
+            return str(topic)  # It's already a string
 
     @staticmethod
     def _find_most_recent_post_date(posts: List[Post]) -> datetime:

@@ -5,8 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Link, useRouter } from '@/i18n/routing';
 import { useTranslations } from 'next-intl';
-import { Search, Calendar, CalendarRange } from "lucide-react";
-import { useEffect, useState } from 'react';
+import { Search, Calendar, CalendarRange, Upload } from "lucide-react";
+import { useEffect, useState, useRef } from 'react';
 import { topicsApi } from '@/lib/api';
 
 export default function Home() {
@@ -18,20 +18,23 @@ export default function Home() {
   const [searchQuery, setSearchQuery] = useState('');
   const [exportingWeekly, setExportingWeekly] = useState(false);
   const [exportingMonthly, setExportingMonthly] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const loadDashboard = async () => {
+    try {
+      const data = await topicsApi.listTopics();
+      setTrendingTopics(data.topics);
+      setLoading(false);
+    } catch (err) {
+      console.error('Failed to load dashboard:', err);
+      setError('Failed to load dashboard data');
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    async function loadDashboard() {
-      try {
-        const data = await topicsApi.listTopics();
-        setTrendingTopics(data.topics);
-        setLoading(false);
-      } catch (err) {
-        console.error('Failed to load dashboard:', err);
-        setError('Failed to load dashboard data');
-        setLoading(false);
-      }
-    }
-
     loadDashboard();
   }, []);
 
@@ -89,6 +92,54 @@ export default function Home() {
     }
   };
 
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files || !e.target.files[0]) {
+      return;
+    }
+
+    const file = e.target.files[0];
+    setSelectedFile(file);
+
+    // Trigger upload after state updates
+    setTimeout(() => uploadFile(file), 0);
+  };
+
+  const uploadFile = async (file: File) => {
+    setUploading(true);
+
+    try {
+      const formData = new FormData();
+      formData.append('upload', file);
+
+      const response = await fetch('http://localhost:8000/api/upload-file-as-post', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.detail || 'Failed to upload file');
+      }
+
+      const result = await response.json();
+      alert(`File uploaded successfully! UUID: ${result.uuid}`);
+
+      // Reset file input
+      setSelectedFile(null);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+
+      // Reload the dashboard to show updated data
+      await loadDashboard();
+    } catch (err: any) {
+      console.error('Failed to upload file:', err);
+      alert(err.message || 'Failed to upload file');
+    } finally {
+      setUploading(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-zinc-50 to-zinc-100 dark:from-zinc-950 dark:to-zinc-900">
@@ -139,7 +190,7 @@ export default function Home() {
               {t('dashboardTitle')}
             </h1>
 
-            {/* Report Export Buttons */}
+            {/* Report Export Buttons and Upload */}
             <div className="flex gap-3">
               <Button
                 onClick={handleExportWeekly}
@@ -159,6 +210,28 @@ export default function Home() {
                 <CalendarRange className="h-4 w-4" />
                 {exportingMonthly ? 'Generating...' : 'Monthly Report'}
               </Button>
+
+              {/* File Upload */}
+              <div className="flex items-center gap-2">
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  onChange={handleFileSelect}
+                  className="hidden"
+                  id="file-upload"
+                  accept="*/*"
+                />
+                <Button
+                  variant="outline"
+                  className="flex items-center gap-2"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={uploading}
+                  type="button"
+                >
+                  <Upload className="h-4 w-4" />
+                  {uploading ? 'Uploading...' : 'Upload Post'}
+                </Button>
+              </div>
             </div>
           </div>
 

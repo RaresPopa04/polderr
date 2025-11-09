@@ -71,20 +71,22 @@ async def get_forum_posts(topic_id: int):
 
 
 @router.post("/topics/{topic_id}/forum")
-async def create_forum_post(topic_id: int, post: ForumPostCreate, user_name: str = "admin"):
+async def create_forum_post(topic_id: int, post: ForumPostCreate):
     """
     Create a new forum post for a topic
+    post.user_name comes from the frontend request body
     """
     if topic_id not in forum_storage:
         forum_storage[topic_id] = []
 
     post_id = len(forum_storage[topic_id]) + 1
 
+    # user_name is extracted from the frontend request body (post.user_name)
     user_post = ForumPostResponse(
         id=post_id,
         content=post.content,
         timestamp=datetime.now().isoformat(),
-        user_name=user_name,
+        user_name=post.user_name,  # From frontend request
     )
 
     # If addressed to the AI, generate a reply

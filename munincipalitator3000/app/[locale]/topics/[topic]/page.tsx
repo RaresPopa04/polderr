@@ -54,9 +54,15 @@ export default function TopicPage() {
         if (!newPostContent.trim()) return;
 
         try {
-            const newPost = await forumApi.createForumPost(topicId, newPostContent);
-            setForumPosts([...forumPosts, newPost]);
+            // Get username from localStorage or use 'Anonymous'
+            const username = localStorage.getItem('username') || 'Anonymous';
+
+            await forumApi.createForumPost(topicId, newPostContent, username);
             setNewPostContent('');
+
+            // Reload all forum posts to show both the question and answer
+            const data = await forumApi.getForumPosts(topicId);
+            setForumPosts(data.posts);
         } catch (err) {
             console.error('Failed to create post:', err);
         }
@@ -331,10 +337,16 @@ export default function TopicPage() {
                                     ) : (
                                         forumPosts.map((post) => (
                                             <div key={post.id} className="border-b border-zinc-200 dark:border-zinc-800 pb-3">
+                                                <div className="flex items-center gap-2 mb-1">
+                                                    <span className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+                                                        {post.user_name}
+                                                    </span>
+                                                    <span className="text-xs text-zinc-400 dark:text-zinc-600">•</span>
+                                                    <span className="text-xs text-zinc-500 dark:text-zinc-400">
+                                                        {new Date(post.timestamp).toLocaleString()}
+                                                    </span>
+                                                </div>
                                                 <p className="text-sm text-zinc-900 dark:text-zinc-50">{post.content}</p>
-                                                <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
-                                                    {new Date(post.timestamp).toLocaleString()}
-                                                </p>
                                             </div>
                                         ))
                                     )}
