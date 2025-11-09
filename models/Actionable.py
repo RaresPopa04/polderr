@@ -1,4 +1,3 @@
-import json
 from dataclasses import dataclass
 
 from llm.AzerionPromptTemplate import AzerionPromptTemplate
@@ -15,7 +14,7 @@ from llm.PromptTemplates.BelastingdienstData import _belastingdienst_data
 @dataclass
 class Actionable:
     def __init__(self,
-                 actionable_id: str,
+                 actionable_id: int,
                  base_link: str,
                  content: str # the actual raw quote from the post
                  ):
@@ -32,10 +31,7 @@ class Actionable:
 
         is_question = llm_client.generate_response(AzerionPromptTemplate(prompt=is_question_find_prompt))
 
-        if is_question.lower() == "yes":
-            return 'True'
-        else:
-            return 'False'
+        return is_question
 
     def generate_proposed_answer(self, llm_client):
         proposed_answer_prompt = actionable_proposed_answer_prompt.format(raw_citation=self.content, all_the_belastingdienst_data=_belastingdienst_data)
@@ -43,25 +39,3 @@ class Actionable:
         proposed_answer = llm_client.generate_response(AzerionPromptTemplate(prompt=proposed_answer_prompt))
 
         return proposed_answer
-
-    def __str__(self) -> dict:
-        return {
-            "actionable_id": self.actionable_id,
-            "base_link": self.base_link,
-            "content": self.content,
-            "is_question": self.is_question,
-            "proposed_response": self.proposed_response
-        }
-
-    def to_json(self):
-        return json.dumps(self.__str__())
-
-    @classmethod
-    def from_json(cls, data: dict):
-        obj = cls.__new__(cls)
-        obj.actionable_id = data.get("actionable_id")
-        obj.base_link = data.get("base_link")
-        obj.content = data.get("content")
-        obj.is_question = data.get("is_question")
-        obj.proposed_response = data.get("proposed_response")
-        return obj

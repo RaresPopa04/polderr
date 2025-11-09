@@ -65,7 +65,7 @@ event_big_summary_prompt = textwrap.dedent(
 actionable_is_question_prompt = textwrap.dedent(
     """
     Generate a yes/no question about whether the given text is a question
-    Strictly return with no additional text yes or no.
+    Return yes or no.
     {raw_citation}
     """)
 actionable_proposed_answer_prompt = textwrap.dedent(
@@ -77,20 +77,6 @@ actionable_proposed_answer_prompt = textwrap.dedent(
     misinformation. Return the answer of the question or the corrected response to the misinformation.
     {raw_citation}
     """)
-
-event_find_actionable_exerpts_prompt = textwrap.dedent(
-    """
-    Use this official information from the Dutch Municipality to answer the 
-    identify misinformation:
-    {all_the_belastingdienst_data}
-    Identify any obvious misinformation phrases from this post data AND any
-    genuine questions from this post_data. 
-    Return ONLY the list of misinformation phrases and questions split by '$' exactly
-    as they appear in the source.
-    Make sure the output is formatted as a list of strings split by the $ symbol added by you.
-    {post_data}
-    """)
-
 import json
 from textwrap import dedent
 
