@@ -21,6 +21,8 @@ async def list_topics():
     for topic in topics:
         events = []
         
+        # Count total posts for this topic
+        total_posts = sum(len(event.posts) for event in topic.events)
         
         misinformation = sum(1 for event in topic.events for post in event.posts for actionable in post.actionables if actionable.is_question == "False")
         questions = sum(1 for event in topic.events for post in event.posts for actionable in post.actionables if actionable.is_question == "True")
@@ -39,8 +41,11 @@ async def list_topics():
             "name": topic.name,
             "icon": topic.icon,
             "events": events,
-            "actionables": actionables
+            "actionables": actionables,
+            "total_posts": total_posts
         })
+    
+    topics_data.sort(key=lambda x: x["total_posts"], reverse=True)
     
     return {"topics": topics_data}
 

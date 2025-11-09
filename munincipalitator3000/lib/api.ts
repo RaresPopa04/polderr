@@ -29,8 +29,8 @@ export const topicsApi = {
  * Events API
  */
 export const eventsApi = {
-  listEvents: () => fetchApi<{ events: any[] }>('/api/events'),
-  getEvent: (eventId: number) => fetchApi<any>(`/api/events/${eventId}`),
+  listEvents: () => fetchApi<{ events: EventListItem[] }>('/api/events'),
+  getEvent: (eventId: number) => fetchApi<EventDetail>(`/api/events/${eventId}`),
 };
 
 /**
@@ -47,14 +47,28 @@ export const searchApi = {
 };
 
 /**
+ * Forum API
+ */
+export const forumApi = {
+  getForumPosts: (topicId: string) => fetchApi<{ posts: ForumPost[] }>(`/api/topics/${topicId}/forum`),
+  createForumPost: (topicId: string, content: string, user_name: string = 'Anonymous') => fetchApi<ForumPost>(`/api/topics/${topicId}/forum`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ content, user_name }),
+  }),
+};
+
+/**
  * Type definitions
  */
 export interface SearchResponse {
   topic_id: number;
   name: string;
   events: SearchEvent[];
-  keywords_found: string[];
-  query_words: string[];
+  total_events_searched: number;
+  similarity_threshold: number;
 }
 
 export interface SearchEvent {
@@ -62,6 +76,67 @@ export interface SearchEvent {
   name: string;
   small_summary: string;
   big_summary: string;
+  case_description?: string;
   date: string;
   keywords: string[];
+  similarity_score?: number;
+}
+
+export interface ForumPost {
+  id: number;
+  content: string;
+  timestamp: string;
+  user_name: string;
+}
+
+export interface EventListItem {
+  event_id: number;
+  name: string;
+  small_summary: string;
+  big_summary: string;
+  date: string | null;
+  post_count: number;
+  topic: string | null;
+}
+
+export interface EventPost {
+  link: string;
+  content: string;
+  date: string | null;
+  source: string;
+  satisfaction_rating: number;
+}
+
+export interface EventActionable {
+  actionable_id: string;
+  content: string;
+  is_question: boolean;
+  proposed_response: string;
+  post_link: string;
+}
+
+export interface InteractionTimelinePoint {
+  date: string;
+  timestamp: number;
+  delta: number;
+  post_link: string | null;
+  total_interactions: number;
+  prediction: boolean;
+}
+
+export interface EventDetail {
+  event_id: number;
+  name: string;
+  small_summary: string;
+  big_summary: string;
+  date: string | null;
+  keywords: string[];
+  posts: EventPost[];
+  actionables: EventActionable[];
+  interaction_timeline: InteractionTimelinePoint[];
+  topic: {
+    id: number;
+    name: string;
+    icon: string;
+  } | null;
 }

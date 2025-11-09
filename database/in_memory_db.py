@@ -1,3 +1,4 @@
+from ntpath import exists
 from typing import List, Optional
 
 from llm.LlmClient import LlmClient
@@ -8,27 +9,34 @@ from models.Post import Post
 from models.Keyword import Keyword
 from datetime import datetime, timedelta
 from models.Topic import Topic
+from typing import Dict
 
 class InMemoryDB:
     """In-memory database using lists for posts and events"""
     
     def __init__(self):
-        self.posts: List[Post] = []
+        self.posts: Dict[str, Post] = {}
         self.events: List[Event] = []
         self.topics: List[Topic] = []
         
         self.topics = [
-            Topic(topic_id=1, name="Traffic", events=[], icon="🚦"), 
-            Topic(topic_id=2, name="Environment", events=[], icon="🌱"),
-            Topic(topic_id=3, name="Crime", events=[], icon="🚨"),
-            Topic(topic_id=4, name="Health", events=[], icon="🏥"),
-            Topic(topic_id=5, name="Education", events=[], icon="📚"),
-            Topic(topic_id=6, name="Transportation", events=[], icon="🚌"),
-            Topic(topic_id=7, name="Economy", events=[], icon="💰"),
-            Topic(topic_id=8, name="Culture", events=[], icon="🎭"),
-            Topic(topic_id=9, name="Politics", events=[], icon="🏛️"),
-            Topic(topic_id=10, name="Other", events=[], icon="📋"),
+            Topic(topic_id=1,  name="Traffic and Safety",        events=[], icon="🚦"),
+            Topic(topic_id=2,  name="Mobility and Transport",    events=[], icon="🚌"),
+            Topic(topic_id=3,  name="Environment and Greenery",  events=[], icon="🌳"),
+            Topic(topic_id=4,  name="Public Works and Housing",  events=[], icon="🏗️"),
+            Topic(topic_id=5,  name="Community and Social Life", events=[], icon="🤝"),
+            Topic(topic_id=6,  name="Culture and Events",        events=[], icon="🎭"),
+            Topic(topic_id=7,  name="Waste and Cleanliness",     events=[], icon="🗑️"),
+            Topic(topic_id=8,  name="Health and Wellbeing",      events=[], icon="🏥"),
+            Topic(topic_id=9,  name="Education and Youth",       events=[], icon="🏫"),
+            Topic(topic_id=10, name="Local Economy and Shops",   events=[], icon="💰"),
+            Topic(topic_id=11, name="Public Administration",     events=[], icon="🏛️"),
+            Topic(topic_id=12, name="Safety and Crime",          events=[], icon="🚨"),
+            Topic(topic_id=13, name="Sustainability and Energy", events=[], icon="⚡"),
+            Topic(topic_id=14, name="Digital Services",          events=[], icon="💻"),
+            Topic(topic_id=15, name="Other",                     events=[], icon="📋"),
         ]
+
         
         
     
@@ -36,9 +44,28 @@ class InMemoryDB:
     def get_all_topics(self) -> List[Topic]:
         """Get all topics"""
         return self.topics
+
+    def get_topic_forum_posts(self, topic_id: int):
+        """Get all posts belonging to a topic (across all its events)"""
+        topic = self.get_topic_by_id(topic_id)
+        if not topic:
+            return []
+
+        posts = []
+        for forum_post in topic.forum.posts:
+            posts.append(forum_post)
+        return posts
+
+    def get_topic_events(self, topic_id: int):
+        """Get all events for a specific topic by topic_id"""
+        topic = self.get_topic_by_id(topic_id)
+        if topic:
+            return topic.events
+        return []
     
     def get_topic_by_id(self, topic_id: int) -> Optional[Topic]:
         """Get a specific topic by ID"""
+        
         for topic in self.topics:
             if topic.topic_id == int(topic_id):
                 return topic
@@ -84,25 +111,39 @@ class InMemoryDB:
                 return True
         return False
     
-    def get_events_by_topic_from_last_24_hours(self, topic: str) -> List[Event]:
-        """Get all events for a specific topic from the last 24 hours"""
+    def get_events_by_topic_from_last_24_hours(self, date: datetime, topic: str) -> List[Event]:
+        """Get all events for a specific topic from the last 72 hours"""
         events = []
+        cutoff_date = date - timedelta(hours=72)
+        
+        print(f"\n🔍 Searching for events with topic='{topic}', after {cutoff_date}")
+        
         for event in self.events:
-            if event.get_event_topic() == topic and event.date > datetime.now() - timedelta(hours=24):
+            event_topic_name = event.get_event_topic()
+            
+            print(f"  Event '{event.name}': topic='{event_topic_name}', date={event.date}")
+            
+            # Check if topic matches and event is within 72 hours
+            if event_topic_name == topic and event.date and event.date > cutoff_date:
+                print(f"    ✓ Match found!")
                 events.append(event)
+            else:
+                if event_topic_name != topic:
+                    print(f"    ✗ Topic mismatch")
+                elif not event.date or event.date <= cutoff_date:
+                    print(f"    ✗ Too old (cutoff: {cutoff_date})")
+                    
+        print(f"📊 Found {len(events)} matching events\n")
         return events
     
     # Post CRUD operations
     def get_all_posts(self) -> List[Post]:
         """Get all posts"""
-        return self.posts
+        return list(self.posts.values())
     
     def get_post_by_id(self, link: str) -> Optional[Post]:
         """Get a specific post by ID"""
-        for post in self.posts:
-            if post.link == link:
-                return post
-        return None
+        return self.posts.get(link)
     
     def get_posts_by_event(self, event_id: int) -> List[Post]:
         """Get all posts for a specific event"""
@@ -111,25 +152,34 @@ class InMemoryDB:
             return event.posts
         return []
     
-    def add_post(self, post: Post) -> Post:
+    def add_post(self, post: Post) -> bool:
         """Add a new post"""
-        self.posts.append(post)
-        return post
+        url = post.link
+        existing_post = self.posts.get(url)
+        if existing_post:
+            last_total_engagement = existing_post.total_engagement
+            print(f"Last total engagement: {last_total_engagement}")
+            print(f"New total engagement: {post.total_engagement}")
+            existing_post.total_engagement = post.total_engagement
+            existing_post.delta_interactions.append((post.date, post.total_engagement - last_total_engagement))
+            return False
+        
+        post.delta_interactions.append((post.date, post.total_engagement))
+        self.posts[url] = post
+        return True
     
     def update_post(self, link: str, updated_post: Post) -> Optional[Post]:
         """Update an existing post"""
-        for i, post in enumerate(self.posts):
-            if post.link == link:
-                self.posts[i] = updated_post
-                return updated_post
+        if link in self.posts:
+            self.posts[link] = updated_post
+            return updated_post
         return None
     
     def delete_post(self, link: str) -> bool:
         """Delete a post by ID"""
-        for i, post in enumerate(self.posts):
-            if post.link == link:
-                self.posts.pop(i)
-                return True
+        if link in self.posts:
+            del self.posts[link]
+            return True
         return False
     
     # Helper methods
@@ -243,8 +293,15 @@ class InMemoryDB:
         topic = self.get_topic_by_id(topic_id)
         if not topic:
             return None
+        
+        # Collect all posts from all events in this topic
+        all_posts = []
+        for event in topic.events:
+            if event.posts:
+                all_posts.extend(event.posts)
+        
         llm_client = LlmClient()
-        return llm_client.generate_response(AzerionPromptTemplate(prompt=get_report_for_topic_prompt.format(topic_posts=topic.posts)))
+        return llm_client.generate_response(AzerionPromptTemplate(prompt=get_report_for_topic_prompt.format(topic_posts=all_posts)))
 
     def get_raport_for_last_week(self, ) -> Optional[str]:
         llm_client = LlmClient()

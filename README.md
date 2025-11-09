@@ -4,6 +4,14 @@
 pip install -r requirements.txt
 ```
 
+```
+brew install ffmpeg
+```
+
+```
+ollama pull qwen3-vl:4b-instruct
+```
+
 ```bash
 python -m api.main
 ```
@@ -26,3 +34,15 @@ python main_generate.py
 2. topic is assigned (find_topic_for_post)
 3. see if there are recents events in this topic and try to assigning similar ones, if no similar ones than create a new one 
 
+Models were using :
+locally hosted via ollama : qwen3-vl:4b-instruct for image to text for eval newspapers etc...
+azerion hosted : elevenlabs-scribe for speech to text
+azerion hosted : gemini-embedding-001 for embeddings 
+azerion hosted : mistral-large-2407-v1:0 for nlp decision making
+
+showcase via sample.png and sample.mp4
+
+
+## Chat
+
+Hey, PolderrAI

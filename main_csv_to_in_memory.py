@@ -24,11 +24,6 @@ def show_database_stats():
     events = db.get_all_events()
     posts = db.get_all_posts()
     
-    print(f"Total Events: {len(events)}")
-    print(f"Total Posts:  {len(posts)}")
-    
-    for post in posts[:10]:
-        print(f"Post: {post.link} and rating {post.satisfaction_rating}")
     
 def process_csv_data():
     """Process all 24 hourly CSV files and load data into memory"""

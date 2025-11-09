@@ -11,6 +11,7 @@ from llm.AzerionPromptTemplate import AzerionPromptTemplate
 from llm.PromptTemplates.Prompts import build_sentiment_prompt
 from Services.EventAssigningService import EventAssigningService
 
+
 # # CONFIGURATION: Control how many posts to process
 # RIJSWIJK_FEED_LIMIT = 0  # Number of posts to process from rijswijk_feed_news.csv (None = all)
 # NUM_SNAPSHOT_FILES = 2   # Number of snapshot files to process (0-24)
@@ -48,14 +49,32 @@ class EventProcessingService:
             else:
                 source = "Unknown Source"
 
+            # comments is a list of json with text and timestamp
+            comments = []
+            print(f"Comments: {row[3]}")
+            if len(row) > 3 and row[3]:
+                try:
+                    comments = json.loads(row[3])
+                except:
+                    comments = []
+            comment_count = len(comments) if isinstance(comments, list) else 0
+            likes = 0
+            if len(row) > 4 and row[4]:
+                try:
+                    likes = int(row[4])
+                except:
+                    likes = 0
+            total_engagement = likes + comment_count    
+
             post = Post.create_with_enrichment(
                 link=link,
                 content=content,
                 date=post_date,
-                source=source
+                source=source,
+                total_engagement=total_engagement
             )
-            db.add_post(post)
-            self.event_assigning_service.assign_posts_to_events(post)
+            if db.add_post(post):
+                self.event_assigning_service.assign_posts_to_events(post)
             return True
             
         except Exception as e:
@@ -220,18 +239,42 @@ class EventProcessingService:
             
             metadata = data.get('metadata', {})
             
+            # Get loaded objects from database (not raw dicts)
+            loaded_posts = db.get_all_posts()
+            loaded_events = db.get_all_events()
+            loaded_topics = db.get_all_topics()
+            
             print(f"\n✅ Successfully loaded database!")
-            print(f"  - Posts loaded: {len(posts_data)}")
-            print(f"  - Events loaded: {len(events_data)}")
-            print(f"  - Topics loaded: {len(topics_data)}")
+            print(f"  - Posts loaded: {len(loaded_posts)}")
+            print(f"  - Events loaded: {len(loaded_events)}")
+            print(f"  - Topics loaded: {len(loaded_topics)}")
             if metadata:
                 print(f"  - Generated at: {metadata.get('generated_at', 'Unknown')}")
             print("=" * 70 + "\n")
             
+            # Print sample of loaded data (first 5 posts and events)
+            for post in loaded_posts[:5]:
+                print(f"Post: {post.link}")
+                print(f"Subject Description: {post.subject_description}")
+                print("-" * 70)
+            
+            if len(loaded_posts) > 5:
+                print(f"... and {len(loaded_posts) - 5} more posts")
+                print("-" * 70)
+            
+            for event in loaded_events[:5]:
+                print(f"Event: {event.name}")
+                print(f"Case Description: {event.case_description}")
+                print("-" * 70)
+            
+            if len(loaded_events) > 5:
+                print(f"... and {len(loaded_events) - 5} more events")
+                print("-" * 70)
+            
             return {
-                "posts": len(posts_data),
-                "events": len(events_data),
-                "topics": len(topics_data),
+                "posts": len(loaded_posts),
+                "events": len(loaded_events),
+                "topics": len(loaded_topics),
                 "metadata": metadata
             }
             
