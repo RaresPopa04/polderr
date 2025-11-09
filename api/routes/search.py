@@ -59,6 +59,7 @@ async def search_by_similarity(request: SearchRequest) -> TopicResponse:
     """
     search_query = request.query.strip()
     original_query = search_query
+    similarity_threshold = 0.7
     
     if not search_query:
         raise HTTPException(status_code=400, detail="Search query cannot be empty")
@@ -72,29 +73,32 @@ async def search_by_similarity(request: SearchRequest) -> TopicResponse:
     
     if query_word_count <= 3:
         print(f"\n📝 Expanding short query: '{search_query}'")
-        expansion_prompt = f"""Expand this search query into a detailed 2-3 sentence description of what the user is looking for. 
-Be specific and include context about the topic.
+        expansion_prompt = f"""You are improving user search queries for semantic similarity over local events.
 
-Query: {search_query}
+Rewrite the following query into a slightly more descriptive, neutral text that is good for embeddings.
 
-Expanded description:"""
+Rules:
+- Preserve the original meaning exactly. Do NOT invent new facts, locations, problems, or opinions.
+- If the query is already clear and specific, keep it very close to the original and only add a few clarifying words.
+- If the query is short or ambiguous, expand it into 1–2 short sentences that describe the likely topic in general terms.
+- Use plain language, no bullet points, no lists.
+- Do NOT mention "query", "user", "search", or any platform.
+- Do NOT add a city name unless it already appears in the query.
+- Output ONLY the rewritten text, nothing else.
+
+Original:
+\"\"\"{search_query}\"\"\"
+
+Rewritten for embeddings:"""
         expanded_query = llm_client.generate_response(AzerionPromptTemplate(prompt=expansion_prompt))
         search_query = expanded_query.strip()
         print(f"✓ Expanded to: '{search_query}'")
     
     # Step 2: Dynamic threshold based on query complexity
-    expanded_query_word_count = len(expanded_query.split())
-    if expanded_query_word_count <= 2:
-        similarity_threshold = 0.3  # Very short queries
-    elif expanded_query_word_count <= 5:
-        similarity_threshold = 0.4  # Short queries
-    else:
-        similarity_threshold = 0.5  # Detailed queries
     
     print(f"\n🔍 Search Configuration:")
     print(f"  Original query: '{original_query}' ({query_word_count} words)")
     print(f"  Search query: '{search_query}'")
-    print(f"  Similarity threshold: {similarity_threshold}")
     
     # Step 3: Get all events from database
     all_events = db.get_all_events()

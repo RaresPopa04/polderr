@@ -30,9 +30,33 @@ def find_topic_for_post_old(post: Post, topics: List[Topic]) -> Topic:
 # Use prompt for this one
 def find_topic_for_post(post: Post, topics: List[Topic]) -> Topic:
     llm_client = LlmClient()
-    prompt = find_topic_for_post_prompt.format(post_content=post.content, topics=topics)
+    
+    # Use subject_description if available, otherwise fall back to content
+    post_description = post.subject_description if post.subject_description else post.content
+    
+    # Format topics list for better readability
+    topics_list = "\n".join([f"- {topic.name}: {topic.icon}" for topic in topics])
+    
+    prompt = find_topic_for_post_prompt.format(
+        post_description=post_description, 
+        topics=topics_list
+    )
     response = llm_client.generate_response(AzerionPromptTemplate(prompt=prompt))
+    
+    # Clean up response (remove whitespace, quotes, etc.)
+    response = response.strip().strip('"').strip("'")
+    
+    # Try exact match first
     for topic in topics:
         if topic.name == response:
             return topic
+    
+    # Try case-insensitive match
+    for topic in topics:
+        if topic.name.lower() == response.lower():
+            print(f"  ⚠️  Case mismatch: '{response}' -> '{topic.name}'")
+            return topic
+    
+    # If no match, return "Other" topic
+    print(f"  ⚠️  No match for '{response}', using 'Other' topic")
     return db.get_topic_by_name("Other")
