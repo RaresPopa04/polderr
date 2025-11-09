@@ -14,7 +14,7 @@ from llm.PromptTemplates.BelastingdienstData import _belastingdienst_data
 @dataclass
 class Actionable:
     def __init__(self,
-                 actionable_id: int,
+                 actionable_id: str,
                  base_link: str,
                  content: str # the actual raw quote from the post
                  ):
@@ -31,7 +31,10 @@ class Actionable:
 
         is_question = llm_client.generate_response(AzerionPromptTemplate(prompt=is_question_find_prompt))
 
-        return is_question
+        if is_question.lower() == "yes":
+            return 'True'
+        else:
+            return 'False'
 
     def generate_proposed_answer(self, llm_client):
         proposed_answer_prompt = actionable_proposed_answer_prompt.format(raw_citation=self.content, all_the_belastingdienst_data=_belastingdienst_data)

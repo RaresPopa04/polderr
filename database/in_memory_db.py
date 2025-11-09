@@ -2,7 +2,7 @@ from typing import List, Optional
 
 from llm.LlmClient import LlmClient
 from llm.AzerionPromptTemplate import AzerionPromptTemplate
-from llm.PromptTemplates.Prompts import get_raport_for_event_prompt, get_raport_for_last_month_prompt, get_raport_for_last_week_prompt, get_raport_for_topic_prompt
+from llm.PromptTemplates.Prompts import get_report_for_event_prompt, get_report_for_last_month_prompt, get_report_for_last_week_prompt, get_report_for_topic_prompt
 from models.Event import Event
 from models.Post import Post
 from datetime import datetime, timedelta
@@ -168,7 +168,7 @@ class InMemoryDB:
         if not event:
             return None
         llm_client = LlmClient()
-        return llm_client.generate_response(AzerionPromptTemplate(prompt=get_raport_for_event_prompt.format(event_posts=event.posts)))
+        return llm_client.generate_response(AzerionPromptTemplate(prompt=get_report_for_event_prompt.format(event_posts=event.posts)))
 
     def get_topic_by_name(self, topic_name: str) -> Optional[Topic]:
         for topic in self.topics:
@@ -181,15 +181,15 @@ class InMemoryDB:
         if not topic:
             return None
         llm_client = LlmClient()
-        return llm_client.generate_response(AzerionPromptTemplate(prompt=get_raport_for_topic_prompt.format(topic_posts=topic.posts)))
+        return llm_client.generate_response(AzerionPromptTemplate(prompt=get_report_for_topic_prompt.format(topic_posts=topic.posts)))
 
     def get_raport_for_last_week(self, ) -> Optional[str]:
         llm_client = LlmClient()
-        return llm_client.generate_response(AzerionPromptTemplate(prompt=get_raport_for_last_week_prompt.format(last_week_posts=self.posts)))
+        return llm_client.generate_response(AzerionPromptTemplate(prompt=get_report_for_last_week_prompt.format(last_week_posts=self.posts)))
 
     def get_raport_for_last_month(self, ) -> Optional[str]:
         llm_client = LlmClient()
-        return llm_client.generate_response(AzerionPromptTemplate(prompt=get_raport_for_last_month_prompt.format(last_month_posts=self.posts)))
+        return llm_client.generate_response(AzerionPromptTemplate(prompt=get_report_for_last_month_prompt.format(last_month_posts=self.posts)))
 
 # Singleton instance
 db = InMemoryDB()

@@ -6,31 +6,31 @@ find_topic_for_post_prompt = textwrap.dedent(
     Chose one of these topics: {topics} for the post: {post_content}. Return only the topic name.
     """)
 
-get_raport_for_event_prompt = textwrap.dedent(
+get_report_for_event_prompt = textwrap.dedent(
     """
-    Generate a raport for an event considering these 
-    news articles / conversations about it. Return only the raport.
+    Generate a report for an event considering these 
+    news articles / conversations about it. Return only the report.
     {event_posts}
     """)
 
-get_raport_for_topic_prompt = textwrap.dedent(
+get_report_for_topic_prompt = textwrap.dedent(
     """
-    Generate a raport for a topic considering these 
-    news articles / conversations about it. Return only the raport.
+    Generate a report for a topic considering these 
+    news articles / conversations about it. Return only the report.
     {topic_posts}
     """)
 
-get_raport_for_last_week_prompt = textwrap.dedent(
+get_report_for_last_week_prompt = textwrap.dedent(
     """
-    Generate a raport for the last week considering these 
-    news articles / conversations about it. Return only the raport.
+    Generate a report for the last week considering these 
+    news articles / conversations about it. Return only the report.
     {last_week_posts}
     """)
 
-get_raport_for_last_month_prompt = textwrap.dedent(
+get_report_for_last_month_prompt = textwrap.dedent(
     """
-    Generate a raport for the last month considering these 
-    news articles / conversations about it. Return only the raport.
+    Generate a report for the last month considering these 
+    news articles / conversations about it. Return only the report.
     {last_month_posts}
     """)
 
@@ -65,9 +65,23 @@ event_big_summary_prompt = textwrap.dedent(
 actionable_is_question_prompt = textwrap.dedent(
     """
     Generate a yes/no question about whether the given text is a question
-    Return yes or no.
+    Strictly return with no additional text yes or no.
     {raw_citation}
     """)
+
+event_find_actionable_exerpts_prompt = textwrap.dedent(
+    """
+    Use this official information from the Dutch Municipality to answer the 
+    identify misinformation:
+    {all_the_belastingdienst_data}
+    Identify any obvious misinformation phrases from this post data AND any
+    genuine questions from this post_data. 
+    Return ONLY the list of misinformation phrases and questions split by '$' exactly
+    as they appear in the source.
+    Make sure the output is formatted as a list of strings split by the $ symbol added by you.
+    {post_data}
+    """)
+
 actionable_proposed_answer_prompt = textwrap.dedent(
     """
     Use this official information from the Dutch Municipality to answer the 
