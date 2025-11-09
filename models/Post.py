@@ -1,6 +1,7 @@
 from dataclasses import dataclass, field
 from datetime import datetime
 from typing import List, Optional, Tuple
+from dataclasses_json import dataclass_json
 
 from llm.AzerionPromptTemplate import AzerionPromptTemplate
 from llm.LlmClient import LlmClient
@@ -9,6 +10,7 @@ from models.Actionable import Actionable
 from llm.PromptTemplates.BelastingdienstData import _belastingdienst_data
 
 
+@dataclass_json
 @dataclass
 class Post:
     link: str

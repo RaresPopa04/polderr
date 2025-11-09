@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from dataclasses_json import dataclass_json
 
 from llm.AzerionPromptTemplate import AzerionPromptTemplate
 from llm.LlmClient import LlmClient
@@ -6,6 +7,7 @@ from llm.PromptTemplates.Prompts import actionable_proposed_answer_prompt, actio
 from llm.PromptTemplates.BelastingdienstData import _belastingdienst_data
 
 
+@dataclass_json
 @dataclass
 class Actionable:
     actionable_id: str

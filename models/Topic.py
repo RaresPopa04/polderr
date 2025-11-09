@@ -1,8 +1,10 @@
 from dataclasses import dataclass, field
 from typing import List, Optional
+from dataclasses_json import dataclass_json
 
 from models.Event import Event
 
+@dataclass_json
 @dataclass
 class Topic:
     topic_id: int

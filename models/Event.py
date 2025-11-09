@@ -1,6 +1,7 @@
 from dataclasses import dataclass, field
 from datetime import datetime
 from typing import List, Optional
+from dataclasses_json import dataclass_json
 
 from llm.AzerionPromptTemplate import AzerionPromptTemplate
 from llm.LlmClient import LlmClient
@@ -18,6 +19,7 @@ from models.Post import Post
 # posts: List[Post] = None,
 # similar_events=None,
 # keywords: List[Keyword] = None,
+@dataclass_json
 @dataclass
 class Event:
     _minimum_event_similarity_threshold = 0.7
