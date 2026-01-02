@@ -1,7 +1,9 @@
 # CivicLens
 
 **Actionable civic insights through human–AI collaboration**  
-Built at Polderr Hackathon · 9 November 2025  
+Built at Polderr Hackathon · 9 November 2025
+
+![Demo CivicLens](assets/demo.jpeg)
 
 - **PowerPoint slides:** [CivicLens Pitch Deck](https://docs.google.com/presentation/d/1472G3EdpkMCCunGx3ZUON4YZgGW5lHYfpXWC7Huqywc/edit?usp=sharing)  
 - **Demo video:** [YouTube Showcase](https://youtu.be/09zDyZ6ZXKo)
